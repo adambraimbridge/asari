@@ -7,24 +7,20 @@ module.exports = ({ personalAccessToken }) => {
     }
 
     const octokit = new Octokit({
-        headers: {
+        previews: [
             /**
-             * Access Projects API using this Accept header while it is under preview
+             * Access Projects API while it is under preview
              *
              * @see https://developer.github.com/v3/projects
              */
-            Accept: 'application/vnd.github.inertia-preview+json'
-        }
-    });
-
-    /**
-     * Authenticate GitHub API calls using GitHub personal access token
-     *
-     * @see https://github.com/octokit/rest.js#authentication
-     */
-    octokit.authenticate({
-        type: 'token',
-        token: personalAccessToken
+            'inertia-preview'
+        ],
+        /**
+         * Authenticate GitHub API calls using GitHub personal access token
+         *
+         * @see https://github.com/octokit/rest.js#authentication
+         */
+        auth: `token ${personalAccessToken}`
     });
 
     const createProject = require('./create-project')(octokit);
