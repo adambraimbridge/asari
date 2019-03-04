@@ -11,6 +11,10 @@
 		"commitmsg": "secret-squirrel-commitmsg",
 		"prepush": "npm run unit-test"  },
   "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:Financial-Times/github-tooling-helper.git"
+  },
   "author": "",
   "license": "MIT",
   "dependencies": {
