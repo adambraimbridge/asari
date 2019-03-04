@@ -21,10 +21,9 @@ const github = require('@financial-times/github')({
 });
 ```
 
-See [`examples/examples.js`](https://github.com/Financial-Times/github/blob/master/examples/examples.js) for a full set of
-usage examples.
+See [`examples/examples.js`](https://github.com/Financial-Times/github-tooling-helper/blob/master/examples/examples.js) for a full set of usage examples.
 
-See [`src/index.js`](https://github.com/Financial-Times/github/blob/master/src/index.js) for all available methods.
+See [`src/index.js`](https://github.com/Financial-Times/github-tooling-helper/blob/master/src/index.js) for all available methods.
 
 ### Command line interface (CLI)
 
@@ -44,7 +43,4 @@ Options:
 
 ## GitHub personal access token security
 
-This package requires a GitHub personal access token with all
-`repo` scopes. This is _very powerful_ as it has access to modify a
-repository's settings, so it is strongly recommended that you follow the guide
-on [How to store and access a GitHub personal access token securely](https://github.com/Financial-Times/next/wiki/How-to-store-and-access-a-GitHub-personal-access-token-securely).
+This package requires a GitHub personal access token with all `repo` scopes. This is _very powerful_ as it has access to modify a repository's settings, so it is strongly recommended that you follow the guide on [How to store and access a GitHub personal access token securely](https://github.com/Financial-Times/next/wiki/How-to-store-and-access-a-GitHub-personal-access-token-securely).
