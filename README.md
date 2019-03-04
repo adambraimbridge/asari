@@ -1,4 +1,6 @@
-# github
+# github-tooling-helper
+
+### @financial-times/github
 
 This package is a wrapper around the official GitHub REST API client for
 JavaScript [@octokit/rest](https://github.com/octokit/rest.js) - it exposes a
