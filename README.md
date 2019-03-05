@@ -33,6 +33,6 @@ const github = require('@financial-times/github')({
 });
 ```
 
-See [`examples/examples.js`](https://github.com/Financial-Times/github-tooling-helper/blob/master/examples/examples.js) for a full set of usage examples.
+See [`examples/examples.js`](https://github.com/Financial-Times/github/blob/master/examples/examples.js) for a full set of usage examples.
 
 See [`src/index.js`](https://github.com/Financial-Times/github/blob/master/src/index.js) for all available methods.
