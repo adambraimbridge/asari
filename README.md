@@ -1,6 +1,6 @@
 # GitHub Command Line Tool
 
-Human friendly command line tool for the GitHub API.
+Human-friendly command line tool for the GitHub API.
 
 ## Usage
 
