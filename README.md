@@ -1,33 +1,10 @@
-# github-tooling-helper
+# GitHub Command Line Tool
 
-### @financial-times/github
-
-This package is a wrapper around the official GitHub REST API client for
-JavaScript [@octokit/rest](https://github.com/octokit/rest.js) - it exposes a
-library and a command line interface (CLI).
-
-_Note:_ Requires a [GitHub personal access token](#github-personal-access-token-security)
-for GitHub API requests that require authentication.
+Human-friendly command line tool for the GitHub API.
 
 ## Usage
 
-### Library
-
-```
-npm install @financial-times/github
-```
-
-```javascript
-const github = require('@financial-times/github')({
-    personalAccessToken: process.env.GITHUB_PERSONAL_ACCESS_TOKEN
-});
-```
-
-See [`examples/examples.js`](https://github.com/Financial-Times/github-tooling-helper/blob/master/examples/examples.js) for a full set of usage examples.
-
-See [`src/index.js`](https://github.com/Financial-Times/github-tooling-helper/blob/master/src/index.js) for all available methods.
-
-### Command line interface (CLI)
+### Command Line Tool
 
 ```
 $ npx @financial-times/github --help
@@ -39,10 +16,23 @@ Commands:
   github pull-request:create       Create a new pull request
 
 Options:
+  --token    GitHub personal access token                              [string]
   --version  Show version number                                       [boolean]
   --help     Show help                                                 [boolean]
 ```
 
-## GitHub personal access token security
+### Library
 
-This package requires a GitHub personal access token with all `repo` scopes. This is _very powerful_ as it has access to modify a repository's settings, so it is strongly recommended that you follow the guide on [How to store and access a GitHub personal access token securely](https://github.com/Financial-Times/next/wiki/How-to-store-and-access-a-GitHub-personal-access-token-securely).
+```
+npm install --save @financial-times/github
+```
+
+```javascript
+const github = require('@financial-times/github')({
+    personalAccessToken: process.env.GITHUB_PERSONAL_ACCESS_TOKEN
+});
+```
+
+See [`examples/examples.js`](https://github.com/Financial-Times/github/blob/master/examples/examples.js) for a full set of usage examples.
+
+See [`src/index.js`](https://github.com/Financial-Times/github/blob/master/src/index.js) for all available methods.
