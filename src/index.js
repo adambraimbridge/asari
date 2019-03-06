@@ -29,6 +29,11 @@ module.exports = ({ personalAccessToken }) => {
     const createPullRequestCard = require('./create-card')(octokit);
 
     return {
+        /**
+         * We're only exposing `octokit` for the purpose of this proof-of-concept.
+         */
+        octokit,
+
         createProject,
         createProjectColumn,
         createPullRequest,
