@@ -3,22 +3,15 @@ version: 2.1
 executors:
   circleci-node-10:
     docker:
-      - image: circleci/node:10.15.2
-    working_directory: ~/project/build
+      - image: circleci/node:10
+    working_directory: ~/project/build-node-10
 
-commands:
-  npm-install:
-    description: "npm install without generating a package-lock file"
-    steps:
-      - run:
-          name: "Install project dependencies"
-          command: npm install --no-package-lock
+  circleci-node-8:
+    docker:
+      - image: circleci/node:8
+    working_directory: ~/project/build-node-8
 
 references:
-
-  #
-  # Workspace
-  #
 
   workspace_root: &workspace_root
     ~/project
@@ -27,91 +20,39 @@ references:
     attach_workspace:
       at: *workspace_root
 
-  #
-  # Cache keys
-  #
-  cache_keys_root: &cache_keys_root
-    keys:
-      - cache-root-v1-{{ .Branch }}-{{ checksum "./package.json" }}
-
-  #
-  # Cache creation
-  #
-
-  create_cache_root: &create_cache_root
-    save_cache:
-      key: cache-root-v1-{{ .Branch }}-{{ checksum "./package.json" }}
-      paths:
-        - ./node_modules/
-
-  #
-  # Cache restoration
-  #
-
-  restore_cache_root: &restore_cache_root
-    restore_cache:
-      <<: *cache_keys_root
-
-  #
-  # Filters
-  #
-
-  filters_branch_build: &filters_branch_build
-    tags:
-      ignore: /.*/
-
-  filters_release_package_build: &filters_release_package_build
-    tags:
-      only:
-        - /^[a-z\-]+-v\d+\.\d+\.\d+(\-\w+\.\d+)?$/
-    branches:
-      ignore: /.*/
-
 jobs:
 
-  build:
+  build-node-10:
     executor: circleci-node-10
     steps:
       - checkout
-      - *restore_cache_root
-      - npm-install
-      - *create_cache_root
+      - run: npm install
       - persist_to_workspace:
           root: *workspace_root
           paths:
-            - build
+            - build-node-10
 
-  test:
+  build-node-8:
+    executor: circleci-node-8
+    steps:
+      - checkout
+      - run: npm install
+      - persist_to_workspace:
+          root: *workspace_root
+          paths:
+            - build-node-8
+
+  test-node-10:
     executor: circleci-node-10
     steps:
       - *attach_workspace
-      - run:
-          name: Run tests
-          command: npm test
+      - run: npm test
 
-  publish:
-    executor: circleci-node-10
+  test-node-8:
+    executor: circleci-node-8
     steps:
       - *attach_workspace
-      - run:
-          name: Configure registry.npmjs.org auth token
-          command: echo "//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}" > ${HOME}/.npmrc
-      - run:
-          name: Extract package name and semver from git tag
-          command: |
-            # https://circleci.com/docs/2.0/env-vars/#using-bash_env-to-set-environment-variables
-            export RELEASE_SEMVER='v[0-9]{1,3}\.[0-9]{1,2}\.[0-9]{1,2}(-[a-z]+\.[0-9])?';
-            export TARGET_VERSION=$(echo $CIRCLE_TAG | grep -o -E $RELEASE_SEMVER);
-            export TARGET_MODULE=$(echo $CIRCLE_TAG | sed -E "s/-${RELEASE_SEMVER}//g");
-            echo "export TARGET_VERSION=$TARGET_VERSION" >> $BASH_ENV;
-            echo "export TARGET_MODULE=$TARGET_MODULE" >> $BASH_ENV;
-            echo "Creating release ${TARGET_VERSION} for ${TARGET_MODULE}";
-      - run:
-          name: Bump package version
-          command: npx athloi -F ${TARGET_MODULE} version ${TARGET_VERSION}
-      - run:
-          name: Publish package to npm
-          command: npx athloi -F ${TARGET_MODULE} publish -- --access=public
+      - run: npm test
 
 workflows:
 
@@ -119,27 +60,11 @@ workflows:
 
   build-test:
     jobs:
-      - build:
-          filters:
-            <<: *filters_branch_build
-      - test:
-          filters:
-            <<: *filters_branch_build
+      - build-node-8
+      - build-node-10
+      - test-node-8:
           requires:
-            - build
-
-  build-test-publish:
-    jobs:
-      - build:
-          filters:
-            <<: *filters_release_package_build
-      - test:
-          filters:
-            <<: *filters_release_package_build
+            - build-node-8
+      - test-node-10:
           requires:
-            - build
-      - publish:
-          filters:
-            <<: *filters_release_package_build
-          requires:
-            - test
+            - build-node-10
