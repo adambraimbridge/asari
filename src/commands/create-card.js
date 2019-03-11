@@ -1,4 +1,5 @@
 const github = require('../index');
+const printOutput = require('../lib/print-output');
 
 /**
  * yargs builder function.
@@ -31,8 +32,9 @@ const builder = (yargs) => {
  * @param {string} argv.token
  * @param {number} argv.column
  * @param {number} argv.pullRequest
+ * @param {string} argv.json
  */
-const handler = async ({ token, column, pullRequest }) => {
+const handler = async ({ token, column, pullRequest, json }) => {
 
     if (isNaN(column) || isNaN(pullRequest)) {
         throw new Error('Column and pull request ID must be a number');
@@ -48,11 +50,9 @@ const handler = async ({ token, column, pullRequest }) => {
         content_type: 'PullRequest'
     };
 
-    try {
-        await createPullRequestCard(inputs);
-    } catch (error) {
-        throw new Error(`Adding a pull request to a project failed. Response: ${error}.`)
-    }
+    const projectCard = await createPullRequestCard(inputs);
+
+    printOutput({ json, resource: projectCard });
 };
 
 module.exports = {
