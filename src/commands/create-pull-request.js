@@ -1,8 +1,6 @@
-/* eslint-disable no-console */
-
 const fs = require('fs');
-
 const github = require('../index');
+const printOutput = require('../lib/print-output');
 
 /**
  * yargs builder function.
@@ -61,9 +59,10 @@ const builder = (yargs) => {
  * @param {string} argv.branch
  * @param {string} [argv.base]
  * @param {string} [argv.body]
+ * @param {string} argv.json
  * @throws {Error} - Throws an error if `body` is invalid
  */
-const handler = async ({ token, owner, repo, title, branch, base, body }) => {
+const handler = async ({ token, owner, repo, title, branch, base, body, json }) => {
     const filePathProvided = typeof body !== 'undefined';
     const incorrectFilePath = filePathProvided && !fs.existsSync(body);
     const correctFilePath = filePathProvided && fs.existsSync(body);
@@ -90,12 +89,9 @@ const handler = async ({ token, owner, repo, title, branch, base, body }) => {
         body: pullRequestBody
     };
 
-    try {
-        const pullRequest = await createPullRequest(inputs);
-        console.log('Pull request ID: ', pullRequest.id);
-    } catch(error) {
-        throw new Error(`Creating a pull request failed. Response: ${error}.`)
-    }
+    const pullRequest = await createPullRequest(inputs);
+
+    printOutput({ json, resource: pullRequest });
 };
 
 module.exports = {
