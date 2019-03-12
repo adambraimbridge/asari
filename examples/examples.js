@@ -1,68 +1,64 @@
-const github = require('@financial-times/tooling-helpers').github({
-    personalAccessToken: process.env.GITHUB_PERSONAL_ACCESS_TOKEN
+const github = require("@financial-times/tooling-helpers").github({
+	personalAccessToken: process.env.GITHUB_PERSONAL_ACCESS_TOKEN
 });
 
-async function main () {
+async function main() {
+	try {
+		// Create the project which returns an object with a project ID
 
-    try {
+		const project = await github.createProject({
+			org: "financial-times-sandbox",
+			name: "Sample Project"
+		});
 
-        // Create the project which returns an object with a project ID
+		const projectId = project.id;
 
-        const project = await github.createProject({
-            org: 'financial-times-sandbox',
-            name: 'Sample Project'
-        });
+		// Create 'To do', 'In progress' and 'Done' columns which return an object with a column IDs
 
-        const projectId = project.id;
+		const toDoColumn = await github.createProjectColumn({
+			project_id: projectId,
+			name: "To do"
+		});
 
-        // Create 'To do', 'In progress' and 'Done' columns which return an object with a column IDs
+		const toDoColumnId = toDoColumn.id;
 
-        const toDoColumn = await github.createProjectColumn({
-            project_id: projectId,
-            name: 'To do'
-        });
+		const inProgressColumn = await github.createProjectColumn({
+			project_id: projectId,
+			name: "In progress"
+		});
 
-        const toDoColumnId = toDoColumn.id;
+		const inProgressColumnId = inProgressColumn.id;
 
-        const inProgressColumn = await github.createProjectColumn({
-            project_id: projectId,
-            name: 'In progress'
-        });
+		const doneColumn = await github.createProjectColumn({
+			project_id: projectId,
+			name: "Done"
+		});
 
-        const inProgressColumnId = inProgressColumn.id;
+		const doneColumnId = doneColumn.id;
 
-        const doneColumn = await github.createProjectColumn({
-            project_id: projectId,
-            name: 'Done'
-        });
+		// Create a PR which returns an object with a PR IDs
 
-        const doneColumnId = doneColumn.id;
+		const pullRequest = await github.createPullRequest({
+			owner: "financial-times-sandbox",
+			repo: "Western-Storm",
+			title: "Sample pull request",
+			head: "kb/sample-pull-request",
+			base: "master",
+			body: "Pull request body"
+		});
 
-        // Create a PR which returns an object with a PR IDs
+		const pullRequestId = pullRequest.id;
 
-        const pullRequest = await github.createPullRequest({
-            owner: 'financial-times-sandbox',
-            repo: 'Western-Storm',
-            title: 'Sample pull request',
-            head: 'kb/sample-pull-request',
-            base: 'master',
-            body: 'Pull request body'
-        });
+		// Create a card with a PR which returns an object with a card ID
 
-        const pullRequestId = pullRequest.id;
-
-        // Create a card with a PR which returns an object with a card ID
-
-        const pullRequestCard = await github.createPullRequestCard({
-            column_id: toDoColumnId,
-            content_id: pullRequestId,
-            content_type: 'PullRequest'
-        });
-
-    } catch (err) {
-        console.error(err);
-    }
-
+		const pullRequestCard = await github.createPullRequestCard({
+			column_id: toDoColumnId,
+			content_id: pullRequestId,
+			content_type: "PullRequest"
+		});
+	} catch (err) {
+		console.error(err);
+	}
 }
 
 main();
