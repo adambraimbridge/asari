@@ -1,6 +1,5 @@
-/* eslint-disable no-console */
-
 const github = require('../index');
+const printOutput = require('../lib/print-output');
 
 /**
  * yargs builder function.
@@ -35,8 +34,9 @@ const builder = (yargs) => {
  * @param {string} argv.token
  * @param {string} argv.org
  * @param {string} argv.name
+ * @param {string} argv.json
  */
-const handler = async ({ token, org, name }) => {
+const handler = async ({ token, org, name, json }) => {
 
     if (!org || !name) {
         throw new Error(
@@ -72,21 +72,17 @@ const handler = async ({ token, org, name }) => {
         name: 'Done'
     }).catch(createProjectError);
 
-    // Create an object that resembles a JSON structure
-    const details = {
-        project: project.id,
+    const projectWithColumns = {
+        project: project,
         columns: {
-            todo: toDoColumn.id,
-            doing: inProgressColumn.id,
-            done: doneColumn.id
-        }
+            todo: toDoColumn,
+            doing: inProgressColumn,
+            done: doneColumn
+        },
+        html_url: project.html_url
     };
 
-    const json = JSON.stringify(details);
-
-    // Print JSON string to console which allows user to copy/save column IDs
-    // Column IDs are needed to add pull requests to an organisation's project
-    console.log(json);
+    printOutput({ json, resource: projectWithColumns });
 };
 
 module.exports = {
