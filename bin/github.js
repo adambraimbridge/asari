@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 require("yargs")
-	.commandDir("commands")
+	.commandDir("../src/commands")
 	.demandCommand()
 	.option("json", {
 		type: "boolean"
