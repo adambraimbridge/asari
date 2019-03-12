@@ -8,12 +8,14 @@ jest.spyOn(global.console, 'warn')
     .mockImplementation((message) => message);
 
 test('`pull-request:create` command module exports an object that can be used by yargs', () => {
-    expect.objectContaining({
-        command: expect.stringMatching('project:create'),
-        desc: expect.any(String),
-        builder: expect.any(Function),
-        handler: expect.any(Function)
-    });
+    expect(createPullRequestCommand).toEqual(
+        expect.objectContaining({
+            command: expect.stringMatching('pull-request:create'),
+            desc: expect.any(String),
+            builder: expect.any(Function),
+            handler: expect.any(Function)
+        })
+    );
 });
 
 test('yargs can load the `pull-request:create` command without any errors or warnings', () => {
