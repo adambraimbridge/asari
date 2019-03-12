@@ -28,8 +28,8 @@ npm install --save @financial-times/github
 ```
 
 ```javascript
-const github = require('@financial-times/github')({
-    personalAccessToken: process.env.GITHUB_PERSONAL_ACCESS_TOKEN
+const github = require("@financial-times/github")({
+  personalAccessToken: process.env.GITHUB_PERSONAL_ACCESS_TOKEN
 });
 ```
 
