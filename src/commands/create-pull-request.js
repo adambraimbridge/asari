@@ -1,5 +1,8 @@
+const flow = require('lodash.flow');
 const fs = require("fs");
+
 const github = require("../lib/github");
+const { withToken } = require("../lib/helpers/yargs/options");
 const printOutput = require("../lib/helpers/print-output");
 
 /**
@@ -8,7 +11,9 @@ const printOutput = require("../lib/helpers/print-output");
  * @param {import('yargs').Yargs} yargs - Instance of yargs
  */
 const builder = yargs => {
-	return yargs
+	const baseOptions = flow(withToken);
+
+	return baseOptions(yargs)
 		.option("owner", {
 			alias: "o",
 			describe: "Owner",
@@ -39,11 +44,6 @@ const builder = yargs => {
 		})
 		.option("body", {
 			describe: "Path to pull request body",
-			type: "string"
-		})
-		.option("token", {
-			describe: "GitHub personal access token",
-			demandOption: true,
 			type: "string"
 		});
 };
