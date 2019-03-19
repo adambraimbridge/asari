@@ -24,10 +24,10 @@ module.exports = ({ personalAccessToken }) => {
 		auth: `token ${personalAccessToken}`
 	});
 
-	const createProject = require("./create-project")(octokit);
-	const createProjectColumn = require("./create-project-column")(octokit);
-	const createPullRequest = require("./create-pull-request")(octokit);
-	const createPullRequestCard = require("./create-card")(octokit);
+	const createProject = require("./github/create-project")(octokit);
+	const createProjectColumn = require("./github/create-project-column")(octokit);
+	const createPullRequest = require("./github/create-pull-request")(octokit);
+	const createPullRequestCard = require("./github/create-card")(octokit);
 
 	return {
 		createProject,

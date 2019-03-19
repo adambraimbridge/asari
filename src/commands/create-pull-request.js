@@ -1,6 +1,6 @@
 const fs = require("fs");
-const github = require("../index");
-const printOutput = require("../lib/print-output");
+const github = require("../lib/github");
+const printOutput = require("../lib/helpers/print-output");
 
 /**
  * yargs builder function.
