@@ -1,5 +1,5 @@
 const fs = require("fs");
-const github = require("../index");
+const github = require("../lib/github");
 const printOutput = require("../lib/helpers/print-output");
 
 /**
