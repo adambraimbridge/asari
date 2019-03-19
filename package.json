@@ -2,7 +2,7 @@
   "name": "@financial-times/github",
   "version": "0.0.0",
   "description": "",
-  "main": "src/index.js",
+  "main": "src/lib/github.js",
   "bin": "bin/github.js",
   "scripts": {
     "test": "npm run lint && npm run unit-test",
