@@ -18,4 +18,11 @@ const withToken = yargs => {
 	});
 };
 
-module.exports = { withToken };
+const withJson = yargs => {
+	return yargs.option("json", {
+		describe: "Format command output as JSON string",
+		type: "boolean"
+	});
+};
+
+module.exports = { withToken, withJson };
