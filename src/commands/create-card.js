@@ -1,4 +1,7 @@
+const flow = require('lodash.flow');
+
 const github = require("../lib/github");
+const { withToken } = require("../lib/helpers/yargs/options");
 const printOutput = require("../lib/helpers/print-output");
 
 /**
@@ -7,7 +10,9 @@ const printOutput = require("../lib/helpers/print-output");
  * @param {import('yargs').Yargs} yargs - Instance of yargs
  */
 const builder = yargs => {
-	return yargs
+	const baseOptions = flow(withToken);
+
+	return baseOptions(yargs)
 		.option("column", {
 			describe: "Project column ID",
 			demandOption: true,
@@ -17,11 +22,6 @@ const builder = yargs => {
 			describe: "Pull request ID",
 			demandOption: true,
 			type: "number"
-		})
-		.option("token", {
-			describe: "GitHub personal access token",
-			demandOption: true,
-			type: "string"
 		});
 };
 

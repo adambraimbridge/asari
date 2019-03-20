@@ -1,4 +1,7 @@
+const flow = require('lodash.flow');
+
 const github = require("../lib/github");
+const { withToken } = require("../lib/helpers/yargs/options");
 const printOutput = require("../lib/helpers/print-output");
 
 /**
@@ -7,7 +10,9 @@ const printOutput = require("../lib/helpers/print-output");
  * @param {import('yargs').Yargs} yargs - Instance of yargs
  */
 const builder = yargs => {
-	return yargs
+	const baseOptions = flow(withToken);
+
+	return baseOptions(yargs)
 		.option("org", {
 			alias: "o",
 			describe: "Organization",
@@ -17,11 +22,6 @@ const builder = yargs => {
 		.option("name", {
 			alias: "n",
 			describe: "Project name",
-			demandOption: true,
-			type: "string"
-		})
-		.option("token", {
-			describe: "GitHub personal access token",
 			demandOption: true,
 			type: "string"
 		});
