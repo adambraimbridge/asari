@@ -1,7 +1,7 @@
 const flow = require('lodash.flow');
 
 const github = require("../lib/github");
-const { withToken } = require("../lib/helpers/yargs/options");
+const { withToken, withJson } = require("../lib/helpers/yargs/options");
 const printOutput = require("../lib/helpers/print-output");
 
 /**
@@ -10,7 +10,7 @@ const printOutput = require("../lib/helpers/print-output");
  * @param {import('yargs').Yargs} yargs - Instance of yargs
  */
 const builder = yargs => {
-	const baseOptions = flow(withToken);
+	const baseOptions = flow([withToken, withJson]);
 
 	return baseOptions(yargs)
 		.option("org", {

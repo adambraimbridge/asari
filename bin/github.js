@@ -3,8 +3,6 @@
 require("yargs")
 	.commandDir("../src/commands")
 	.demandCommand()
-	.option("json", {
-		type: "boolean"
-	})
+	.group(['token', 'json'], 'Global Options:')
 	.strict()
 	.help().argv;
