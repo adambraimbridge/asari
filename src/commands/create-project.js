@@ -47,13 +47,15 @@ const builder = yargs => {
  *
  * @param {object} argv - argv parsed and filtered by yargs
  * @param {string} argv.token
+ * @param {boolean} argv.org
+ * @param {boolean} argv.repo
+ * @param {boolean} argv.user
  * @param {string} argv.target
  * @param {string} argv.name
  * @param {string} [argv.description]
  * @param {string} argv.json
  */
-const handler = async ({ token, target, name, description, json }) => {
-
+const handler = async ({ token, org, repo, user, target, name, description, json }) => {
 	const createProjectError = error => {
 		throw new Error(`Creating a project failed. Response: ${error}.`);
 	};
@@ -63,6 +65,9 @@ const handler = async ({ token, target, name, description, json }) => {
 	});
 
 	const project = await createProject({
+		org,
+		repo,
+		user,
 		target,
 		name,
 		description
