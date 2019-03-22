@@ -16,32 +16,43 @@ const builder = yargs => {
 		.option("org", {
 			alias: "o",
 			describe: "Organization",
-			demandOption: true,
-			type: "string"
+			type: "boolean"
 		})
-		.option("name", {
-			alias: "n",
-			describe: "Project name",
-			demandOption: true,
-			type: "string"
+		.option("repo", {
+			alias: "r",
+			describe: "Repository",
+			type: "boolean"
+		})
+		.option("user", {
+			alias: "u",
+			describe: "GitHub username",
+			type: "boolean"
+		})
+		.conflicts({
+			org: ["repo", "user"],
+			repo: ["org", "user"],
+			user: ["org", "repo"]
+		})
+		.middleware((argv, yargs) => {
+			if(!argv.org && !argv.repo && !argv.user) {
+				yargs.showHelp();
+				console.error('Organisation, repository or a GitHub username must provided'); // eslint-disable-line no-console
+				yargs.exit(1);
+			}
 		});
 };
 
 /**
- * Create an organisation project with columns.
+ * Create an organisation, repository or user project with columns.
  *
  * @param {object} argv - argv parsed and filtered by yargs
  * @param {string} argv.token
- * @param {string} argv.org
+ * @param {string} argv.target
  * @param {string} argv.name
+ * @param {string} [argv.description]
  * @param {string} argv.json
  */
-const handler = async ({ token, org, name, json }) => {
-	if (!org || !name) {
-		throw new Error(
-			"Organisation (--org) and project name (--name) must be provided"
-		);
-	}
+const handler = async ({ token, target, name, description, json }) => {
 
 	const createProjectError = error => {
 		throw new Error(`Creating a project failed. Response: ${error}.`);
@@ -52,8 +63,9 @@ const handler = async ({ token, org, name, json }) => {
 	});
 
 	const project = await createProject({
-		org,
-		name
+		org: target,
+		name,
+		body: description
 	}).catch(createProjectError);
 
 	const toDoColumn = await createProjectColumn({
@@ -85,7 +97,7 @@ const handler = async ({ token, org, name, json }) => {
 };
 
 module.exports = {
-	command: "project:create",
+	command: "projects:create <target> <name> [description]",
 	desc: "Create a new project",
 	builder,
 	handler
