@@ -63,9 +63,9 @@ const handler = async ({ token, target, name, description, json }) => {
 	});
 
 	const project = await createProject({
-		org: target,
+		target,
 		name,
-		body: description
+		description
 	}).catch(createProjectError);
 
 	const toDoColumn = await createProjectColumn({
