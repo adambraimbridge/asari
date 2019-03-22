@@ -67,7 +67,7 @@ jobs:
           command: echo "//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}" > ${HOME}/.npmrc
       - run:
           name: Bump package version
-          command: npm version ${CIRCLE_TAG}
+          command: npm version --no-git-tag-version ${CIRCLE_TAG}
       - run:
           name: Publish package to npm
           command: npm publish --access=public
