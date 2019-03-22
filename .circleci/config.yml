@@ -18,6 +18,13 @@ references:
     attach_workspace:
       at: *workspace_root
 
+  filter_version_tag: &filter_version_tag
+    tags:
+      only:
+        - /^v?\d+\.\d+\.\d+(?:-beta\.\d+)?$/
+    branches:
+      ignore: /.*/
+
 jobs:
   build-node-10:
     executor: circleci-node-10
@@ -51,6 +58,20 @@ jobs:
       - *attach_workspace
       - run: npm test
 
+  publish:
+    executor: circleci-node-10
+    steps:
+      - *attach_workspace
+      - run:
+          name: Configure registry.npmjs.org auth token
+          command: echo "//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}" > ${HOME}/.npmrc
+      - run:
+          name: Bump package version
+          command: npm version ${CIRCLE_TAG}
+      - run:
+          name: Publish package to npm
+          command: npm publish --access=public
+
 workflows:
   version: 2
 
@@ -64,3 +85,28 @@ workflows:
       - test-node-10:
           requires:
             - build-node-10
+
+  build-test-publish:
+    jobs:
+      - build-node-8:
+          filters:
+            <<: *filter_version_tag
+      - build-node-10:
+          filters:
+            <<: *filter_version_tag
+      - test-node-8:
+          filters:
+            <<: *filter_version_tag
+          requires:
+            - build-node-8
+      - test-node-10:
+          filters:
+            <<: *filter_version_tag
+          requires:
+            - build-node-10
+      - publish:
+          filters:
+            <<: *filter_version_tag
+          requires:
+            - test-node-8
+            - test-node-10
