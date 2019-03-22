@@ -3,6 +3,8 @@
 const updateNotifier = require("update-notifier");
 const yargs = require("yargs");
 
+const options = require('../src/lib/helpers/yargs/options');
+
 const yargsCommandsDirectoryPath = "../src/commands";
 
 /**
@@ -25,6 +27,8 @@ yargs
 	 * Group global options in usage output.
 	 */
 	.group(["token", "json"], "Global Options:")
+	.describe("token", options.descriptions.token)
+	.describe("json", options.descriptions.json)
 	/**
 	 * Report unrecognized commands as errors.
 	 */
