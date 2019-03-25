@@ -2,7 +2,7 @@
 
 const descriptions = {
 	token:
-		"GitHub personal access token (uses `GITHUB_PERSONAL_ACCESS_TOKEN` environment variable by default). Generate one at https://github.com/settings/tokens/new?scopes=repo,admin:org.",
+		"GitHub personal access token (uses `GITHUB_PERSONAL_ACCESS_TOKEN` environment variable by default). Generate one at https://github.com/settings/tokens/new?scopes=repo,write:org.",
 	json: "Format command output as JSON string"
 };
 
