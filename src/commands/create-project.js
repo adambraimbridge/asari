@@ -33,12 +33,12 @@ const builder = yargs => {
 			repo: ["org", "user"],
 			user: ["org", "repo"]
 		})
-		.middleware((argv, yargs) => {
-			if(!argv.org && !argv.repo && !argv.user) {
-				yargs.showHelp();
-				console.error('Organisation, repository or a GitHub username must provided'); // eslint-disable-line no-console
-				yargs.exit(1);
+		.check(function (argv) {
+			if (!argv.org && !argv.repo && !argv.user) {
+				throw new Error('Organisation, repository or a GitHub username must provided');
 			}
+
+			return true;
 		});
 };
 
