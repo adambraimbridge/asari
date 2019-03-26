@@ -12,7 +12,7 @@ github <command>
 
 Commands:
   github project:add-pull-request  Add a pull request to a project
-  github project:create            Create a new project
+  github projects:create           Create a new project
   github pull-request:create       Create a new pull request
 
 Options:
