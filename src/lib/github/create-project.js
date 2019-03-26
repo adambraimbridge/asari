@@ -1,4 +1,7 @@
 module.exports = octokit => {
+	/**
+	 * Based on the option passed in, either `org`, `repo` or `user` will be defined.
+	 */
 	return async ({ org, repo, user, target, name, description }) => {
 		if (org) {
 			/**
