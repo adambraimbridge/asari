@@ -35,7 +35,9 @@ const builder = yargs => {
 		})
 		.check(function (argv) {
 			if (!argv.org && !argv.repo && !argv.user) {
-				throw new Error('Organisation, repository or a GitHub username must provided');
+				throw new Error(
+					'Organisation (--org), repository (--repo) or a GitHub username (--user) option must provided'
+				);
 			}
 
 			return true;
