@@ -38,9 +38,7 @@ module.exports = octokit => {
 			 *
 			 * @see https://octokit.github.io/rest.js/#api-Projects-createForRepo
 			 */
-			const string = target.split('/');
-			const owner = string[0]
-			const repo = string[1];
+			const [owner, repo] = target.split('/');
 
 			const result = await octokit.projects.createForRepo({
 				owner,
