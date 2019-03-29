@@ -6,10 +6,10 @@ module.exports = octokit => {
 		 * @see https://developer.github.com/v3/projects/#list-organization-projects
 		 */
 		const result = await octokit.projects.listForOrg({
-            org, 
-            state: 'open', 
-            per_page: 100
-        });
+			org,
+			state: 'open',
+			per_page: 100
+		});
 
 		return result.data;
 	};

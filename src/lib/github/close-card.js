@@ -6,8 +6,8 @@ module.exports = octokit => {
 		 * @see https://octokit.github.io/rest.js/#api-Projects-update
 		 */
 		const result = await octokit.projects.update({
-            project_id,
-            state: 'closed'
+			project_id,
+			state: 'closed'
 		});
 
 		return result.data;
