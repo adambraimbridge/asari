@@ -26,6 +26,7 @@ module.exports = ({ personalAccessToken }) => {
 
 	const createProject = require('./github/create-project')(octokit);
 	const closeProject = require('./github/close-card')(octokit);
+	const listProjects = require('./github/list-projects')(octokit);
 	const createProjectColumn = require('./github/create-project-column')(octokit);
 	const createPullRequest = require('./github/create-pull-request')(octokit);
 	const createPullRequestCard = require('./github/create-card')(octokit);
@@ -33,6 +34,7 @@ module.exports = ({ personalAccessToken }) => {
 	return {
 		createProject,
 		closeProject,
+		listProjects,
 		createProjectColumn,
 		createPullRequest,
 		createPullRequestCard
