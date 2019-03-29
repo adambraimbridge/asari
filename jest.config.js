@@ -12,5 +12,6 @@ module.exports = {
 				outputName: "results.xml"
 			}
 		]
-	]
+	],
+	verbose: true,
 };
