@@ -5,6 +5,7 @@ jest.spyOn(global.console, "warn");
 
 // Don't let Octokit make network requests
 nock.disableNetConnect();
+
 test("`pull-request:create` command module exports an object that can be used by yargs", () => {
 	expect(createPullRequestCommand).toEqual(
 		expect.objectContaining({

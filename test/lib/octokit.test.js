@@ -1,5 +1,5 @@
 const nock = require('nock');
-const octokit = require("../../lib/octokit")
+const authenticatedOctokit = require("../../lib/octokit")
 
 // Don't let Octokit make network requests
 nock.disableNetConnect();
@@ -16,8 +16,8 @@ describe("lib/octokit.js", () => {
 	})
 
 	test("Calling octokit() returns an instance of Octokit", async () => {
-		const github = await octokit({ personalAccessToken: "incorrectToken" })
-		expect(github).toMatchSnapshot()
+		const octokit = await authenticatedOctokit({ personalAccessToken: "incorrectToken" })
+		expect(octokit).toMatchSnapshot()
 	})
 
 	test("Calling octokit() triggers a POST network request to https://api.github.com", async () => {
@@ -28,8 +28,8 @@ describe("lib/octokit.js", () => {
 			.post('/repos/test/test/pulls')
 			.reply(200, {})
 
-		const github = await octokit({ personalAccessToken: "incorrectToken" })
-		const result = await github.pulls.create({
+		const octokit = await authenticatedOctokit({ personalAccessToken: "incorrectToken" })
+		const result = await octokit.pulls.create({
 			owner: "test",
 			repo: "test",
 			title: "test",
