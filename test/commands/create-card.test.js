@@ -1,12 +1,10 @@
+const nock = require('nock');
 const yargs = require("yargs");
-
-const columnFixture = require("../../__mocks__/@octokit/fixtures/createColumn");
-
-const cardFixture = require("../../__mocks__/@octokit/fixtures/createCard");
-
 const addPullRequestCommand = require("../../src/commands/create-card");
+jest.spyOn(global.console, "warn");
 
-jest.spyOn(global.console, "warn").mockImplementation(message => message);
+// Don't let Octokit make network requests
+nock.disableNetConnect();
 
 afterEach(() => {
 	jest.clearAllMocks();
@@ -41,7 +39,7 @@ test("running command handler with a `column` ID as a string is expected to thro
 	try {
 		await addPullRequestCommand.handler({
 			column: "ID",
-			pullRequest: cardFixture.id
+			pullRequest: 1
 		});
 	} catch (error) {
 		expect(error).toBeInstanceOf(Error);
@@ -52,7 +50,7 @@ test("running command handler with a `pullRequest` ID as a string is expected to
 	expect.assertions(1);
 	try {
 		await addPullRequestCommand.handler({
-			column: columnFixture.id,
+			column: 1,
 			pullRequest: "ID"
 		});
 	} catch (error) {

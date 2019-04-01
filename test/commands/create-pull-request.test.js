@@ -1,11 +1,10 @@
+const nock = require('nock');
 const yargs = require("yargs");
-
-const pullRequestFixture = require("../../__mocks__/@octokit/fixtures/create");
-
 const createPullRequestCommand = require("../../src/commands/create-pull-request");
-
 jest.spyOn(global.console, "warn");
 
+// Don't let Octokit make network requests
+nock.disableNetConnect();
 test("`pull-request:create` command module exports an object that can be used by yargs", () => {
 	expect(createPullRequestCommand).toEqual(
 		expect.objectContaining({
@@ -34,9 +33,9 @@ test("running command handler without `owner` to throw an error", async () => {
 	expect.assertions(1);
 	try {
 		await createPullRequestCommand.handler({
-			repo: pullRequestFixture.head.repo.html_url,
-			title: pullRequestFixture.title,
-			branch: pullRequestFixture.head.label
+			repo: "test",
+			title: "test",
+			branch: "test",
 		});
 	} catch (error) {
 		expect(error).toBeInstanceOf(Error);
@@ -47,9 +46,9 @@ test("running command handler without `repo` to throw an error", async () => {
 	expect.assertions(1);
 	try {
 		await createPullRequestCommand.handler({
-			owner: pullRequestFixture.user.login,
-			title: pullRequestFixture.title,
-			branch: pullRequestFixture.head.label
+			owner: "test",
+			title: "test",
+			branch: "test",
 		});
 	} catch (error) {
 		expect(error).toBeInstanceOf(Error);
@@ -60,9 +59,9 @@ test("running command handler without `title` to throw an error", async () => {
 	expect.assertions(1);
 	try {
 		await createPullRequestCommand.handler({
-			owner: pullRequestFixture.user.login,
-			repo: pullRequestFixture.head.repo.html_url,
-			branch: pullRequestFixture.head.label
+			owner: "test",
+			repo: "test",
+			branch: "test",
 		});
 	} catch (error) {
 		expect(error).toBeInstanceOf(Error);
@@ -73,9 +72,9 @@ test("running command handler without `branch` to throw an error", async () => {
 	expect.assertions(1);
 	try {
 		await createPullRequestCommand.handler({
-			owner: pullRequestFixture.user.login,
-			repo: pullRequestFixture.head.repo.html_url,
-			title: pullRequestFixture.title
+			owner: "test",
+			repo: "test",
+			title: "test",
 		});
 	} catch (error) {
 		expect(error).toBeInstanceOf(Error);

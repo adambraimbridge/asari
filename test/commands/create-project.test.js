@@ -1,10 +1,10 @@
+const nock = require('nock');
 const yargs = require("yargs");
-
-const organisationFixture = require("../../__mocks__/@octokit/fixtures/createForOrg");
-
 const createProjectCommand = require("../../src/commands/create-project");
+jest.spyOn(global.console, "warn");
 
-jest.spyOn(global.console, "warn").mockImplementation(message => message);
+// Don't let Octokit make network requests
+nock.disableNetConnect();
 
 afterEach(() => {
 	jest.resetAllMocks();
@@ -38,7 +38,7 @@ test("running command handler without `org` to throw", async () => {
 	expect.assertions(1);
 	try {
 		await createProjectCommand.handler({
-			name: organisationFixture.name
+			name: "test"
 		});
 	} catch (error) {
 		expect(error).toBeInstanceOf(Error);
@@ -49,7 +49,7 @@ test("running command handler without `name` to throw", async () => {
 	expect.assertions(1);
 	try {
 		await createProjectCommand.handler({
-			org: organisationFixture.creator.login
+			org: "test"
 		});
 	} catch (error) {
 		expect(error).toBeInstanceOf(Error);
