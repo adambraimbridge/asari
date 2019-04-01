@@ -17,7 +17,12 @@ describe("lib/octokit.js", () => {
 
 	test("Calling octokit() returns an instance of Octokit", async () => {
 		const octokit = await authenticatedOctokit({ personalAccessToken: "incorrectToken" })
-		expect(octokit).toMatchSnapshot()
+		expect(octokit).toEqual(
+			expect.objectContaining({
+				git: expect.any(Object),
+				authenticate: expect.any(Function),
+			})
+		)
 	})
 
 	test("Calling octokit() triggers a POST network request to https://api.github.com", async () => {
@@ -29,7 +34,7 @@ describe("lib/octokit.js", () => {
 			.reply(200, {})
 
 		const octokit = await authenticatedOctokit({ personalAccessToken: "incorrectToken" })
-		const result = await octokit.pulls.create({
+		await octokit.pulls.create({
 			owner: "test",
 			repo: "test",
 			title: "test",

@@ -1,7 +1,7 @@
 const flow = require("lodash.flow");
 const fs = require("fs");
 
-const octokit = require("../../../lib/octokit");
+const authenticatedOctokit = require("../../../lib/octokit");
 const { withToken, withJson } = require("../../lib/helpers/yargs/options");
 const printOutput = require("../../lib/helpers/print-output");
 
@@ -85,9 +85,14 @@ const handler = async ({ token, owner, repo, title, branch, base, body, json }) 
 		body: pullRequestBody
 	};
 
-	const pullRequest = await octokit({ personalAccessToken: token })('createPullRequest', inputs)
-
-	printOutput({ json, resource: pullRequest });
+	try {
+		const octokit = await authenticatedOctokit({ personalAccessToken: token })
+		const result = await octokit.pulls.create(inputs)
+		printOutput({ json, resource: result });
+	}
+	catch (error) {
+		throw new Error(error)
+	}
 };
 
 module.exports = {
