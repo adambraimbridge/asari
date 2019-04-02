@@ -1,9 +1,14 @@
-const flow = require("lodash.flow");
-const fs = require("fs");
+/**
+ * @see: https://octokit.github.io/rest.js/#api-Pulls-create
+ * const result = await octokit.pulls.create({owner, repo, title, head, base, *body, *maintainer_can_modify})
+ * /repos/:owner/:repo/pulls
+ */
+const flow = require("lodash.flow")
+const fs = require("fs")
 
-const authenticatedOctokit = require("../../../lib/octokit");
-const { withToken, withJson } = require("../../lib/helpers/yargs/options");
-const printOutput = require("../../lib/helpers/print-output");
+const commonYargs = require("../../../lib/common-yargs")
+const printOutput = require("../../../lib/print-output")
+const authenticatedOctokit = require("../../../lib/octokit")
 
 /**
  * yargs builder function.
@@ -11,21 +16,19 @@ const printOutput = require("../../lib/helpers/print-output");
  * @param {import('yargs').Yargs} yargs - Instance of yargs
  */
 const builder = yargs => {
-	const baseOptions = flow([withToken, withJson]);
+	const baseOptions = flow([
+		commonYargs.withToken,
+		commonYargs.withJson,
+		commonYargs.withBase,
+		commonYargs.withOwner,
+		commonYargs.withRepo,
+		commonYargs.withNumber,
+		commonYargs.withReviewers,
+		commonYargs.withTeamReviewers,
+		commonYargs.withBody,
+	])
 
 	return baseOptions(yargs)
-		.option("owner", {
-			alias: "o",
-			describe: "Owner",
-			demandOption: true,
-			type: "string"
-		})
-		.option("repo", {
-			alias: "r",
-			describe: "Repository",
-			demandOption: true,
-			type: "string"
-		})
 		.option("title", {
 			alias: "t",
 			describe: "Pull request title",
@@ -37,67 +40,61 @@ const builder = yargs => {
 			demandOption: true,
 			type: "string"
 		})
-		.option("base", {
-			describe: "Base branch",
-			default: "master",
-			type: "string"
-		})
-		.option("body", {
-			describe: "Path to pull request body",
-			type: "string"
-		});
-};
+}
 
 /**
  * Return the contents of a pull request body and create a pull request.
  *
  * @param {object} argv - argv parsed and filtered by yargs
  * @param {string} argv.token
+ * @param {string} argv.json
  * @param {string} argv.owner
  * @param {string} argv.repo
  * @param {string} argv.title
  * @param {string} argv.branch
  * @param {string} [argv.base]
  * @param {string} [argv.body]
- * @param {string} argv.json
- * @throws {Error} - Throws an error if `body` is invalid
+ * @throws {Error} - Throws an error if any required properties are invalid
  */
-const handler = async ({ token, owner, repo, title, branch, base, body, json }) => {
-	const filePathProvided = typeof body !== "undefined";
-	const incorrectFilePath = filePathProvided && !fs.existsSync(body);
-	const correctFilePath = filePathProvided && fs.existsSync(body);
+const handler = async ({ token, json, base, body, owner, repo, title, branch }) => {
 
-	if (!owner || !repo || !title || !branch) {
-		throw new Error("Owner, repo, title and branch must be provided");
-	}
-
-	if (incorrectFilePath) {
-		throw new Error(`File path ${body} not found`);
-	}
-
-	const pullRequestBody = correctFilePath ? fs.readFileSync(body, "utf8") : undefined;
-	const inputs = {
+	// Ensure that all required properties have values
+	const requiredProperties = {
+		body,
 		owner,
 		repo,
 		title,
+		branch,
+	}
+	if (Object.values(requiredProperties).some(property => !property)) {
+		throw new Error(`Please provide all required properties: ${Object.keys(requiredProperties).join(", ")}`)
+	}
+
+	// Confirm that the required file exists
+	const correctFilePath = fs.existsSync(body)
+	if (!correctFilePath) {
+		throw new Error(`File path ${body} not found`)
+	}
+
+	const pullRequestBody = fs.readFileSync(body, "utf8")
+	const inputs = Object.assign({}, requiredProperties, {
+		body: pullRequestBody,
 		head: branch,
 		base,
-		body: pullRequestBody
-	};
-
+	})
 	try {
 		const octokit = await authenticatedOctokit({ personalAccessToken: token })
 		const result = await octokit.pulls.create(inputs)
-		printOutput({ json, resource: result });
+		printOutput({ json, resource: result })
 	}
 	catch (error) {
 		throw new Error(error)
 	}
-};
+}
 
 module.exports = {
 	command: "pulls create",
 	desc: "Create a new pull request",
 	builder,
 	handler
-};
+}
