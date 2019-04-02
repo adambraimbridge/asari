@@ -38,57 +38,25 @@ describe("Yargs", () => {
 		expect(console.warn).not.toBeCalled()
 	})
 
-	test("running the command handler without `owner` to throw an error", async () => {
-		expect.assertions(1)
-		try {
-			await yargsModule.handler({
-				repo: "https://github.com/octocat",
-				title: "Test: Error expected",
-				branch: "test-branch"
-			})
-		} catch (error) {
-			expect(error).toBeInstanceOf(Error)
-		}
-	})
-
-	test("running the command handler without `repo` to throw an error", async () => {
-		expect.assertions(1)
-		try {
-			await yargsModule.handler({
-				owner: "Octocat",
-				title: "Test: Error expected",
-				branch: "test-branch"
-			})
-		} catch (error) {
-			expect(error).toBeInstanceOf(Error)
-		}
-	})
-
-	test("running the command handler without `title` to throw an error", async () => {
-		expect.assertions(1)
-		try {
-			await yargsModule.handler({
-				owner: "Octocat",
-				repo: "https://github.com/octocat",
-				branch: "test-branch"
-			})
-		} catch (error) {
-			expect(error).toBeInstanceOf(Error)
-		}
-	})
-
-	test("running the command handler without `branch` to throw an error", async () => {
-		expect.assertions(1)
-		try {
-			await yargsModule.handler({
-				owner: "Octocat",
-				repo: "https://github.com/octocat",
-				title: "Test: Error expected",
-			})
-		} catch (error) {
-			expect(error).toBeInstanceOf(Error)
-		}
-	})
+	const requiredOptions = {
+		token: "test",
+		owner: "test",
+		repo: "test",
+		title: "test",
+		branch: "test",
+	}
+	for (let option of Object.keys(requiredOptions)) {
+		test(`Running the command handler without '${option}' throws an error`, async () => {
+			expect.assertions(1)
+			try {
+				const testOptions = Object.assign({}, requiredOptions)
+				delete testOptions[option]
+				await yargsModule.handler(testOptions)
+			} catch (error) {
+				expect(error).toBeInstanceOf(Error)
+			}
+		})
+	}
 })
 
 describe("Octokit", () => {
