@@ -75,4 +75,4 @@ module.exports = {
 	desc: "Request a review for a pull request",
 	builder,
 	handler
-};
+}
