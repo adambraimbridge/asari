@@ -22,7 +22,6 @@ const builder = yargs => {
 		commonYargs.withBase,
 		commonYargs.withOwner,
 		commonYargs.withRepo,
-		commonYargs.withNumber,
 		commonYargs.withReviewers,
 		commonYargs.withTeamReviewers,
 		commonYargs.withBody,
@@ -47,8 +46,8 @@ const builder = yargs => {
  * @param {string} argv.repo
  * @param {string} argv.title
  * @param {string} argv.branch
+ * @param {string} argv.body
  * @param {string} [argv.base]
- * @param {string} [argv.body]
  * @throws {Error} - Throws an error if any required properties are invalid
  */
 const handler = async ({ token, json, base, body, owner, repo, title, branch }) => {
