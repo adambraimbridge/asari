@@ -43,7 +43,6 @@ describe("Yargs", () => {
 		owner: "test",
 		repo: "test",
 		number: 1,
-		title: "test",
 		branch: "test",
 	}
 	for (let option of Object.keys(requiredOptions)) {
