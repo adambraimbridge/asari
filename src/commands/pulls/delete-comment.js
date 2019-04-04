@@ -61,7 +61,7 @@ const handler = async ({ token, json, owner, repo, comment_id }) => {
 }
 
 module.exports = {
-	command: "deleteComment",
+	command: "delete-comment",
 	desc: "Delete a comment on an existing pull request",
 	builder,
 	handler,

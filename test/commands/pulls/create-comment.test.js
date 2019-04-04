@@ -1,20 +1,24 @@
 const yargs = require("yargs")
 const nock = require('nock');
-const yargsModule = require("../../../src/commands/pulls/createReviewRequest")
+const yargsModule = require("../../../src/commands/pulls/create-comment")
 
 // Don't let Octokit make network requests
 nock.disableNetConnect();
 
+jest.mock('fs', () => ({
+	existsSync: jest.fn().mockReturnValue(true),
+	readFileSync: jest.fn().mockReturnValue(true),
+}))
 jest.spyOn(global.console, "warn");
 afterEach(() => {
 	jest.clearAllMocks();
 });
 
 describe("Yargs", () => {
-	test("`pulls createReviewRequest` command module exports an object that can be used by yargs", () => {
+	test("`pulls create-comment` command module exports an object that can be used by yargs", () => {
 		expect(yargsModule).toEqual(
 			expect.objectContaining({
-				command: expect.stringMatching("createReviewRequest"),
+				command: expect.stringMatching("create-comment"),
 				desc: expect.any(String),
 				builder: expect.any(Function),
 				handler: expect.any(Function),
@@ -22,7 +26,7 @@ describe("Yargs", () => {
 		)
 	})
 
-	test("yargs can load the `pulls createReviewRequest` command without any errors or warnings", () => {
+	test("yargs can load the `pulls create-comment` command without any errors or warnings", () => {
 		expect(() => {
 			yargs.command(
 				yargsModule.command,
@@ -38,7 +42,11 @@ describe("Yargs", () => {
 		token: "test",
 		owner: "test",
 		repo: "test",
+		body: "test",
 		number: 1,
+		commit_id: 1,
+		path: "test",
+		position: 1,
 	}
 	for (let option of Object.keys(requiredOptions)) {
 		test(`Running the command handler without '${option}' throws an error`, async () => {
@@ -52,14 +60,6 @@ describe("Yargs", () => {
 			}
 		})
 	}
-	test(`Running the command handler without 'reviewers' or 'team_reviewers' throws an error`, async () => {
-		expect.assertions(1)
-		try {
-			await yargsModule.handler(requiredOptions)
-		} catch (error) {
-			expect(error).toBeInstanceOf(Error)
-		}
-	})
 })
 
 describe("Octokit", () => {
@@ -67,16 +67,19 @@ describe("Octokit", () => {
 	// If this endpoint is not called, nock.isDone() will be false.
 	nock('https://api.github.com')
 		.persist()
-		.post('/repos/test/test/pulls/1/requested_reviewers')
+		.post('/repos/test/test/pulls/1/comments')
 		.reply(200, {})
 
-	test("Running the command handler triggers a network request of the GitHub API", async () => {
+	test("running the command handler triggers a network request of the GitHub API", async () => {
 		await yargsModule.handler({
 			token: "test",
+			body: "test",
 			owner: "test",
 			repo: "test",
 			number: 1,
-			reviewers: "test",
+			commit_id: 1,
+			path: "test",
+			position: 1,
 		})
 		expect(nock.isDone()).toBe(true)
 	})
