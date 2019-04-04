@@ -46,7 +46,7 @@ const github = require("@financial-times/github")({
 
 # Developers
 
-## Command heirarchy and directory structure
+## Command hierarchy and directory structure
 
 This project follows the example provided in the Yards documentation for command hierarchy and directory structure. 
 
