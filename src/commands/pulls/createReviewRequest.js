@@ -71,7 +71,7 @@ const handler = async ({ token, json, owner, repo, number, reviewers, team_revie
 }
 
 module.exports = {
-	command: "pulls createReviewRequest",
+	command: "createReviewRequest",
 	desc: "Request a review for a pull request",
 	builder,
 	handler

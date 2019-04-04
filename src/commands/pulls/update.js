@@ -92,7 +92,7 @@ const handler = async ({ token, json, base, body, owner, repo, number, title, br
 }
 
 module.exports = {
-	command: "pulls update",
+	command: "update",
 	desc: "Update an existing pull request",
 	builder,
 	handler

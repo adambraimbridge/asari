@@ -90,7 +90,7 @@ const handler = async ({ token, json, owner, repo, number, body, commit_id, path
 }
 
 module.exports = {
-	command: "pulls createComment",
+	command: "createComment",
 	desc: "Create a comment on an existing pull request",
 	builder,
 	handler

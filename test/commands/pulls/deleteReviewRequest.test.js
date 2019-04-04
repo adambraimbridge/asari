@@ -14,7 +14,7 @@ describe("Yargs", () => {
 	test("`pulls createReviewRequest` command module exports an object that can be used by yargs", () => {
 		expect(yargsModule).toEqual(
 			expect.objectContaining({
-				command: expect.stringMatching("pulls createReviewRequest"),
+				command: expect.stringMatching("createReviewRequest"),
 				desc: expect.any(String),
 				builder: expect.any(Function),
 				handler: expect.any(Function),
