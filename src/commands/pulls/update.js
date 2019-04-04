@@ -46,19 +46,20 @@ const builder = yargs => {
  * @param {string} argv.json
  * @param {string} argv.owner
  * @param {string} argv.repo
+ * @param {string} argv.number
  * @param {string} argv.title
  * @param {string} argv.branch
  * @param {string} [argv.base]
  * @param {string} [argv.body]
  * @throws {Error} - Throws an error if any required properties are invalid
  */
-const handler = async ({ token, json, base, body, owner, repo, title, branch }) => {
+const handler = async ({ token, json, base, body, owner, repo, number, title, branch }) => {
 
 	// Ensure that all required properties have values
 	const requiredProperties = {
-		body,
 		owner,
 		repo,
+		number,
 		title,
 		branch,
 	}
@@ -67,16 +68,16 @@ const handler = async ({ token, json, base, body, owner, repo, title, branch }) 
 	}
 
 	// Confirm that the required file exists
-	let pullRequestBody;
+	let bodyContent;
 	if (body) {
 		const correctFilePath = fs.existsSync(body)
 		if (!correctFilePath) {
 			throw new Error(`File path ${body} not found`)
 		}
-		pullRequestBody = fs.readFileSync(body, "utf8")
+		bodyContent = fs.readFileSync(body, "utf8")
 	}
 	const inputs = Object.assign({}, requiredProperties, {
-		body: pullRequestBody,
+		body: bodyContent,
 		head: branch,
 		base,
 	})

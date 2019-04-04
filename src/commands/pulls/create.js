@@ -71,9 +71,9 @@ const handler = async ({ token, json, base, body, owner, repo, title, branch }) 
 		throw new Error(`File path ${body} not found`)
 	}
 
-	const pullRequestBody = fs.readFileSync(body, "utf8")
+	const bodyContent = fs.readFileSync(body, "utf8")
 	const inputs = Object.assign({}, requiredProperties, {
-		body: pullRequestBody,
+		body: bodyContent,
 		head: branch,
 		base,
 	})
