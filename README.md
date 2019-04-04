@@ -48,7 +48,7 @@ const github = require("@financial-times/github")({
 
 ## Command hierarchy and directory structure
 
-This project follows the example provided in the Yards documentation for command hierarchy and directory structure. 
+This project follows the example provided in the Yargs documentation for command hierarchy and directory structure. 
 
  - @see: https://github.com/yargs/yargs/blob/master/docs/advanced.md#commanddirdirectory-opts
  - @see: [`src/commands`](https://github.com/Financial-Times/github/blob/master/src/commands/) for all available commands.
