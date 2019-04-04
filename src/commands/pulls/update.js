@@ -1,7 +1,7 @@
 /**
- * @see: https://octokit.github.io/rest.js/#api-Pulls-create
- * const result = await octokit.pulls.create({owner, repo, title, head, base, *body, *maintainer_can_modify})
- * /repos/:owner/:repo/pulls
+ * @see: https://octokit.github.io/rest.js/#api-Pulls-update
+ * const result = await octokit.pulls.update({owner, repo, number, title, body, state, base, maintainer_can_modify})
+ * /repos/:owner/:repo/pulls/:number
  */
 const flow = require("lodash.flow")
 const fs = require("fs")
@@ -23,22 +23,23 @@ const builder = yargs => {
 		commonYargs.withOwner,
 		commonYargs.withRepo,
 		commonYargs.withNumber,
-		commonYargs.withReviewers,
-		commonYargs.withTeamReviewers,
 		commonYargs.withBody,
 		commonYargs.withTitle,
 	])
 
 	return baseOptions(yargs)
-		.option("branch", {
-			describe: "Branch",
-			demandOption: true,
-			type: "string"
+		.option("state", {
+			describe: "State of this Pull Request. Either open or closed. Allowed values: open, closed",
+			type: "string",
+		})
+		.option("maintainer_can_modify", {
+			describe: "Indicates whether maintainers can modify the pull request.",
+			type: "string",
 		})
 }
 
 /**
- * Return the contents of a pull request body and create a pull request.
+ * Return the contents of a pull request body and update a pull request.
  *
  * @param {object} argv - argv parsed and filtered by yargs
  * @param {string} argv.token
@@ -66,12 +67,14 @@ const handler = async ({ token, json, base, body, owner, repo, title, branch }) 
 	}
 
 	// Confirm that the required file exists
-	const correctFilePath = fs.existsSync(body)
-	if (!correctFilePath) {
-		throw new Error(`File path ${body} not found`)
+	let pullRequestBody;
+	if (body) {
+		const correctFilePath = fs.existsSync(body)
+		if (!correctFilePath) {
+			throw new Error(`File path ${body} not found`)
+		}
+		pullRequestBody = fs.readFileSync(body, "utf8")
 	}
-
-	const pullRequestBody = fs.readFileSync(body, "utf8")
 	const inputs = Object.assign({}, requiredProperties, {
 		body: pullRequestBody,
 		head: branch,
@@ -79,7 +82,7 @@ const handler = async ({ token, json, base, body, owner, repo, title, branch }) 
 	})
 	try {
 		const octokit = await authenticatedOctokit({ personalAccessToken: token })
-		const result = await octokit.pulls.create(inputs)
+		const result = await octokit.pulls.update(inputs)
 		printOutput({ json, resource: result })
 	}
 	catch (error) {
@@ -88,8 +91,8 @@ const handler = async ({ token, json, base, body, owner, repo, title, branch }) 
 }
 
 module.exports = {
-	command: "pulls create",
-	desc: "Create a new pull request",
+	command: "pulls update",
+	desc: "Update an existing pull request",
 	builder,
 	handler
 }
