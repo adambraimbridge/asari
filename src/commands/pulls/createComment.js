@@ -41,17 +41,17 @@ const builder = yargs => {
 }
 
 /**
- * Return the contents of a pull request body and update a pull request.
+ * Create a comment for a pull request.
  *
  * @param {object} argv - argv parsed and filtered by yargs
  * @param {string} argv.token
  * @param {string} argv.json
  * @param {string} argv.owner
  * @param {string} argv.repo
- * @param {string} argv.title
- * @param {string} argv.branch
- * @param {string} [argv.base]
- * @param {string} [argv.body]
+ * @param {string} argv.commit_id
+ * @param {string} argv.path 
+ * @param {string} argv.position
+ * @param {string} argv.body
  * @throws {Error} - Throws an error if any required properties are invalid
  */
 const handler = async ({ token, json, owner, repo, number, body, commit_id, path, position }) => {

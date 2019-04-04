@@ -29,7 +29,7 @@ const builder = yargs => {
 }
 
 /**
- * Return the contents of a pull request body and update a pull request.
+ * Create a comment from a pull request.
  *
  * @param {object} argv - argv parsed and filtered by yargs
  * @param {string} argv.token

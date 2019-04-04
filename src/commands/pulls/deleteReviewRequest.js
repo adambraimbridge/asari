@@ -28,7 +28,7 @@ const builder = yargs => {
 }
 
 /**
- * Request a review for a pull request.
+ * Delete a review for a pull request.
  *
  * @param {object} argv - argv parsed and filtered by yargs
  * @param {string} argv.token
