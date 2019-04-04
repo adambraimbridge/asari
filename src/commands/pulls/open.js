@@ -1,5 +1,6 @@
 /**
- * @see: https://octokit.github.io/rest.js/#api-Pulls-update
+ * @see: https://octokit.github.io/rest.js/#api-Pulls-update 
+ * There is no "open" endpoint in the Octokit API. We use "update" with a `state` of "open".
  * const result = await octokit.pulls.update({owner, repo, number, title, body, state, base, maintainer_can_modify})
  * /repos/:owner/:repo/pulls/:number
  */
@@ -26,12 +27,7 @@ const builder = yargs => {
 		commonYargs.withBody,
 		commonYargs.withTitle,
 	])
-
 	return baseOptions(yargs)
-		.option("state", {
-			describe: "State of this Pull Request. Either open or closed. Allowed values: open, closed",
-			type: "string",
-		})
 		.option("maintainer_can_modify", {
 			describe: "Indicates whether maintainers can modify the pull request.",
 			type: "string",
@@ -39,7 +35,7 @@ const builder = yargs => {
 }
 
 /**
- * Return the contents of a pull request body and update a pull request.
+ * Update a pull request.
  *
  * @param {object} argv - argv parsed and filtered by yargs
  * @param {string} argv.token
@@ -47,20 +43,19 @@ const builder = yargs => {
  * @param {string} argv.owner
  * @param {string} argv.repo
  * @param {string} argv.number
- * @param {string} argv.title
- * @param {string} argv.branch
- * @param {string} [argv.base]
+ * @param {string} [argv.title]
  * @param {string} [argv.body]
+ * @param {string} [argv.base]
+ * @param {string} [argv.maintainer_can_modify]
  * @throws {Error} - Throws an error if any required properties are invalid
  */
-const handler = async ({ token, json, base, body, owner, repo, number, title, branch }) => {
+const handler = async ({ token, json, owner, repo, number, title, body, base, maintainer_can_modify }) => {
 
 	// Ensure that all required properties have values
 	const requiredProperties = {
 		owner,
 		repo,
 		number,
-		branch,
 	}
 	if (Object.values(requiredProperties).some(property => !property)) {
 		throw new Error(`Please provide all required properties: ${Object.keys(requiredProperties).join(", ")}`)
@@ -76,10 +71,11 @@ const handler = async ({ token, json, base, body, owner, repo, number, title, br
 		bodyContent = fs.readFileSync(body, "utf8")
 	}
 	const inputs = Object.assign({}, requiredProperties, {
-		body: bodyContent,
-		head: branch,
 		title,
+		body: bodyContent,
 		base,
+		maintainer_can_modify,
+		state: "open",
 	})
 	try {
 		const octokit = await authenticatedOctokit({ personalAccessToken: token })
@@ -92,8 +88,8 @@ const handler = async ({ token, json, base, body, owner, repo, number, title, br
 }
 
 module.exports = {
-	command: "update",
-	desc: "Update an existing pull request",
+	command: "open",
+	desc: "Set the state of an existing pull request to `open`",
 	builder,
 	handler
 }

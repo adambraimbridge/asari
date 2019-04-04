@@ -1,6 +1,6 @@
 const yargs = require("yargs")
 const nock = require('nock');
-const yargsModule = require("../../../src/commands/pulls/update")
+const yargsModule = require("../../../src/commands/pulls/open")
 
 // Don't let Octokit make network requests
 nock.disableNetConnect();
@@ -15,10 +15,10 @@ afterEach(() => {
 });
 
 describe("Yargs", () => {
-	test("`pulls update` command module exports an object that can be used by yargs", () => {
+	test("`pulls open` command module exports an object that can be used by yargs", () => {
 		expect(yargsModule).toEqual(
 			expect.objectContaining({
-				command: expect.stringMatching("update"),
+				command: expect.stringMatching("open"),
 				desc: expect.any(String),
 				builder: expect.any(Function),
 				handler: expect.any(Function),
@@ -26,7 +26,7 @@ describe("Yargs", () => {
 		)
 	})
 
-	test("yargs can load the `pulls update` command without any errors or warnings", () => {
+	test("yargs can load the `pulls open` command without any errors or warnings", () => {
 		expect(() => {
 			yargs.command(
 				yargsModule.command,
@@ -43,7 +43,6 @@ describe("Yargs", () => {
 		owner: "test",
 		repo: "test",
 		number: 1,
-		branch: "test",
 	}
 	for (let option of Object.keys(requiredOptions)) {
 		test(`Running the command handler without '${option}' throws an error`, async () => {
@@ -73,8 +72,6 @@ describe("Octokit", () => {
 			owner: "test",
 			repo: "test",
 			number: 1,
-			title: "test",
-			branch: "test",
 		})
 		expect(nock.isDone()).toBe(true)
 	})
