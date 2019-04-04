@@ -60,7 +60,6 @@ const handler = async ({ token, json, base, body, owner, repo, number, title, br
 		owner,
 		repo,
 		number,
-		title,
 		branch,
 	}
 	if (Object.values(requiredProperties).some(property => !property)) {
@@ -79,6 +78,7 @@ const handler = async ({ token, json, base, body, owner, repo, number, title, br
 	const inputs = Object.assign({}, requiredProperties, {
 		body: bodyContent,
 		head: branch,
+		title,
 		base,
 	})
 	try {
