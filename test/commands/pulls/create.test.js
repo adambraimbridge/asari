@@ -43,7 +43,7 @@ describe("Yargs", () => {
 		owner: "test",
 		repo: "test",
 		title: "test",
-		branch: "test",
+		head: "test",
 	}
 	for (let option of Object.keys(requiredOptions)) {
 		test(`Running the command handler without '${option}' throws an error`, async () => {
@@ -74,7 +74,7 @@ describe("Octokit", () => {
 			owner: "test",
 			repo: "test",
 			title: "test",
-			branch: "test",
+			head: "test",
 			base: "test",
 		})
 		expect(nock.isDone()).toBe(true)
