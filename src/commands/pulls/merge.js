@@ -82,7 +82,7 @@ const handler = async ({ token, json, owner, repo, number, commit_title, commit_
 		printOutput({ json, resource: result })
 	}
 	catch (error) {
-		throw new Error(error)
+		printOutput({ json, error })
 	}
 }
 
