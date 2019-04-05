@@ -44,6 +44,18 @@ const github = require("@financial-times/github")({
 });
 ```
 
-See [`examples/examples.js`](https://github.com/Financial-Times/github/blob/master/examples/examples.js) for a full set of usage examples.
+# Developers
 
-See [`src/lib/github.js`](https://github.com/Financial-Times/github/blob/master/src/lib/github.js) for all available methods.
+## Command hierarchy and directory structure
+
+This project follows the example provided in the Yargs documentation for command hierarchy and directory structure. 
+
+ - @see: https://github.com/yargs/yargs/blob/master/docs/advanced.md#commanddirdirectory-opts
+ - @see: [`src/commands`](https://github.com/Financial-Times/github/blob/master/src/commands/) for all available commands.
+
+## Conventions: CamelCase and under_scores
+
+All commands and variables are consistent with the Ocktokit and GitHub APIs documentation, respectively:
+
+ - https://octokit.github.io/rest.js/#api-Pulls <-- Instead of camelCaseFormat, we use hyphen-format. 
+ - https://developer.github.com/v3/pulls <-- Variables are under_score_format.
