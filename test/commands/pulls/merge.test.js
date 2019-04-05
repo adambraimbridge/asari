@@ -35,7 +35,6 @@ describe("Yargs", () => {
 	})
 
 	const requiredOptions = {
-		token: "test",
 		owner: "test",
 		repo: "test",
 		number: "test",
