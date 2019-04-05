@@ -16,33 +16,48 @@ const builder = yargs => {
 		.option("org", {
 			alias: "o",
 			describe: "Organization",
-			demandOption: true,
-			type: "string"
+			type: "boolean"
 		})
-		.option("name", {
-			alias: "n",
-			describe: "Project name",
-			demandOption: true,
-			type: "string"
+		.option("repo", {
+			alias: "r",
+			describe: "Repository",
+			type: "boolean"
+		})
+		.option("user", {
+			alias: "u",
+			describe: "GitHub username",
+			type: "boolean"
+		})
+		.conflicts({
+			org: ["repo", "user"],
+			repo: ["org", "user"],
+			user: ["org", "repo"]
+		})
+		.check(function (argv) {
+			if (!argv.org && !argv.repo && !argv.user) {
+				throw new Error(
+					'Organisation (--org), repository (--repo) or a GitHub username (--user) option must provided'
+				);
+			}
+
+			return true;
 		});
 };
 
 /**
- * Create an organisation project with columns.
+ * Create an organisation, repository or user project with columns.
  *
  * @param {object} argv - argv parsed and filtered by yargs
  * @param {string} argv.token
- * @param {string} argv.org
+ * @param {boolean} argv.org
+ * @param {boolean} argv.repo
+ * @param {boolean} argv.user
+ * @param {string} argv.target
  * @param {string} argv.name
+ * @param {string} [argv.description]
  * @param {string} argv.json
  */
-const handler = async ({ token, org, name, json }) => {
-	if (!org || !name) {
-		throw new Error(
-			"Organisation (--org) and project name (--name) must be provided"
-		);
-	}
-
+const handler = async ({ token, org, repo, user, target, name, description, json }) => {
 	const createProjectError = error => {
 		throw new Error(`Creating a project failed. Response: ${error}.`);
 	};
@@ -53,7 +68,11 @@ const handler = async ({ token, org, name, json }) => {
 
 	const project = await createProject({
 		org,
-		name
+		repo,
+		user,
+		target,
+		name,
+		description
 	}).catch(createProjectError);
 
 	const toDoColumn = await createProjectColumn({
@@ -85,7 +104,7 @@ const handler = async ({ token, org, name, json }) => {
 };
 
 module.exports = {
-	command: "project:create",
+	command: "projects:create <target> <name> [description]",
 	desc: "Create a new project",
 	builder,
 	handler

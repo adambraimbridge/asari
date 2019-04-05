@@ -10,10 +10,10 @@ afterEach(() => {
 	jest.resetAllMocks();
 });
 
-test("`project:create` command module exports an object that can be used by yargs", () => {
+test("`projects:create` command module exports an object that can be used by yargs", () => {
 	expect(createProjectCommand).toEqual(
 		expect.objectContaining({
-			command: expect.stringMatching("project:create"),
+			command: expect.stringMatching("projects:create"),
 			desc: expect.any(String),
 			builder: expect.any(Function),
 			handler: expect.any(Function)
@@ -21,7 +21,7 @@ test("`project:create` command module exports an object that can be used by yarg
 	);
 });
 
-test("yargs can load the `project:create` command without any errors or warnings", () => {
+test("yargs can load the `projects:create` command without any errors or warnings", () => {
 	expect(() => {
 		yargs.command(
 			createProjectCommand.command,

@@ -13,7 +13,6 @@ npm install --global @financial-times/github
 
 github --help
 ```
-
 When you run the tool it will automatically notify you if there is a newer
 version of it available for you to update to. This
 [can be disabled](https://www.npmjs.com/package/update-notifier#user-settings)
@@ -29,7 +28,18 @@ If you just want to try this tool out without installing it, you can run it with
 [`npx`](https://www.npmjs.com/package/npx) e.g.
 
 ```shell
-npx @financial-times/github --help
+$ npx @financial-times/github --help
+github <command>
+
+Commands:
+  github project:add-pull-request  Add a pull request to a project
+  github projects:create           Create a new project
+  github pull-request:create       Create a new pull request
+
+Options:
+  --token    GitHub personal access token                              [string]
+  --version  Show version number                                       [boolean]
+  --help     Show help                                                 [boolean]
 ```
 
 ### Library

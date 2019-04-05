@@ -1,9 +1,9 @@
-const Octokit = require("@octokit/rest");
+const Octokit = require('@octokit/rest');
 
 module.exports = ({ personalAccessToken }) => {
 	if (!personalAccessToken) {
 		throw new Error(
-			"github tooling helper: Missing personalAccessToken option - https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/"
+			'github tooling helper: Missing personalAccessToken option - https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/'
 		);
 	}
 
@@ -14,7 +14,7 @@ module.exports = ({ personalAccessToken }) => {
 			 *
 			 * @see https://developer.github.com/v3/projects
 			 */
-			"inertia-preview"
+			'inertia-preview'
 		],
 		/**
 		 * Authenticate GitHub API calls using GitHub personal access token
@@ -24,13 +24,17 @@ module.exports = ({ personalAccessToken }) => {
 		auth: `token ${personalAccessToken}`
 	});
 
-	const createProject = require("./github/create-project")(octokit);
-	const createProjectColumn = require("./github/create-project-column")(octokit);
-	const createPullRequest = require("./github/create-pull-request")(octokit);
-	const createPullRequestCard = require("./github/create-card")(octokit);
+	const createProject = require('./github/create-project')(octokit);
+	const closeProject = require('./github/close-card')(octokit);
+	const listProjects = require('./github/list-projects')(octokit);
+	const createProjectColumn = require('./github/create-project-column')(octokit);
+	const createPullRequest = require('./github/create-pull-request')(octokit);
+	const createPullRequestCard = require('./github/create-card')(octokit);
 
 	return {
 		createProject,
+		closeProject,
+		listProjects,
 		createProjectColumn,
 		createPullRequest,
 		createPullRequestCard
