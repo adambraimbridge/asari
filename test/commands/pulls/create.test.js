@@ -10,6 +10,7 @@ jest.mock('fs', () => ({
 	readFileSync: jest.fn().mockReturnValue(true),
 }))
 jest.spyOn(global.console, "warn");
+jest.spyOn(global.console, "log");
 afterEach(() => {
 	jest.clearAllMocks();
 });
@@ -62,7 +63,7 @@ describe("Yargs", () => {
 describe("Octokit", () => {
 
 	// If this endpoint is not called, nock.isDone() will be false.
-	nock('https://api.github.com')
+	const successResponse = nock('https://api.github.com')
 		.persist()
 		.post('/repos/test/test/pulls')
 		.reply(200, {})
@@ -77,6 +78,37 @@ describe("Octokit", () => {
 			head: "test",
 			base: "test",
 		})
-		expect(nock.isDone()).toBe(true)
+		expect(successResponse.isDone()).toBe(true)
 	})
 })
+
+describe("Error output", () => {
+
+	// If this endpoint is not called, nock.isDone() will be false.
+	const errorResponse = nock('https://api.github.com')
+		.persist()
+		.post('/repos/error/error/pulls')
+		.reply(422, {
+			"message": "Validation Failed",
+			"errors": [{
+				"resource": "PullRequest",
+				"code": "custom",
+				"message": "A pull request already exists for error:error."
+			}],
+			"documentation_url": "https://developer.github.com/v3/pulls/#create-a-pull-request"
+		})
+
+	test("Output error responses that are returned from network requests of the GitHub API", async () => {
+		const response = await yargsModule.handler({
+			token: "error",
+			body: "error",
+			owner: "error",
+			repo: "error",
+			title: "error",
+			head: "error",
+			base: "error",
+		})
+		expect(errorResponse.isDone()).toBe(true)
+		expect(console.log).toBeCalledWith(expect.stringMatching("error"))
+	})
+}) 
