@@ -29,8 +29,8 @@ const builder = yargs => {
 	])
 
 	return baseOptions(yargs)
-		.option("branch", {
-			describe: "Branch",
+		.option("head", {
+			describe: "The name of the branch where your changes are implemented.",
 			demandOption: true,
 			type: "string"
 		})
@@ -45,12 +45,12 @@ const builder = yargs => {
  * @param {string} argv.owner
  * @param {string} argv.repo
  * @param {string} argv.title
- * @param {string} argv.branch
+ * @param {string} argv.head
  * @param {string} argv.body
  * @param {string} [argv.base]
  * @throws {Error} - Throws an error if any required properties are invalid
  */
-const handler = async ({ token, json, base, body, owner, repo, title, branch }) => {
+const handler = async ({ token, json, base, body, owner, repo, title, head }) => {
 
 	// Ensure that all required properties have values
 	const requiredProperties = {
@@ -58,7 +58,7 @@ const handler = async ({ token, json, base, body, owner, repo, title, branch }) 
 		owner,
 		repo,
 		title,
-		branch,
+		head,
 	}
 	if (Object.values(requiredProperties).some(property => !property)) {
 		throw new Error(`Please provide all required properties: ${Object.keys(requiredProperties).join(", ")}`)
@@ -73,16 +73,17 @@ const handler = async ({ token, json, base, body, owner, repo, title, branch }) 
 	const bodyContent = fs.readFileSync(body, "utf8")
 	const inputs = Object.assign({}, requiredProperties, {
 		body: bodyContent,
-		head: branch,
+		head,
 		base,
 	})
+
 	try {
 		const octokit = await authenticatedOctokit({ personalAccessToken: token })
 		const result = await octokit.pulls.create(inputs)
 		printOutput({ json, resource: result })
 	}
 	catch (error) {
-		throw new Error(error)
+		printOutput({ json, error })
 	}
 }
 
