@@ -1,8 +1,24 @@
-const flow = require('lodash.flow');
+/**
+ * There are two "create" endpoints for projects in the Octokit API. This command combines them into one.
+ * If the `account_type` is "org", it creates an organization project board.
+ * If the `account_type` is "repo", it creates a repository project board. This type requres a `repo` argument.
+ * 
+ * @see: https://octokit.github.io/rest.js/#api-Projects-createForOrg
+ * Creates an organization project board. Returns a 404 Not Found status if projects are disabled in the organization.
+ * const result = await octokit.projects.createForOrg({org, name, body, per_page, page})
+ * /orgs/:org/projects
+ * 
+ * @see: https://octokit.github.io/rest.js/#api-Projects-createForRepo
+ * Creates a repository project board. Returns a 404 Not Found status if projects are disabled in the repository.
+ * const result = await octokit.projects.createForRepo({owner, repo, name, body, per_page, page})
+ * /repos/:owner/:repo/projects
+ */
+const flow = require("lodash.flow")
+const fs = require("fs")
 
-const github = require("../lib/github");
-const { withToken, withJson } = require("../lib/helpers/yargs/options");
-const printOutput = require("../lib/helpers/print-output");
+const commonYargs = require("../../../lib/common-yargs")
+const printOutput = require("../../../lib/print-output")
+const authenticatedOctokit = require("../../../lib/octokit")
 
 /**
  * yargs builder function.
@@ -10,102 +26,93 @@ const printOutput = require("../lib/helpers/print-output");
  * @param {import('yargs').Yargs} yargs - Instance of yargs
  */
 const builder = yargs => {
-	const baseOptions = flow([withToken, withJson]);
-
+	const baseOptions = flow([
+		commonYargs.withToken,
+		commonYargs.withJson,
+		commonYargs.withOwner, // This is either an organisation or a user
+		commonYargs.withRepo,
+		commonYargs.withName,
+		commonYargs.withBody,
+	])
 	return baseOptions(yargs)
-		.option("org", {
-			alias: "o",
-			describe: "Organization",
-			type: "boolean"
+		.option("account_type", {
+			describe: "The GitHub account type. Either 'org' (Organisation) or 'repo' (Repository).",
+			demandOption: true,
+			type: "string"
 		})
-		.option("repo", {
-			alias: "r",
-			describe: "Repository",
-			type: "boolean"
-		})
-		.option("user", {
-			alias: "u",
-			describe: "GitHub username",
-			type: "boolean"
-		})
-		.conflicts({
-			org: ["repo", "user"],
-			repo: ["org", "user"],
-			user: ["org", "repo"]
-		})
-		.check(function (argv) {
-			if (!argv.org && !argv.repo && !argv.user) {
-				throw new Error(
-					'Organisation (--org), repository (--repo) or a GitHub username (--user) option must provided'
-				);
-			}
-
-			return true;
-		});
-};
+}
 
 /**
- * Create an organisation, repository or user project with columns.
+ * Return the contents of a pull request body and create a pull request.
  *
  * @param {object} argv - argv parsed and filtered by yargs
  * @param {string} argv.token
- * @param {boolean} argv.org
- * @param {boolean} argv.repo
- * @param {boolean} argv.user
- * @param {string} argv.target
- * @param {string} argv.name
- * @param {string} [argv.description]
  * @param {string} argv.json
+ * @param {string} argv.owner
+ * @param {string} argv.repo
+ * @param {string} argv.name
+ * @param {string} argv.body
+ * @param {string} argv.account_type
+ * @throws {Error} - Throws an error if any required properties are invalid
  */
-const handler = async ({ token, org, repo, user, target, name, description, json }) => {
-	const createProjectError = error => {
-		throw new Error(`Creating a project failed. Response: ${error}.`);
-	};
+const handler = async ({ token, json, owner, repo, name, body, account_type }) => {
 
-	const { createProject, createProjectColumn } = github({
-		personalAccessToken: token
-	});
-
-	const project = await createProject({
-		org,
-		repo,
-		user,
-		target,
+	// Ensure that all required properties have values
+	const requiredProperties = {
+		owner,
 		name,
-		description
-	}).catch(createProjectError);
+		body,
+		account_type,
+	}
+	if (
+		Object.values(requiredProperties).some(property => !property)
+		|| (account_type === 'repo' && !repo)
+	) {
+		const message = `Please provide all required properties: ${Object.keys(requiredProperties).join(", ")}`
+		if (account_type === 'repo' && !repo) message += `, and "repo".`
+		throw new Error(message)
+	}
 
-	const toDoColumn = await createProjectColumn({
-		project_id: project.id,
-		name: "To do"
-	}).catch(createProjectError);
+	// Confirm that the required file exists
+	const correctFilePath = fs.existsSync(body)
+	if (!correctFilePath) {
+		throw new Error(`File path ${body} not found`)
+	}
 
-	const inProgressColumn = await createProjectColumn({
-		project_id: project.id,
-		name: "In progress"
-	}).catch(createProjectError);
+	const bodyContent = fs.readFileSync(body, "utf8")
+	const inputs = Object.assign({}, requiredProperties, {
+		body: bodyContent,
+	})
+	if (account_type === 'repo') inputs.repo = repo
 
-	const doneColumn = await createProjectColumn({
-		project_id: project.id,
-		name: "Done"
-	}).catch(createProjectError);
+	try {
+		const octokit = await authenticatedOctokit({ personalAccessToken: token })
+		const project = (account_type === 'repo')
+			? await octokit.projects.createForRepo(inputs)
+			: await octokit.projects.createForOrg(inputs)
 
-	const projectWithColumns = {
-		project: project,
-		columns: {
-			todo: toDoColumn,
-			doing: inProgressColumn,
-			done: doneColumn
-		},
-		html_url: project.html_url
-	};
+		const { project_id } = project
 
-	printOutput({ json, resource: projectWithColumns });
-};
+		// Create a default kanban three-column setup in the new project.
+		const projectWithColumns = {
+			project: project,
+			columns: {
+				todo: await octokit.projects.createColumn({ project_id, name: "To do" }),
+				doing: await octokit.projects.createColumn({ project_id, name: "In progress" }),
+				done: await octokit.projects.createColumn({ project_id, name: "Done" }),
+			},
+			html_url: project.html_url
+		};
+		printOutput({ json, resource: projectWithColumns })
+	}
+	catch (error) {
+		printOutput({ json, error })
+	}
+}
 
 module.exports = {
-	command: "projects:create <target> <name> [description]",
+	command: "create",
 	desc: "Create a new project",
 	builder,
 	handler
-};
+}
