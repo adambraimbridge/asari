@@ -1,9 +1,9 @@
 const flow = require('lodash.flow');
 const { URL } = require('url');
 
-const github = require("../lib/github");
-const { withToken, withJson } = require("../lib/helpers/yargs/options");
-const printOutput = require("../lib/helpers/print-output");
+const github = require('../lib/github');
+const { withToken, withJson } = require('../lib/helpers/yargs/options');
+const printOutput = require('../lib/helpers/print-output');
 
 /**
  * yargs builder function.
@@ -58,8 +58,8 @@ const handler = async ({ token, path, json }) => {
 };
 
 module.exports = {
-	command: "projects:close <path>",
-	desc: "Close a project",
+	command: 'projects:close <path>',
+	desc: 'Close a project',
 	builder,
 	handler
 };
