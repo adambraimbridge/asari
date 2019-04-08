@@ -7,10 +7,11 @@ module.exports = octokit => {
 		 */
 		const result = await octokit.projects.listForOrg({
 			org,
-			state: 'open',
-			per_page: 100
+			state: 'open'
 		});
 
-		return result.data;
+		const paginatedResult = await octokit.paginate(result);
+
+		return paginatedResult;
 	};
 };

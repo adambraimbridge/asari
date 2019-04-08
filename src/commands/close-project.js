@@ -41,15 +41,13 @@ const handler = async ({ token, path, json }) => {
 		throw new Error(`Listing all open projects failed. Response: ${error}.`);
 	});
 
-	// TODO: Fix issue with pagination, right now it only gives us a max of 30 responses
+	let projectId;
 	for (let i of openProjects) {
 		if (i.html_url === path) {
-			const projectId = i.id;
-
-			return projectId;
+			projectId = i.id;
 		}
 	}
-	// eslint-disable-next-line no-undef
+
 	const closedProject = await closeProject({ project_id: projectId }).catch(error => {
 		throw new Error(`Closing project failed. Response: ${error}.`);
 	});
