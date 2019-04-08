@@ -1,6 +1,6 @@
 const nock = require('nock');
 const yargs = require("yargs");
-const addPullRequestCommand = require("../../src/commands/create-card");
+const addPullRequestCommand = require("../../../src/commands/projects/create-card");
 jest.spyOn(global.console, "warn");
 
 // Don't let Octokit make network requests
@@ -10,10 +10,10 @@ afterEach(() => {
 	jest.clearAllMocks();
 });
 
-test("`project:add-pull-request` command module exports an object that can be used by yargs", () => {
+test("`projects create-card` command module exports an object that can be used by yargs", () => {
 	expect(addPullRequestCommand).toEqual(
 		expect.objectContaining({
-			command: expect.stringMatching("project:add-pull-request"),
+			command: expect.stringMatching("projects create-card"),
 			desc: expect.any(String),
 			builder: expect.any(Function),
 			handler: expect.any(Function)
@@ -21,7 +21,7 @@ test("`project:add-pull-request` command module exports an object that can be us
 	);
 });
 
-test("yargs can load the `project:add-pull-request` command without any errors or warnings", () => {
+test("yargs can load the `projects create-card` command without any errors or warnings", () => {
 	expect(() => {
 		yargs.command(
 			addPullRequestCommand.command,

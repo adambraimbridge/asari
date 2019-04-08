@@ -1,7 +1,7 @@
 const flow = require('lodash.flow');
 const { URL } = require('url');
 
-const github = require("../lib/github");
+const github = require("../../lib/github");
 const { withToken, withJson } = require("../lib/helpers/yargs/options");
 const printOutput = require("../lib/helpers/print-output");
 
@@ -15,8 +15,8 @@ const builder = yargs => {
 
 	return baseOptions(yargs)
 		.positional('path', {
-            describe: 'Project URL',
-            type: 'string'
+			describe: 'Project URL',
+			type: 'string'
 		});
 };
 
@@ -31,7 +31,7 @@ const handler = async ({ token, path, json }) => {
 	const url = new URL(path);
 	const pathName = url.pathname;
 	// TODO: Use projectType to distinguish if a repo, user or org project needs to be closed
-	const [ , projectType, name ] = pathName.split('/'); // eslint-disable-line no-unused-vars
+	const [, projectType, name] = pathName.split('/'); // eslint-disable-line no-unused-vars
 
 	const { listProjects, closeProject } = github({
 		personalAccessToken: token

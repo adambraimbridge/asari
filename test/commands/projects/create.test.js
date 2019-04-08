@@ -1,6 +1,6 @@
 const nock = require('nock');
 const yargs = require("yargs");
-const createProjectCommand = require("../../src/commands/create-project");
+const createProjectCommand = require("../../../src/commands/projects/create");
 jest.spyOn(global.console, "warn");
 
 // Don't let Octokit make network requests
@@ -10,10 +10,10 @@ afterEach(() => {
 	jest.resetAllMocks();
 });
 
-test("`projects:create` command module exports an object that can be used by yargs", () => {
+test("`projects create` command module exports an object that can be used by yargs", () => {
 	expect(createProjectCommand).toEqual(
 		expect.objectContaining({
-			command: expect.stringMatching("projects:create"),
+			command: expect.stringMatching("projects create"),
 			desc: expect.any(String),
 			builder: expect.any(Function),
 			handler: expect.any(Function)
@@ -21,7 +21,7 @@ test("`projects:create` command module exports an object that can be used by yar
 	);
 });
 
-test("yargs can load the `projects:create` command without any errors or warnings", () => {
+test("yargs can load the `projects create` command without any errors or warnings", () => {
 	expect(() => {
 		yargs.command(
 			createProjectCommand.command,
