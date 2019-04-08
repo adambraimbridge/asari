@@ -15,8 +15,8 @@ const builder = yargs => {
 
 	return baseOptions(yargs)
 		.positional('path', {
-            describe: 'Project URL',
-            type: 'string'
+			describe: 'Project URL',
+			type: 'string'
 		});
 };
 
@@ -30,14 +30,13 @@ const builder = yargs => {
 const handler = async ({ token, path, json }) => {
 	const url = new URL(path);
 	const pathName = url.pathname;
-	// TODO: Use projectType to distinguish if a repo, user or org project needs to be closed
-	const [ , projectType, name ] = pathName.split('/'); // eslint-disable-line no-unused-vars
+	const [ , projectType, name ] = pathName.split('/');
 
 	const { listProjects, closeProject } = github({
 		personalAccessToken: token
 	});
 
-	const openProjects = await listProjects({ org: name }).catch(error => {
+	const openProjects = await listProjects({ name, projectType }).catch(error => {
 		throw new Error(`Listing all open projects failed. Response: ${error}.`);
 	});
 
