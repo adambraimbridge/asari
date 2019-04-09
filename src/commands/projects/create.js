@@ -1,13 +1,20 @@
 /**
- * There are two "create" endpoints for projects in the Octokit API. This command combines them into one.
+ * There are three "create" endpoints for projects in the Octokit API. This command combines them into one.
+ *
+ * If the `account_type` is "user", it creates a user project board.
  * If the `account_type` is "org", it creates an organization project board.
  * If the `account_type` is "repo", it creates a repository project board. This type requres a `repo` argument.
- * 
+
+ * @see: https://octokit.github.io/rest.js/#api-Projects-createForAuthenticatedUser
+ * Creates an user project board. Returns a 404 Not Found status if projects are disabled for the user.
+ * const result = await octokit.projects.createForAuthenticatedUser({name, body, per_page, page})
+ * /user/projects
+ *
  * @see: https://octokit.github.io/rest.js/#api-Projects-createForOrg
  * Creates an organization project board. Returns a 404 Not Found status if projects are disabled in the organization.
  * const result = await octokit.projects.createForOrg({org, name, body, per_page, page})
  * /orgs/:org/projects
- * 
+ *
  * @see: https://octokit.github.io/rest.js/#api-Projects-createForRepo
  * Creates a repository project board. Returns a 404 Not Found status if projects are disabled in the repository.
  * const result = await octokit.projects.createForRepo({owner, repo, name, body, per_page, page})
@@ -36,7 +43,7 @@ const builder = yargs => {
 	])
 	return baseOptions(yargs)
 		.option("account_type", {
-			describe: "The GitHub account type. Either 'org' (Organisation) or 'repo' (Repository).",
+			describe: "The GitHub account type. Either 'user', 'org' (Organisation) or 'repo' (Repository).",
 			demandOption: true,
 			type: "string"
 		})
@@ -83,15 +90,28 @@ const handler = async ({ token, json, owner, repo, name, body, account_type }) =
 	const inputs = Object.assign({}, requiredProperties, {
 		body: bodyContent,
 	})
-	if (account_type === 'repo') inputs.repo = repo
 
 	try {
 		const octokit = await authenticatedOctokit({ personalAccessToken: token })
-		const project = (account_type === 'repo')
-			? await octokit.projects.createForRepo(inputs)
-			: await octokit.projects.createForOrg(inputs)
 
-		const { project_id } = project
+		let project
+		switch (account_type) {
+			case 'user':
+				project = await octokit.projects.createForAuthenticatedUser(inputs)
+				break
+			case 'repo':
+				inputs.repo = repo
+				project = await octokit.projects.createForRepo(inputs)
+				break
+			case 'org':
+				inputs.org = owner
+				project = await octokit.projects.createForOrg(inputs)
+				break
+			default:
+				throw new Error("Please provide a GitHub `account_type`. Either 'user', 'org' (Organisation) or 'repo' (Repository).")
+		}
+
+		const { project_id } = project.data
 
 		// Create a default kanban three-column setup in the new project.
 		const projectWithColumns = {
@@ -101,7 +121,6 @@ const handler = async ({ token, json, owner, repo, name, body, account_type }) =
 				doing: await octokit.projects.createColumn({ project_id, name: "In progress" }),
 				done: await octokit.projects.createColumn({ project_id, name: "Done" }),
 			},
-			html_url: project.html_url
 		};
 		printOutput({ json, resource: projectWithColumns })
 	}

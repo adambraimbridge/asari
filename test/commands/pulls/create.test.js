@@ -5,6 +5,9 @@ const yargsModule = require("../../../src/commands/pulls/create")
 // Don't let Octokit make network requests
 nock.disableNetConnect();
 
+// Reset any mocked network endpoints
+nock.cleanAll()
+
 jest.mock('fs', () => ({
 	existsSync: jest.fn().mockReturnValue(true),
 	readFileSync: jest.fn().mockReturnValue(true),
@@ -63,7 +66,6 @@ describe("Octokit", () => {
 
 	// If this endpoint is not called, nock.isDone() will be false.
 	const successResponse = nock('https://api.github.com')
-		.persist()
 		.post('/repos/test/test/pulls')
 		.reply(200, {})
 
@@ -85,7 +87,6 @@ describe("Error output", () => {
 
 	// If this endpoint is not called, nock.isDone() will be false.
 	const errorResponse = nock('https://api.github.com')
-		.persist()
 		.post('/repos/error/error/pulls')
 		.reply(422, {
 			"message": "Validation Failed",
@@ -98,7 +99,7 @@ describe("Error output", () => {
 		})
 
 	test("Output error responses that are returned from network requests of the GitHub API", async () => {
-		const response = await yargsModule.handler({
+		await yargsModule.handler({
 			token: "error",
 			body: "error",
 			owner: "error",
@@ -108,6 +109,6 @@ describe("Error output", () => {
 			base: "error",
 		})
 		expect(errorResponse.isDone()).toBe(true)
-		expect(console.log).toBeCalledWith(expect.stringMatching("error"))
+		expect(console.log).toBeCalledWith(expect.stringMatching(/error/i))
 	})
 }) 
