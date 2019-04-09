@@ -1,9 +1,34 @@
-const flow = require('lodash.flow');
-const { URL } = require('url');
+/**
+ * @see: https://octokit.github.io/rest.js/#api-Projects-update
+ * There is no 'closed' endpoint in the Octokit API. We use 'update' with a `state` of 'closed'.
+ * const result = await octokit.projects.update({project_id, name, body, state, organization_permission, private, per_page, page})
+ * /projects/:project_id
+ *
+ * There are three 'list' endpoints for projects in the Octokit API.
+ * This command uses one of these list endpoints to get all projects for `account_type`.
+ * Then it can get the ID of the relevant project board, from that list.
+ *
+ * If the `account_type` is 'user', it lists a user's project boards.
+ * If the `account_type` is 'org', it lists a organization's project boards.
+ * If the `account_type` is 'repo', it lists a repository's project boards. This type requres a `repo` argument.
+ *
+ * @see: https://octokit.github.io/rest.js/#api-Projects-listForUser
+ * const result = await octokit.projects.listForUser({username, state, per_page, page})
+ * /users/:username/projects
+ *
+ * @see: https://octokit.github.io/rest.js/#api-Projects-listForOrg
+ * const result = await octokit.projects.listForOrg({org, state, per_page, page})
+ * /orgs/:org/projects
+ *
+ * @see: https://octokit.github.io/rest.js/#api-Projects-listForRepo
+ * const result = await octokit.projects.listForRepo({owner, repo, state, per_page, page})
+ * /repos/:owner/:repo/projects
+ */
+const flow = require('lodash.flow')
 
-const github = require("../../lib/github");
-const { withToken, withJson } = require("../lib/helpers/yargs/options");
-const printOutput = require("../lib/helpers/print-output");
+const commonYargs = require('../../../lib/common-yargs')
+const printOutput = require('../../../lib/print-output')
+const authenticatedOctokit = require('../../../lib/octokit')
 
 /**
  * yargs builder function.
@@ -11,55 +36,106 @@ const printOutput = require("../lib/helpers/print-output");
  * @param {import('yargs').Yargs} yargs - Instance of yargs
  */
 const builder = yargs => {
-	const baseOptions = flow([withToken, withJson]);
-
+	const baseOptions = flow([
+		commonYargs.withToken,
+		commonYargs.withJson,
+		commonYargs.withOwner, // This is either an organisation or a user
+		commonYargs.withRepo,
+		commonYargs.withNumber,
+		commonYargs.withAccountType,
+	])
 	return baseOptions(yargs)
-		.positional('path', {
-			describe: 'Project URL',
-			type: 'string'
-		});
-};
+}
 
 /**
- * Close a project.
+ * Get a project based on its number from a list of projects.
+ *
+ * @param {*} number
+ * @param {*} projects
+ */
+const getProject = (number, projects) => projects.data.find(project => {
+	return project.number === number
+})
+
+/**
+ * Update a project board to 'status: closed'.
  *
  * @param {object} argv - argv parsed and filtered by yargs
  * @param {string} argv.token
- * @param {string} argv.path
+ * @param {string} argv.json
+ * @param {string} argv.owner
+ * @param {string} argv.repo
+ * @param {string} argv.number
+ * @param {string} argv.account_type
+ * @throws {Error} - Throws an error if any required properties are invalid
  */
-const handler = async ({ token, path, json }) => {
-	const url = new URL(path);
-	const pathName = url.pathname;
-	// TODO: Use projectType to distinguish if a repo, user or org project needs to be closed
-	const [, projectType, name] = pathName.split('/'); // eslint-disable-line no-unused-vars
+const handler = async ({ token, json, owner, repo, number, account_type }) => {
 
-	const { listProjects, closeProject } = github({
-		personalAccessToken: token
-	});
-
-	const openProjects = await listProjects({ org: name }).catch(error => {
-		throw new Error(`Listing all open projects failed. Response: ${error}.`);
-	});
-
-	// TODO: Fix issue with pagination, right now it only gives us a max of 30 responses
-	for (let i of openProjects) {
-		if (i.html_url === path) {
-			const projectId = i.id;
-
-			return projectId;
-		}
+	// Ensure that all required properties have values
+	const requiredProperties = {
+		owner,
+		number,
+		account_type,
 	}
-	// eslint-disable-next-line no-undef
-	const closedProject = await closeProject({ project_id: projectId }).catch(error => {
-		throw new Error(`Closing project failed. Response: ${error}.`);
-	});
+	if (
+		Object.values(requiredProperties).some(property => !property)
+		|| (account_type === 'repo' && !repo)
+	) {
+		const message = `Please provide all required properties: ${Object.keys(requiredProperties).join(', ')}`
+		if (account_type === 'repo' && !repo) message += `, and 'repo'.`
+		throw new Error(message)
+	}
 
-	printOutput({ json, resource: closedProject });
-};
+	const inputs = Object.assign({}, requiredProperties, {
+		state: 'all',
+		per_page: 100,
+	})
+
+	try {
+		const octokit = await authenticatedOctokit({ personalAccessToken: token })
+
+		/**
+		 * Find the project based on account type and number.
+		 */
+		let project
+		switch (account_type) {
+			case 'user':
+				inputs.username = owner
+				project = getProject(number, await octokit.projects.listForUser(inputs))
+				break
+			case 'repo':
+				inputs.repo = repo
+				project = getProject(number, await octokit.projects.listForRepo(inputs))
+				break
+			case 'org':
+				inputs.org = owner
+				project = getProject(number, await octokit.projects.listForOrg(inputs))
+				break
+			default:
+				throw new Error('Please provide a GitHub `account_type`. Either "user", "org" (Organisation) or "repo" (Repository).')
+		}
+		if (!project) {
+			throw new Error(`No project found for number: ${number}.`)
+		}
+
+		/**
+		 * Update the project to a `state` of 'closed'
+		 */
+		const result = await octokit.projects.update({
+			project_id: project.id,
+			state: 'closed',
+		})
+		const { html_url, state } = result.data
+		printOutput({ json, resource: { html_url, state } })
+	}
+	catch (error) {
+		printOutput({ json, error })
+	}
+}
 
 module.exports = {
-	command: "projects:close <path>",
-	desc: "Close a project",
+	command: 'close',
+	desc: 'Set the state of an existing project board to `closed`',
 	builder,
 	handler
-};
+}

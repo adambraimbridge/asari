@@ -4,7 +4,7 @@
  * If the `account_type` is "user", it creates a user project board.
  * If the `account_type` is "org", it creates an organization project board.
  * If the `account_type` is "repo", it creates a repository project board. This type requres a `repo` argument.
-
+ *
  * @see: https://octokit.github.io/rest.js/#api-Projects-createForAuthenticatedUser
  * Creates an user project board. Returns a 404 Not Found status if projects are disabled for the user.
  * const result = await octokit.projects.createForAuthenticatedUser({name, body, per_page, page})
@@ -40,13 +40,9 @@ const builder = yargs => {
 		commonYargs.withRepo,
 		commonYargs.withName,
 		commonYargs.withBody,
+		commonYargs.withAccountType,
 	])
 	return baseOptions(yargs)
-		.option("account_type", {
-			describe: "The GitHub account type. Either 'user', 'org' (Organisation) or 'repo' (Repository).",
-			demandOption: true,
-			type: "string"
-		})
 }
 
 /**
