@@ -35,7 +35,7 @@ const builder = yargs => {
 }
 
 /**
- * Return the contents of a pull request body and create a pull request.
+ * Add a pull request to a GitHub project column.
  *
  * @param {object} argv - argv parsed and filtered by yargs
  * @param {string} argv.token
