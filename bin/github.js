@@ -1,11 +1,8 @@
 #!/usr/bin/env node
-
 const updateNotifier = require("update-notifier");
 const yargs = require("yargs");
-
-const options = require('../src/lib/helpers/yargs/options');
-
 const yargsCommandsDirectoryPath = "../src/commands";
+const { descriptions } = require('../lib/common-yargs')
 
 /**
  * Configure yargs.
@@ -27,8 +24,8 @@ yargs
 	 * Group global options in usage output.
 	 */
 	.group(["token", "json"], "Global Options:")
-	.describe("token", options.descriptions.token)
-	.describe("json", options.descriptions.json)
+	.describe("token", descriptions.token)
+	.describe("json", descriptions.json)
 	/**
 	 * Report unrecognized commands as errors.
 	 */
