@@ -5,6 +5,9 @@ const yargsModule = require("../../../src/commands/pulls/create-review-request")
 // Don't let Octokit make network requests
 nock.disableNetConnect();
 
+// Reset any mocked network endpoints
+nock.cleanAll()
+
 jest.spyOn(global.console, "warn");
 afterEach(() => {
 	jest.clearAllMocks();
@@ -64,8 +67,7 @@ describe("Yargs", () => {
 describe("Octokit", () => {
 
 	// If this endpoint is not called, nock.isDone() will be false.
-	nock('https://api.github.com')
-		.persist()
+	const successResponse = nock('https://api.github.com')
 		.post('/repos/test/test/pulls/1/requested_reviewers')
 		.reply(200, {})
 
@@ -77,6 +79,6 @@ describe("Octokit", () => {
 			number: 1,
 			reviewers: "test",
 		})
-		expect(nock.isDone()).toBe(true)
+		expect(successResponse.isDone()).toBe(true)
 	})
 })

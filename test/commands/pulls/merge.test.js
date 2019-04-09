@@ -5,6 +5,9 @@ const yargsModule = require("../../../src/commands/pulls/merge")
 // Don't let Octokit make network requests
 nock.disableNetConnect();
 
+// Reset any mocked network endpoints
+nock.cleanAll()
+
 jest.spyOn(global.console, "warn");
 afterEach(() => {
 	jest.clearAllMocks();
@@ -56,8 +59,7 @@ describe("Yargs", () => {
 describe("Octokit", () => {
 
 	// If this endpoint is not called, nock.isDone() will be false.
-	nock('https://api.github.com')
-		.persist()
+	const successResponse = nock('https://api.github.com')
 		.put('/repos/test/test/pulls/1/merge')
 		.reply(200, {})
 
@@ -68,6 +70,6 @@ describe("Octokit", () => {
 			repo: "test",
 			number: 1,
 		})
-		expect(nock.isDone()).toBe(true)
+		expect(successResponse.isDone()).toBe(true)
 	})
 })

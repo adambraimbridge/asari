@@ -49,11 +49,8 @@ const handler = async ({ token, json, owner, repo, number, reviewers, team_revie
 		repo,
 		number,
 	}
-	if (
-		Object.values(requiredProperties).some(property => !property)
-		|| (!reviewers && !team_reviewers)
-	) {
-		throw new Error(`Please provide all required properties: ${Object.keys(requiredProperties).join(", ")}, (and either reviewers or team_reviewers)`)
+	if (Object.values(requiredProperties).some(property => !property)) {
+		throw new Error(`Please provide all required properties: ${Object.keys(requiredProperties).join(", ")}`)
 	}
 
 	const inputs = Object.assign({}, requiredProperties, {
