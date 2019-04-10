@@ -1,11 +1,10 @@
 /**
- * @see: https://octokit.github.io/rest.js/#api-Pulls-update 
+ * @see: https://octokit.github.io/rest.js/#api-Pulls-update
  * There is no "closed" endpoint in the Octokit API. We use "update" with a `state` of "closed".
  * const result = await octokit.pulls.update({owner, repo, number, title, body, state, base, maintainer_can_modify})
  * /repos/:owner/:repo/pulls/:number
  */
 const flow = require("lodash.flow")
-const fs = require("fs")
 
 const commonYargs = require("../../../lib/common-yargs")
 const printOutput = require("../../../lib/print-output")
@@ -20,18 +19,11 @@ const builder = yargs => {
 	const baseOptions = flow([
 		commonYargs.withToken,
 		commonYargs.withJson,
-		commonYargs.withBase,
 		commonYargs.withOwner,
 		commonYargs.withRepo,
 		commonYargs.withNumber,
-		commonYargs.withBody,
-		commonYargs.withTitle,
 	])
 	return baseOptions(yargs)
-		.option("maintainer_can_modify", {
-			describe: "Indicates whether maintainers can modify the pull request.",
-			type: "string",
-		})
 }
 
 /**
@@ -43,13 +35,9 @@ const builder = yargs => {
  * @param {string} argv.owner
  * @param {string} argv.repo
  * @param {string} argv.number
- * @param {string} [argv.title]
- * @param {string} [argv.body]
- * @param {string} [argv.base]
- * @param {string} [argv.maintainer_can_modify]
  * @throws {Error} - Throws an error if any required properties are invalid
  */
-const handler = async ({ token, json, owner, repo, number, title, body, base, maintainer_can_modify }) => {
+const handler = async ({ token, json, owner, repo, number }) => {
 
 	// Ensure that all required properties have values
 	const requiredProperties = {
@@ -61,20 +49,7 @@ const handler = async ({ token, json, owner, repo, number, title, body, base, ma
 		throw new Error(`Please provide all required properties: ${Object.keys(requiredProperties).join(", ")}`)
 	}
 
-	// Confirm that the required file exists
-	let bodyContent;
-	if (body) {
-		const correctFilePath = fs.existsSync(body)
-		if (!correctFilePath) {
-			throw new Error(`File path ${body} not found`)
-		}
-		bodyContent = fs.readFileSync(body, "utf8")
-	}
 	const inputs = Object.assign({}, requiredProperties, {
-		title,
-		body: bodyContent,
-		base,
-		maintainer_can_modify,
 		state: "closed",
 	})
 	try {
