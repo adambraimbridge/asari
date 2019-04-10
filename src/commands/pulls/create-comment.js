@@ -49,7 +49,7 @@ const builder = yargs => {
  * @param {string} argv.owner
  * @param {string} argv.repo
  * @param {string} argv.commit_id
- * @param {string} argv.path 
+ * @param {string} argv.path
  * @param {string} argv.position
  * @param {string} argv.body
  * @throws {Error} - Throws an error if any required properties are invalid

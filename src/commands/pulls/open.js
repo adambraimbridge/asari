@@ -1,5 +1,5 @@
 /**
- * @see: https://octokit.github.io/rest.js/#api-Pulls-update 
+ * @see: https://octokit.github.io/rest.js/#api-Pulls-update
  * There is no "open" endpoint in the Octokit API. We use "update" with a `state` of "open".
  * const result = await octokit.pulls.update({owner, repo, number, title, body, state, base, maintainer_can_modify})
  * /repos/:owner/:repo/pulls/:number
