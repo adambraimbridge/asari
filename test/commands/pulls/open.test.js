@@ -31,12 +31,7 @@ describe("Yargs", () => {
 
 	test("yargs can load the `pulls open` command without any errors or warnings", () => {
 		expect(() => {
-			yargs.command(
-				yargsModule.command,
-				yargsModule.desc,
-				yargsModule.builder,
-				yargsModule.handler
-			).argv
+			yargs.command(yargsModule).argv
 		}).not.toThrow()
 		expect(console.warn).not.toBeCalled()
 	})
