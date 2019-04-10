@@ -45,23 +45,15 @@ const builder = yargs => {
  * @throws {Error} - Throws an error if any required properties are invalid
  */
 const handler = async ({ token, json, column_id, pull_request_id }) => {
-
-	// Ensure that all required properties have values
-	const requiredProperties = {
+	const inputs = {
 		column_id,
 		pull_request_id,
+		content_id: pull_request_id,
+		content_type: 'PullRequest'
 	}
-	if (Object.values(requiredProperties).some(property => !property)) {
-		throw new Error(`Please provide all required properties: ${Object.keys(requiredProperties).join(', ')}`)
-	}
-
 	try {
 		const octokit = await authenticatedOctokit({ personalAccessToken: token })
-		const result = await octokit.projects.createCard({
-			column_id,
-			content_id: pull_request_id,
-			content_type: 'PullRequest'
-		})
+		const result = await octokit.projects.createCard(inputs)
 		printOutput({ json, resource: result.data })
 	}
 	catch (error) {

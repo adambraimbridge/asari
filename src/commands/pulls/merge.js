@@ -59,23 +59,15 @@ const builder = yargs => {
  * @throws {Error} - Throws an error if any required properties are invalid
  */
 const handler = async ({ token, json, owner, repo, number, commit_title, commit_message, sha, merge_method }) => {
-
-	// Ensure that all required properties have values
-	const requiredProperties = {
+	const inputs = {
 		owner,
 		repo,
 		number,
-	}
-	if (Object.values(requiredProperties).some(property => !property)) {
-		throw new Error(`Please provide all required properties: ${Object.keys(requiredProperties).join(", ")}`)
-	}
-
-	const inputs = Object.assign({}, requiredProperties, {
 		commit_title,
 		commit_message,
 		sha,
 		merge_method,
-	})
+	}
 	try {
 		const octokit = await authenticatedOctokit({ personalAccessToken: token })
 		const result = await octokit.pulls.merge(inputs)

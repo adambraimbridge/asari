@@ -42,24 +42,13 @@ const builder = yargs => {
  * @throws {Error} - Throws an error if any required properties are invalid
  */
 const handler = async ({ token, json, owner, repo, number, reviewers, team_reviewers }) => {
-
-	// Ensure that all required properties have values
-	const requiredProperties = {
+	const inputs = {
 		owner,
 		repo,
 		number,
-	}
-	if (
-		Object.values(requiredProperties).some(property => !property)
-		|| (!reviewers && !team_reviewers)
-	) {
-		throw new Error(`Please provide all required properties: ${Object.keys(requiredProperties).join(", ")}, (and either reviewers or team_reviewers)`)
-	}
-
-	const inputs = Object.assign({}, requiredProperties, {
 		reviewers,
 		team_reviewers,
-	})
+	}
 	try {
 		const octokit = await authenticatedOctokit({ personalAccessToken: token })
 		const result = await octokit.pulls.createReviewRequest(inputs)

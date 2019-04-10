@@ -64,33 +64,18 @@ const builder = yargs => {
  */
 const handler = async ({ token, json, owner, repo, name, body, account_type }) => {
 
-	// Ensure that all required properties have values
-	const requiredProperties = {
-		owner,
-		name,
-		body,
-		account_type,
-	}
-	if (
-		Object.values(requiredProperties).some(property => !property)
-		|| (account_type === 'repo' && !repo)
-	) {
-		const message = `Please provide all required properties: ${Object.keys(requiredProperties).join(", ")}`
-		if (account_type === 'repo' && !repo) message += `, and "repo".`
-		throw new Error(message)
-	}
-
 	// Confirm that the required file exists
 	const correctFilePath = fs.existsSync(body)
 	if (!correctFilePath) {
 		throw new Error(`File path ${body} not found`)
 	}
-
 	const bodyContent = fs.readFileSync(body, "utf8")
-	const inputs = Object.assign({}, requiredProperties, {
+	const inputs = {
+		owner,
+		name,
 		body: bodyContent,
-	})
-
+		account_type,
+	}
 	try {
 		const octokit = await authenticatedOctokit({ personalAccessToken: token })
 

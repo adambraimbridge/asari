@@ -70,27 +70,13 @@ const getProject = (number, projects) => projects.data.find(project => {
  * @throws {Error} - Throws an error if any required properties are invalid
  */
 const handler = async ({ token, json, owner, repo, number, account_type }) => {
-
-	// Ensure that all required properties have values
-	const requiredProperties = {
+	const inputs = {
 		owner,
 		number,
 		account_type,
-	}
-	if (
-		Object.values(requiredProperties).some(property => !property)
-		|| (account_type === 'repo' && !repo)
-	) {
-		const message = `Please provide all required properties: ${Object.keys(requiredProperties).join(', ')}`
-		if (account_type === 'repo' && !repo) message += `, and 'repo'.`
-		throw new Error(message)
-	}
-
-	const inputs = Object.assign({}, requiredProperties, {
 		state: 'all',
 		per_page: 100,
-	})
-
+	}
 	try {
 		const octokit = await authenticatedOctokit({ personalAccessToken: token })
 
