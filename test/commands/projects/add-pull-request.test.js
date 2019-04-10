@@ -28,12 +28,7 @@ describe("Yargs", () => {
 
 	test("yargs can load the `projects add-pull-request` command without any errors or warnings", () => {
 		expect(() => {
-			yargs.command(
-				yargsModule.command,
-				yargsModule.desc,
-				yargsModule.builder,
-				yargsModule.handler
-			).argv
+			yargs.command(yargsModule).argv
 		}).not.toThrow()
 		expect(console.warn).not.toBeCalled()
 	})
@@ -48,9 +43,16 @@ describe("Yargs", () => {
 			try {
 				const testOptions = Object.assign({}, requiredOptions)
 				delete testOptions[option]
-				await yargsModule.handler(testOptions)
-			} catch (error) {
-				expect(error).toBeInstanceOf(Error)
+
+				const optionString = Object.keys(testOptions)
+					.map(option => `--${option} ${testOptions[option]}`)
+					.join(' ')
+
+				require('child_process')
+					.execSync(`./bin/github.js projects add-pull-request ${optionString}`)
+			}
+			catch (error) {
+				expect(error.message).toEqual(expect.stringContaining(option))
 			}
 		})
 	}
