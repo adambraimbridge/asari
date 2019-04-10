@@ -1,5 +1,5 @@
-const yargs = require("yargs")
 const nock = require('nock');
+const commonTests = require("../../common-tests")
 const yargsModule = require("../../../src/commands/pulls/merge")
 
 // Don't let Octokit make network requests
@@ -13,43 +13,17 @@ afterEach(() => {
 	jest.clearAllMocks();
 });
 
-describe("Yargs", () => {
-	test("`pulls merge` command module exports an object that can be used by yargs", () => {
-		expect(yargsModule).toEqual(
-			expect.objectContaining({
-				command: expect.stringMatching("merge"),
-				desc: expect.any(String),
-				builder: expect.any(Function),
-				handler: expect.any(Function),
-			})
-		)
-	})
-
-	test("yargs can load the `pulls merge` command without any errors or warnings", () => {
-		expect(() => {
-			yargs.command(yargsModule).argv
-		}).not.toThrow()
-		expect(console.warn).not.toBeCalled()
-	})
-
-	const requiredOptions = {
-		owner: "test",
-		repo: "test",
-		number: "test",
-	}
-	for (let option of Object.keys(requiredOptions)) {
-		test(`Running the command handler without '${option}' throws an error`, async () => {
-			expect.assertions(1)
-			try {
-				const testOptions = Object.assign({}, requiredOptions)
-				delete testOptions[option]
-				await yargsModule.handler(testOptions)
-			} catch (error) {
-				expect(error).toBeInstanceOf(Error)
-			}
-		})
-	}
-})
+/**
+ * Common Yargs tests
+ */
+const commandGroup = 'pulls'
+const command = 'merge'
+const requiredOptions = {
+	owner: "test",
+	repo: "test",
+	number: "test",
+}
+commonTests.describeYargs(yargsModule, commandGroup, command, requiredOptions)
 
 describe("Octokit", () => {
 

@@ -1,5 +1,5 @@
-const yargs = require("yargs")
 const nock = require('nock');
+const commonTests = require("../../common-tests")
 const yargsModule = require("../../../src/commands/projects/add-pull-request")
 
 // Don't let Octokit make network requests
@@ -14,49 +14,17 @@ afterEach(() => {
 	jest.clearAllMocks();
 });
 
-describe("Yargs", () => {
-	test("`projects add-pull-request` command module exports an object that can be used by yargs", () => {
-		expect(yargsModule).toEqual(
-			expect.objectContaining({
-				command: expect.stringMatching(/add/i),
-				desc: expect.any(String),
-				builder: expect.any(Function),
-				handler: expect.any(Function),
-			})
-		)
-	})
 
-	test("yargs can load the `projects add-pull-request` command without any errors or warnings", () => {
-		expect(() => {
-			yargs.command(yargsModule).argv
-		}).not.toThrow()
-		expect(console.warn).not.toBeCalled()
-	})
-
-	const requiredOptions = {
-		column_id: 1,
-		pull_request_id: 1,
-	}
-	for (let option of Object.keys(requiredOptions)) {
-		test(`Running the command handler without '${option}' throws an error`, async () => {
-			expect.assertions(1)
-			try {
-				const testOptions = Object.assign({}, requiredOptions)
-				delete testOptions[option]
-
-				const optionString = Object.keys(testOptions)
-					.map(option => `--${option} ${testOptions[option]}`)
-					.join(' ')
-
-				require('child_process')
-					.execSync(`./bin/github.js projects add-pull-request ${optionString}`)
-			}
-			catch (error) {
-				expect(error.message).toEqual(expect.stringContaining(option))
-			}
-		})
-	}
-})
+/**
+ * Common Yargs tests
+ */
+const commandGroup = 'projects'
+const command = 'add-pull-request'
+const requiredOptions = {
+	column_id: 1,
+	pull_request_id: 1,
+}
+commonTests.describeYargs(yargsModule, commandGroup, command, requiredOptions)
 
 describe("Octokit", () => {
 
