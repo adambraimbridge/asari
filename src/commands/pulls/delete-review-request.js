@@ -68,7 +68,7 @@ const handler = async ({ token, json, owner, repo, number, reviewers, team_revie
 }
 
 module.exports = {
-	command: "delete-review-request",
+	command: "delete-review-request [options]",
 	desc: "Delete a requested review for a pull request",
 	builder,
 	handler

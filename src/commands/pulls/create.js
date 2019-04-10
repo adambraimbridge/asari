@@ -88,7 +88,7 @@ const handler = async ({ token, json, base, body, owner, repo, title, head }) =>
 }
 
 module.exports = {
-	command: "create",
+	command: "create [options]",
 	desc: "Create a new pull request",
 	builder,
 	handler

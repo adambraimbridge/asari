@@ -126,7 +126,7 @@ const handler = async ({ token, json, owner, repo, name, body, account_type }) =
 }
 
 module.exports = {
-	command: "create",
+	command: "create [options]",
 	desc: "Create a new project",
 	builder,
 	handler

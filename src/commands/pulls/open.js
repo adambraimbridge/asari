@@ -88,7 +88,7 @@ const handler = async ({ token, json, owner, repo, number, title, body, base, ma
 }
 
 module.exports = {
-	command: "open",
+	command: "open [options]",
 	desc: "Set the state of an existing pull request to `open`",
 	builder,
 	handler

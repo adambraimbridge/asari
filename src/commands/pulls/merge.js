@@ -87,7 +87,7 @@ const handler = async ({ token, json, owner, repo, number, commit_title, commit_
 }
 
 module.exports = {
-	command: "merge",
+	command: "merge [options]",
 	desc: "Merge an existing pull request",
 	builder,
 	handler

@@ -134,7 +134,7 @@ const handler = async ({ token, json, owner, repo, number, account_type }) => {
 }
 
 module.exports = {
-	command: 'close',
+	command: 'close [options]',
 	desc: 'Set the state of an existing project board to `closed`',
 	builder,
 	handler
