@@ -17,6 +17,14 @@ yargs
 	 */
 	.commandDir(yargsCommandsDirectoryPath)
 	/**
+	 * Set a usage message and description.
+	 */
+	.usage('$0 <command> <subcommand> [arguments]', 'Work with GitHub from the command line.')
+	/**
+	 * Maximize the width of yargs’ usage instructions.
+	 */
+	.wrap(yargs.terminalWidth())
+	/**
 	 * Always require a command to be specified.
 	 */
 	.demandCommand()
