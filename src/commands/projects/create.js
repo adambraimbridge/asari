@@ -38,11 +38,15 @@ const builder = yargs => {
 		commonYargs.withJson,
 		commonYargs.withOwner, // This is either an organisation or a user
 		commonYargs.withRepo,
-		commonYargs.withName,
 		commonYargs.withBody,
 		commonYargs.withAccountType,
 	])
 	return baseOptions(yargs)
+		.option('name', {
+			describe: 'Project name',
+			demandOption: true,
+			type: 'string'
+		})
 }
 
 /**

@@ -71,6 +71,7 @@ describe("Octokit", () => {
 			project_id: 1
 		})
 		.post('/projects/1/columns')
+		.times(3)
 		.reply(200, {
 			column_id: 1
 		})
@@ -102,7 +103,7 @@ describe("Error output", () => {
 		})
 
 	test("Output error responses that are returned from network requests of the GitHub API", async () => {
-		const response = await yargsModule.handler({
+		await yargsModule.handler({
 			token: "test",
 			owner: "test",
 			name: "test",
