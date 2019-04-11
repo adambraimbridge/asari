@@ -3,10 +3,10 @@
  * const result = await octokit.pulls.deleteComment({owner, repo, comment_id})
  * /repos/:owner/:repo/pulls/comments/:comment_id
  */
-const flow = require("lodash.flow")
-const commonYargs = require("../../../lib/common-yargs")
-const printOutput = require("../../../lib/print-output")
-const authenticatedOctokit = require("../../../lib/octokit")
+const flow = require('lodash.flow')
+const commonYargs = require('../../../lib/common-yargs')
+const printOutput = require('../../../lib/print-output')
+const authenticatedOctokit = require('../../../lib/octokit')
 
 /**
  * yargs builder function.
@@ -15,17 +15,17 @@ const authenticatedOctokit = require("../../../lib/octokit")
  */
 const builder = yargs => {
 	const baseOptions = flow([
-		commonYargs.withToken,
-		commonYargs.withJson,
-		commonYargs.withOwner,
-		commonYargs.withRepo,
+		// prettier-ignore
+		commonYargs.withToken(),
+		commonYargs.withJson(),
+		commonYargs.withOwner(),
+		commonYargs.withRepo(),
 	])
 
-	return baseOptions(yargs)
-		.option("comment_id", {
-			describe: "The ID of the comment to be deleted.",
-			type: "integer",
-		})
+	return baseOptions(yargs).option('comment_id', {
+		describe: 'The ID of the comment to be deleted.',
+		type: 'integer',
+	})
 }
 
 /**
@@ -49,15 +49,14 @@ const handler = async ({ token, json, owner, repo, comment_id }) => {
 		const octokit = await authenticatedOctokit({ personalAccessToken: token })
 		const result = await octokit.pulls.deleteComment(inputs)
 		printOutput({ json, resource: result })
-	}
-	catch (error) {
+	} catch (error) {
 		printOutput({ json, error })
 	}
 }
 
 module.exports = {
-	command: "delete-comment [options]",
-	desc: "Delete a comment on an existing pull request",
+	command: 'delete-comment [options]',
+	desc: 'Delete a comment on an existing pull request',
 	builder,
 	handler,
 }

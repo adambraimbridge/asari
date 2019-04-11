@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-const updateNotifier = require("update-notifier");
-const yargs = require("yargs");
-const yargsCommandsDirectoryPath = "../src/commands";
+const updateNotifier = require('update-notifier')
+const yargs = require('yargs')
+const yargsCommandsDirectoryPath = '../src/commands'
 const { descriptions } = require('../lib/common-yargs')
 
 /**
@@ -31,9 +31,9 @@ yargs
 	/**
 	 * Group global options in usage output.
 	 */
-	.group(["token", "json"], "Global Options:")
-	.describe("token", descriptions.token)
-	.describe("json", descriptions.json)
+	.group(['token', 'json'], 'Global Options:')
+	.describe('token', descriptions.token)
+	.describe('json', descriptions.json)
 	/**
 	 * Report unrecognized commands as errors.
 	 */
@@ -41,7 +41,7 @@ yargs
 	/**
 	 * Enable the display of help with the `--help` option.
 	 */
-	.help();
+	.help()
 
 /**
  * Parse command line arguments and handle them.
@@ -51,7 +51,7 @@ yargs
  *
  * @see https://nodejs.org/dist/latest/docs/api/process.html#process_process_argv
  */
-yargs.parse();
+yargs.parse()
 
 /**
  * Display a notification if a newer version of this package is available to install.
@@ -67,5 +67,5 @@ yargs.parse();
  *
  * @see https://www.npmjs.com/package/update-notifier
  */
-const packageJson = require("../package.json");
-updateNotifier({ pkg: packageJson }).notify();
+const packageJson = require('../package.json')
+updateNotifier({ pkg: packageJson }).notify()

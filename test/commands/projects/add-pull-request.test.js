@@ -1,19 +1,18 @@
-const nock = require('nock');
-const commonTests = require("../../common-tests")
-const yargsModule = require("../../../src/commands/projects/add-pull-request")
+const nock = require('nock')
+const commonTests = require('../../common-tests')
+const yargsModule = require('../../../src/commands/projects/add-pull-request')
 
 // Don't let Octokit make network requests
-nock.disableNetConnect();
+nock.disableNetConnect()
 
 // Reset any mocked network endpoints
 nock.cleanAll()
 
-jest.spyOn(global.console, "warn");
-jest.spyOn(global.console, "log");
+jest.spyOn(global.console, 'warn')
+jest.spyOn(global.console, 'log')
 afterEach(() => {
-	jest.clearAllMocks();
-});
-
+	jest.clearAllMocks()
+})
 
 /**
  * Common Yargs tests
@@ -26,16 +25,15 @@ const requiredOptions = {
 }
 commonTests.describeYargs(yargsModule, commandGroup, command, requiredOptions)
 
-describe("Octokit", () => {
-
+describe('Octokit', () => {
 	// If this endpoint is not called, nock.isDone() will be false.
 	const successResponse = nock('https://api.github.com')
 		.post('/projects/columns/1/cards')
 		.reply(200)
 
-	test("Running the command handler triggers a network request of the GitHub API", async () => {
+	test('Running the command handler triggers a network request of the GitHub API', async () => {
 		await yargsModule.handler({
-			token: "test",
+			token: 'test',
 			column_id: 1,
 			pull_request_id: 1,
 		})
@@ -43,23 +41,24 @@ describe("Octokit", () => {
 	})
 })
 
-describe("Error output", () => {
-
+describe('Error output', () => {
 	// If this endpoint is not called, nock.isDone() will be false.
 	const errorResponse = nock('https://api.github.com')
 		.post('/projects/columns/1/cards')
 		.reply(422, {
-			"message": "Validation Failed",
-			"errors": [{
-				"resource": "MockResource",
-				"code": "custom",
-				"message": "This is a mock error message."
-			}],
+			message: 'Validation Failed',
+			errors: [
+				{
+					resource: 'MockResource',
+					code: 'custom',
+					message: 'This is a mock error message.',
+				},
+			],
 		})
 
-	test("Output error responses that are returned from network requests of the GitHub API", async () => {
+	test('Output error responses that are returned from network requests of the GitHub API', async () => {
 		const response = await yargsModule.handler({
-			token: "test",
+			token: 'test',
 			column_id: 1,
 			pull_request_id: 1,
 		})

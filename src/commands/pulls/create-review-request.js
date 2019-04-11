@@ -3,10 +3,10 @@
  * const result = await octokit.pulls.createReviewRequest({owner, repo, number, *reviewers, *team_reviewers})
  * /repos/:owner/:repo/pulls/:number/requested_reviewers
  */
-const flow = require("lodash.flow")
-const commonYargs = require("../../../lib/common-yargs")
-const printOutput = require("../../../lib/print-output")
-const authenticatedOctokit = require("../../../lib/octokit")
+const flow = require('lodash.flow')
+const commonYargs = require('../../../lib/common-yargs')
+const printOutput = require('../../../lib/print-output')
+const authenticatedOctokit = require('../../../lib/octokit')
 
 /**
  * yargs builder function.
@@ -15,13 +15,14 @@ const authenticatedOctokit = require("../../../lib/octokit")
  */
 const builder = yargs => {
 	const baseOptions = flow([
-		commonYargs.withToken,
-		commonYargs.withJson,
-		commonYargs.withOwner,
-		commonYargs.withRepo,
-		commonYargs.withNumber,
-		commonYargs.withReviewers,
-		commonYargs.withTeamReviewers,
+		// prettier-ignore
+		commonYargs.withToken(),
+		commonYargs.withJson(),
+		commonYargs.withOwner(),
+		commonYargs.withRepo(),
+		commonYargs.withNumber(),
+		commonYargs.withReviewers(),
+		commonYargs.withTeamReviewers(),
 	])
 
 	return baseOptions(yargs)
@@ -53,15 +54,14 @@ const handler = async ({ token, json, owner, repo, number, reviewers, team_revie
 		const octokit = await authenticatedOctokit({ personalAccessToken: token })
 		const result = await octokit.pulls.createReviewRequest(inputs)
 		printOutput({ json, resource: result })
-	}
-	catch (error) {
+	} catch (error) {
 		printOutput({ json, error })
 	}
 }
 
 module.exports = {
-	command: "create-review-request [options]",
-	desc: "Request a review for a pull request",
+	command: 'create-review-request [options]',
+	desc: 'Request a review for a pull request',
 	builder,
-	handler
+	handler,
 }

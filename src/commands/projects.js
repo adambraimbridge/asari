@@ -3,8 +3,8 @@
  * @see: https://github.com/yargs/yargs/blob/master/docs/advanced.md#commanddirdirectory-opts
  */
 exports.command = 'projects <command> [options]'
-exports.desc = 'Manage GitHub project boards'
-exports.builder = function (yargs) {
+exports.desc = 'Manage GitHub project boards.'
+exports.builder = function(yargs) {
 	return yargs.commandDir('projects')
 }
-exports.handler = function () { }
+exports.handler = function() {}

@@ -4,11 +4,11 @@
  * const result = await octokit.pulls.update({owner, repo, number, title, body, state, base, maintainer_can_modify})
  * /repos/:owner/:repo/pulls/:number
  */
-const flow = require("lodash.flow")
+const flow = require('lodash.flow')
 
-const commonYargs = require("../../../lib/common-yargs")
-const printOutput = require("../../../lib/print-output")
-const authenticatedOctokit = require("../../../lib/octokit")
+const commonYargs = require('../../../lib/common-yargs')
+const printOutput = require('../../../lib/print-output')
+const authenticatedOctokit = require('../../../lib/octokit')
 
 /**
  * yargs builder function.
@@ -17,11 +17,12 @@ const authenticatedOctokit = require("../../../lib/octokit")
  */
 const builder = yargs => {
 	const baseOptions = flow([
-		commonYargs.withToken,
-		commonYargs.withJson,
-		commonYargs.withOwner,
-		commonYargs.withRepo,
-		commonYargs.withNumber,
+		// prettier-ignore
+		commonYargs.withToken(),
+		commonYargs.withJson(),
+		commonYargs.withOwner(),
+		commonYargs.withRepo({ demandOption: true }),
+		commonYargs.withNumber({ demandOption: true }),
 	])
 	return baseOptions(yargs)
 }
@@ -42,21 +43,20 @@ const handler = async ({ token, json, owner, repo, number }) => {
 		owner,
 		repo,
 		number,
-		state: "closed",
+		state: 'closed',
 	}
 	try {
 		const octokit = await authenticatedOctokit({ personalAccessToken: token })
 		const result = await octokit.pulls.update(inputs)
 		printOutput({ json, resource: result })
-	}
-	catch (error) {
+	} catch (error) {
 		printOutput({ json, error })
 	}
 }
 
 module.exports = {
-	command: "close [options]",
-	desc: "Set the state of an existing pull request to `closed`",
+	command: 'close [options]',
+	desc: 'Set the state of an existing pull request to `closed`',
 	builder,
-	handler
+	handler,
 }

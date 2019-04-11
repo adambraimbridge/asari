@@ -1,5 +1,5 @@
 /* global expect */
-const yargs = require("yargs")
+const yargs = require('yargs')
 
 const commandModuleExportsObject = (yargsModule, commandGroup, command) => {
 	test(`The "${commandGroup} ${command}" command module exports an object that can be used by yargs`, () => {
@@ -21,7 +21,7 @@ const commandModuleCanLoad = (yargsModule, commandGroup, command) => {
 		expect(console.warn).not.toBeCalled()
 	})
 }
-const missingOptionWillThrow = (requiredOptions) => {
+const missingOptionWillThrow = (requiredOptions, commandGroup, command) => {
 	for (let option of Object.keys(requiredOptions)) {
 		test(`Running the command handler without '${option}' throws an error`, async () => {
 			expect.assertions(1)
@@ -33,20 +33,18 @@ const missingOptionWillThrow = (requiredOptions) => {
 					.map(option => `--${option} ${testOptions[option]}`)
 					.join(' ')
 
-				require('child_process')
-					.execSync(`./bin/github.js projects add-pull-request ${optionString}`)
-			}
-			catch (error) {
+				require('child_process').execSync(`./bin/github.js ${commandGroup} ${command} ${optionString}`)
+			} catch (error) {
 				expect(error.message).toEqual(expect.stringContaining(option))
 			}
 		})
 	}
 }
 const describeYargs = (yargsModule, commandGroup, command, requiredOptions) => {
-	describe("Yargs", () => {
+	describe('Yargs', () => {
 		commandModuleExportsObject(yargsModule, commandGroup, command)
 		commandModuleCanLoad(yargsModule, commandGroup, command)
-		missingOptionWillThrow(requiredOptions)
+		missingOptionWillThrow(requiredOptions, commandGroup, command)
 	})
 }
 module.exports = {

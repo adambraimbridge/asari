@@ -1,9 +1,9 @@
-const nock = require('nock');
-const commonTests = require("../../common-tests")
-const yargsModule = require("../../../src/commands/pulls/create")
+const nock = require('nock')
+const commonTests = require('../../common-tests')
+const yargsModule = require('../../../src/commands/pulls/create')
 
 // Don't let Octokit make network requests
-nock.disableNetConnect();
+nock.disableNetConnect()
 
 // Reset any mocked network endpoints
 nock.cleanAll()
@@ -12,11 +12,11 @@ jest.mock('fs', () => ({
 	existsSync: jest.fn().mockReturnValue(true),
 	readFileSync: jest.fn().mockReturnValue(true),
 }))
-jest.spyOn(global.console, "warn");
-jest.spyOn(global.console, "log");
+jest.spyOn(global.console, 'warn')
+jest.spyOn(global.console, 'log')
 afterEach(() => {
-	jest.clearAllMocks();
-});
+	jest.clearAllMocks()
+})
 
 /**
  * Common Yargs tests
@@ -24,58 +24,58 @@ afterEach(() => {
 const commandGroup = 'pulls'
 const command = 'create'
 const requiredOptions = {
-	owner: "test",
-	repo: "test",
-	title: "test",
-	head: "test",
+	owner: 'test',
+	repo: 'test',
+	title: 'test',
+	head: 'test',
 }
 commonTests.describeYargs(yargsModule, commandGroup, command, requiredOptions)
 
-describe("Octokit", () => {
-
+describe('Octokit', () => {
 	// If this endpoint is not called, nock.isDone() will be false.
 	const successResponse = nock('https://api.github.com')
 		.post('/repos/test/test/pulls')
 		.reply(200, {})
 
-	test("running the command handler triggers a network request of the GitHub API", async () => {
+	test('running the command handler triggers a network request of the GitHub API', async () => {
 		await yargsModule.handler({
-			token: "test",
-			body: "test",
-			owner: "test",
-			repo: "test",
-			title: "test",
-			head: "test",
-			base: "test",
+			token: 'test',
+			body: 'test',
+			owner: 'test',
+			repo: 'test',
+			title: 'test',
+			head: 'test',
+			base: 'test',
 		})
 		expect(successResponse.isDone()).toBe(true)
 	})
 })
 
-describe("Error output", () => {
-
+describe('Error output', () => {
 	// If this endpoint is not called, nock.isDone() will be false.
 	const errorResponse = nock('https://api.github.com')
 		.post('/repos/error/error/pulls')
 		.reply(422, {
-			"message": "Validation Failed",
-			"errors": [{
-				"resource": "PullRequest",
-				"code": "custom",
-				"message": "A pull request already exists for error:error."
-			}],
-			"documentation_url": "https://developer.github.com/v3/pulls/#create-a-pull-request"
+			message: 'Validation Failed',
+			errors: [
+				{
+					resource: 'PullRequest',
+					code: 'custom',
+					message: 'A pull request already exists for error:error.',
+				},
+			],
+			documentation_url: 'https://developer.github.com/v3/pulls/#create-a-pull-request',
 		})
 
-	test("Output error responses that are returned from network requests of the GitHub API", async () => {
+	test('Output error responses that are returned from network requests of the GitHub API', async () => {
 		await yargsModule.handler({
-			token: "error",
-			body: "error",
-			owner: "error",
-			repo: "error",
-			title: "error",
-			head: "error",
-			base: "error",
+			token: 'error',
+			body: 'error',
+			owner: 'error',
+			repo: 'error',
+			title: 'error',
+			head: 'error',
+			base: 'error',
 		})
 		expect(errorResponse.isDone()).toBe(true)
 		expect(console.log).toBeCalledWith(expect.stringMatching(/error/i))

@@ -20,12 +20,12 @@
  * const result = await octokit.projects.createForRepo({owner, repo, name, body, per_page, page})
  * /repos/:owner/:repo/projects
  */
-const flow = require("lodash.flow")
-const fs = require("fs")
+const flow = require('lodash.flow')
+const fs = require('fs')
 
-const commonYargs = require("../../../lib/common-yargs")
-const printOutput = require("../../../lib/print-output")
-const authenticatedOctokit = require("../../../lib/octokit")
+const commonYargs = require('../../../lib/common-yargs')
+const printOutput = require('../../../lib/print-output')
+const authenticatedOctokit = require('../../../lib/octokit')
 
 /**
  * yargs builder function.
@@ -34,19 +34,19 @@ const authenticatedOctokit = require("../../../lib/octokit")
  */
 const builder = yargs => {
 	const baseOptions = flow([
-		commonYargs.withToken,
-		commonYargs.withJson,
-		commonYargs.withOwner, // This is either an organisation or a user
-		commonYargs.withRepo,
-		commonYargs.withBody,
-		commonYargs.withAccountType,
+		// prettier-ignore
+		commonYargs.withToken(),
+		commonYargs.withJson(),
+		commonYargs.withOwner(), // This is either an organisation or a user
+		commonYargs.withRepo(),
+		commonYargs.withBody(),
+		commonYargs.withAccountType(),
 	])
-	return baseOptions(yargs)
-		.option('name', {
-			describe: 'Project name',
-			demandOption: true,
-			type: 'string'
-		})
+	return baseOptions(yargs).option('name', {
+		describe: 'Project name',
+		demandOption: true,
+		type: 'string',
+	})
 }
 
 /**
@@ -63,13 +63,12 @@ const builder = yargs => {
  * @throws {Error} - Throws an error if any required properties are invalid
  */
 const handler = async ({ token, json, owner, repo, name, body, account_type }) => {
-
 	// Confirm that the required file exists
 	const correctFilePath = fs.existsSync(body)
 	if (!correctFilePath) {
 		throw new Error(`File path ${body} not found`)
 	}
-	const bodyContent = fs.readFileSync(body, "utf8")
+	const bodyContent = fs.readFileSync(body, 'utf8')
 	const inputs = {
 		owner,
 		name,
@@ -102,21 +101,20 @@ const handler = async ({ token, json, owner, repo, name, body, account_type }) =
 		const projectWithColumns = {
 			project: project,
 			columns: {
-				todo: await octokit.projects.createColumn({ project_id, name: "To do" }),
-				doing: await octokit.projects.createColumn({ project_id, name: "In progress" }),
-				done: await octokit.projects.createColumn({ project_id, name: "Done" }),
+				todo: await octokit.projects.createColumn({ project_id, name: 'To do' }),
+				doing: await octokit.projects.createColumn({ project_id, name: 'In progress' }),
+				done: await octokit.projects.createColumn({ project_id, name: 'Done' }),
 			},
-		};
+		}
 		printOutput({ json, resource: projectWithColumns })
-	}
-	catch (error) {
+	} catch (error) {
 		printOutput({ json, error })
 	}
 }
 
 module.exports = {
-	command: "create [options]",
-	desc: "Create a new project",
+	command: 'create [options]',
+	desc: 'Create a new project',
 	builder,
-	handler
+	handler,
 }

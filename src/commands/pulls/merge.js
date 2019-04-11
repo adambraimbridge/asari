@@ -3,10 +3,10 @@
  * const result = await octokit.pulls.merge({ owner, repo, number, *commit_title, *commit_message, *sha, *merge_method})
  * /repos/:owner/:repo/pulls/:number/merge
  */
-const flow = require("lodash.flow")
-const commonYargs = require("../../../lib/common-yargs")
-const printOutput = require("../../../lib/print-output")
-const authenticatedOctokit = require("../../../lib/octokit")
+const flow = require('lodash.flow')
+const commonYargs = require('../../../lib/common-yargs')
+const printOutput = require('../../../lib/print-output')
+const authenticatedOctokit = require('../../../lib/octokit')
 
 /**
  * yargs builder function.
@@ -15,31 +15,32 @@ const authenticatedOctokit = require("../../../lib/octokit")
  */
 const builder = yargs => {
 	const baseOptions = flow([
-		commonYargs.withToken,
-		commonYargs.withJson,
-		commonYargs.withBase,
-		commonYargs.withOwner,
-		commonYargs.withRepo,
-		commonYargs.withNumber,
+		// prettier-ignore
+		commonYargs.withToken(),
+		commonYargs.withJson(),
+		commonYargs.withBase(),
+		commonYargs.withOwner(),
+		commonYargs.withRepo(),
+		commonYargs.withNumber(),
 	])
 	return baseOptions(yargs)
-		.option("commit_title", {
-			alias: "t",
-			describe: "Pull request commit title",
-			type: "string"
+		.option('commit_title', {
+			alias: 't',
+			describe: 'Pull request commit title',
+			type: 'string',
 		})
-		.option("commit_message", {
-			alias: "m",
-			describe: "Pull request commit message",
-			type: "string"
+		.option('commit_message', {
+			alias: 'm',
+			describe: 'Pull request commit message',
+			type: 'string',
 		})
-		.option("sha", {
-			describe: "SHA that the pull request head must match to allow merge",
-			type: "string"
+		.option('sha', {
+			describe: 'SHA that the pull request head must match to allow merge',
+			type: 'string',
 		})
-		.option("merge_method", {
-			describe: "Merge method to use. Possible values are merge, squash or rebase. Default is merge.",
-			type: "string"
+		.option('merge_method', {
+			describe: 'Merge method to use. Possible values are merge, squash or rebase. Default is merge.',
+			type: 'string',
 		})
 }
 
@@ -72,15 +73,14 @@ const handler = async ({ token, json, owner, repo, number, commit_title, commit_
 		const octokit = await authenticatedOctokit({ personalAccessToken: token })
 		const result = await octokit.pulls.merge(inputs)
 		printOutput({ json, resource: result })
-	}
-	catch (error) {
+	} catch (error) {
 		printOutput({ json, error })
 	}
 }
 
 module.exports = {
-	command: "merge [options]",
-	desc: "Merge an existing pull request",
+	command: 'merge [options]',
+	desc: 'Merge an existing pull request',
 	builder,
-	handler
+	handler,
 }

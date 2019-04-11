@@ -18,20 +18,21 @@ const authenticatedOctokit = require('../../../lib/octokit')
  */
 const builder = yargs => {
 	const baseOptions = flow([
-		commonYargs.withToken,
-		commonYargs.withJson,
+		// prettier-ignore
+		commonYargs.withToken(),
+		commonYargs.withJson(),
 	])
 	return baseOptions(yargs)
 		.option('column_id', {
 			describe: 'Project column ID',
 			demandOption: true,
-			type: 'number'
+			type: 'number',
 		})
 		.option('pull_request_id', {
 			describe: 'Pull request ID',
 			demandOption: true,
-			type: 'number'
-		});
+			type: 'number',
+		})
 }
 
 /**
@@ -49,14 +50,13 @@ const handler = async ({ token, json, column_id, pull_request_id }) => {
 		column_id,
 		pull_request_id,
 		content_id: pull_request_id,
-		content_type: 'PullRequest'
+		content_type: 'PullRequest',
 	}
 	try {
 		const octokit = await authenticatedOctokit({ personalAccessToken: token })
 		const result = await octokit.projects.createCard(inputs)
 		printOutput({ json, resource: result.data })
-	}
-	catch (error) {
+	} catch (error) {
 		printOutput({ json, error })
 	}
 }
@@ -65,5 +65,5 @@ module.exports = {
 	command: 'add-pull-request [options]',
 	desc: 'Add a pull request to a GitHub project column',
 	builder,
-	handler
+	handler,
 }

@@ -1,0 +1,11 @@
+{
+  "prettier.useTabs": true,
+  "prettier.tslintIntegration": true,
+  "prettier.trailingComma": "es5",
+  "prettier.stylelintIntegration": true,
+  "prettier.singleQuote": true,
+  "prettier.semi": false,
+  "prettier.eslintIntegration": true,
+  "prettier.printWidth": 800,
+  "editor.wordWrapColumn": 800
+}

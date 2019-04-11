@@ -37,12 +37,13 @@ const authenticatedOctokit = require('../../../lib/octokit')
  */
 const builder = yargs => {
 	const baseOptions = flow([
-		commonYargs.withToken,
-		commonYargs.withJson,
-		commonYargs.withOwner, // This is either an organisation or a user
-		commonYargs.withRepo,
-		commonYargs.withNumber,
-		commonYargs.withAccountType,
+		// prettier-ignore
+		commonYargs.withToken(),
+		commonYargs.withJson(),
+		commonYargs.withOwner({ demandOption: true }), // This is either an organisation or a user
+		commonYargs.withRepo(),
+		commonYargs.withNumber(),
+		commonYargs.withAccountType({ demandOption: true }),
 	])
 	return baseOptions(yargs)
 }
@@ -53,9 +54,10 @@ const builder = yargs => {
  * @param {*} number
  * @param {*} projects
  */
-const getProject = (number, projects) => projects.data.find(project => {
-	return project.number === number
-})
+const getProject = (number, projects) =>
+	projects.data.find(project => {
+		return project.number === number
+	})
 
 /**
  * Update a project board to 'status: closed'.
@@ -113,8 +115,7 @@ const handler = async ({ token, json, owner, repo, number, account_type }) => {
 		})
 		const { html_url, state } = result.data
 		printOutput({ json, resource: { html_url, state } })
-	}
-	catch (error) {
+	} catch (error) {
 		printOutput({ json, error })
 	}
 }
@@ -123,5 +124,5 @@ module.exports = {
 	command: 'close [options]',
 	desc: 'Set the state of an existing project board to `closed`',
 	builder,
-	handler
+	handler,
 }

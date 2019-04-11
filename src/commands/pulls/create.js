@@ -3,12 +3,12 @@
  * const result = await octokit.pulls.create({owner, repo, title, head, base, *body, *maintainer_can_modify})
  * /repos/:owner/:repo/pulls
  */
-const flow = require("lodash.flow")
-const fs = require("fs")
+const flow = require('lodash.flow')
+const fs = require('fs')
 
-const commonYargs = require("../../../lib/common-yargs")
-const printOutput = require("../../../lib/print-output")
-const authenticatedOctokit = require("../../../lib/octokit")
+const commonYargs = require('../../../lib/common-yargs')
+const printOutput = require('../../../lib/print-output')
+const authenticatedOctokit = require('../../../lib/octokit')
 
 /**
  * yargs builder function.
@@ -17,23 +17,23 @@ const authenticatedOctokit = require("../../../lib/octokit")
  */
 const builder = yargs => {
 	const baseOptions = flow([
-		commonYargs.withToken,
-		commonYargs.withJson,
-		commonYargs.withBase,
-		commonYargs.withOwner,
-		commonYargs.withRepo,
-		commonYargs.withReviewers,
-		commonYargs.withTeamReviewers,
-		commonYargs.withBody,
-		commonYargs.withTitle,
+		// prettier-ignore
+		commonYargs.withToken(),
+		commonYargs.withJson(),
+		commonYargs.withBase(),
+		commonYargs.withOwner(),
+		commonYargs.withRepo(),
+		commonYargs.withReviewers(),
+		commonYargs.withTeamReviewers(),
+		commonYargs.withBody(),
+		commonYargs.withTitle(),
 	])
 
-	return baseOptions(yargs)
-		.option("head", {
-			describe: "The name of the branch where your changes are implemented.",
-			demandOption: true,
-			type: "string"
-		})
+	return baseOptions(yargs).option('head', {
+		describe: 'The name of the branch where your changes are implemented.',
+		demandOption: true,
+		type: 'string',
+	})
 }
 
 /**
@@ -51,13 +51,12 @@ const builder = yargs => {
  * @throws {Error} - Throws an error if any required properties are invalid
  */
 const handler = async ({ token, json, base, body, owner, repo, title, head }) => {
-
 	// Confirm that the required file exists
 	const correctFilePath = fs.existsSync(body)
 	if (!correctFilePath) {
 		throw new Error(`File path ${body} not found`)
 	}
-	const bodyContent = fs.readFileSync(body, "utf8")
+	const bodyContent = fs.readFileSync(body, 'utf8')
 	const inputs = {
 		body: bodyContent,
 		owner,
@@ -70,15 +69,14 @@ const handler = async ({ token, json, base, body, owner, repo, title, head }) =>
 		const octokit = await authenticatedOctokit({ personalAccessToken: token })
 		const result = await octokit.pulls.create(inputs)
 		printOutput({ json, resource: result })
-	}
-	catch (error) {
+	} catch (error) {
 		printOutput({ json, error })
 	}
 }
 
 module.exports = {
-	command: "create [options]",
-	desc: "Create a new pull request",
+	command: 'create [options]',
+	desc: 'Create a new pull request',
 	builder,
-	handler
+	handler,
 }
