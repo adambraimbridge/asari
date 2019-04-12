@@ -1,3 +1,4 @@
+const { fs, vol } = require('memfs')
 const nock = require('nock')
 const commonTests = require('../../common-tests')
 const yargsModule = require('../../../src/commands/pulls/delete-review-request')
@@ -10,6 +11,8 @@ nock.disableNetConnect()
 
 jest.spyOn(global.console, 'warn')
 afterEach(() => {
+	vol.reset()
+	fs.access.mockReset()
 	jest.clearAllMocks()
 })
 

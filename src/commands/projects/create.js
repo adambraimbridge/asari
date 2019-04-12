@@ -1,23 +1,22 @@
 /**
  * There are three "create" endpoints for projects in the Octokit API. This command combines them into one.
  *
- * If the `account_type` is "user", it creates a user project board.
- * If the `account_type` is "org", it creates an organization project board.
- * If the `account_type` is "repo", it creates a repository project board. This type requres a `repo` argument.
+ * This command accepts a `--url` parameter.
+ * It figures out from the URL whether it's for an organisation, repository or user.
  *
  * @see: https://octokit.github.io/rest.js/#api-Projects-createForAuthenticatedUser
  * Creates an user project board. Returns a 404 Not Found status if projects are disabled for the user.
- * const result = await octokit.projects.createForAuthenticatedUser({name, body, per_page, page})
+ * const result = await octokit.projects.createForAuthenticatedUser({name, [body], [per_page], [page]})
  * /user/projects
  *
  * @see: https://octokit.github.io/rest.js/#api-Projects-createForOrg
  * Creates an organization project board. Returns a 404 Not Found status if projects are disabled in the organization.
- * const result = await octokit.projects.createForOrg({org, name, body, per_page, page})
+ * const result = await octokit.projects.createForOrg({org, name, [body], [per_page], [page]})
  * /orgs/:org/projects
  *
  * @see: https://octokit.github.io/rest.js/#api-Projects-createForRepo
  * Creates a repository project board. Returns a 404 Not Found status if projects are disabled in the repository.
- * const result = await octokit.projects.createForRepo({owner, repo, name, body, per_page, page})
+ * const result = await octokit.projects.createForRepo({owner, repo, name, [body], [per_page], [page]})
  * /repos/:owner/:repo/projects
  */
 const flow = require('lodash.flow')
@@ -37,10 +36,10 @@ const builder = yargs => {
 		// prettier-ignore
 		commonYargs.withToken(),
 		commonYargs.withJson(),
-		commonYargs.withOwner(), // This is either an organisation or a user
+		commonYargs.withGitHubUrl(),
+		commonYargs.withOwner({ demandOption: true }), // This is either an organisation or a user
 		commonYargs.withRepo(),
 		commonYargs.withBody(),
-		commonYargs.withAccountType(),
 	])
 	return baseOptions(yargs).option('name', {
 		describe: 'Project name',

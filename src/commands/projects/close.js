@@ -42,7 +42,7 @@ const builder = yargs => {
 		commonYargs.withJson(),
 		commonYargs.withOwner({ demandOption: true }), // This is either an organisation or a user
 		commonYargs.withRepo(),
-		commonYargs.withNumber(),
+		commonYargs.withNumber({ demandOption: true }),
 		commonYargs.withAccountType({ demandOption: true }),
 	])
 	return baseOptions(yargs)

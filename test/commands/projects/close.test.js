@@ -1,3 +1,4 @@
+const { fs, vol } = require('memfs')
 const nock = require('nock')
 const commonTests = require('../../common-tests')
 const yargsModule = require('../../../src/commands/projects/close')
@@ -8,9 +9,16 @@ nock.disableNetConnect()
 // Reset any mocked network endpoints
 nock.cleanAll()
 
+jest.mock('fs', () => {
+	const { fs } = require('memfs')
+	jest.spyOn(fs, 'access')
+	return fs
+})
 jest.spyOn(global.console, 'warn')
 jest.spyOn(global.console, 'log')
 afterEach(() => {
+	vol.reset()
+	fs.access.mockReset()
 	jest.clearAllMocks()
 })
 

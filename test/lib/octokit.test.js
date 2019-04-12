@@ -1,3 +1,4 @@
+const { fs, vol } = require('memfs')
 const nock = require('nock')
 const authenticatedOctokit = require('../../lib/octokit')
 
