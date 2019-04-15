@@ -39,9 +39,9 @@ const handler = async (argv) => {
 		const octokit = await authenticatedOctokit({ personalAccessToken: argv.token });
 
 		const result = await octokit.pulls.merge({
-			owner: argv.pr.owner,
-			repo: argv.pr.repo,
-			pull_number: argv.pr.number,
+			owner: argv.pullRequest.owner,
+			repo: argv.pullRequest.repo,
+			pull_number: argv.pullRequest.number,
 			merge_method: argv.method,
 		});
 
@@ -52,7 +52,7 @@ const handler = async (argv) => {
 }
 
 module.exports = {
-	command: "merge <pr>",
+	command: "merge <pull-request>",
 	desc: "Merge an existing pull request",
 	builder,
 	handler

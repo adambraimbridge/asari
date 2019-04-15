@@ -39,7 +39,7 @@ describe("Yargs", () => {
 		try {
 			const testOptions = {
 				token: "test",
-				pr: "foo-bar",
+				pullRequest: "foo-bar",
 			};
 			await yargsModule.handler(testOptions)
 		} catch (error) {
@@ -49,7 +49,7 @@ describe("Yargs", () => {
 
 	const requiredOptions = {
 		token: "test",
-		pr: "https://github.com/test/test/",
+		pullRequest: "https://github.com/test/test/",
 	}
 	for (let option of Object.keys(requiredOptions)) {
 		test(`Running the command handler without '${option}' throws an error`, async () => {
@@ -75,7 +75,7 @@ describe("Octokit", () => {
 	test("running the command handler triggers a network request of the GitHub API", async () => {
 		await yargsModule.handler({
 			token: "test",
-			pr: {
+			pullRequest: {
 				owner: "test",
 				repo: "test",
 				number: 1
