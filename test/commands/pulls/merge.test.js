@@ -34,11 +34,22 @@ describe("Yargs", () => {
 		expect(console.warn).not.toBeCalled()
 	})
 
+	test("an invalid pull request URL errors", async () => {
+		expect.assertions(1)
+		try {
+			const testOptions = {
+				token: "test",
+				pr: "foo-bar",
+			};
+			await yargsModule.handler(testOptions)
+		} catch (error) {
+			expect(error).toBeInstanceOf(Error)
+		}
+	})
+
 	const requiredOptions = {
 		token: "test",
-		owner: "test",
-		repo: "test",
-		number: "test",
+		pr: "https://github.com/test/test/",
 	}
 	for (let option of Object.keys(requiredOptions)) {
 		test(`Running the command handler without '${option}' throws an error`, async () => {
@@ -55,7 +66,6 @@ describe("Yargs", () => {
 })
 
 describe("Octokit", () => {
-
 	// If this endpoint is not called, nock.isDone() will be false.
 	nock('https://api.github.com')
 		.persist()
@@ -65,9 +75,11 @@ describe("Octokit", () => {
 	test("running the command handler triggers a network request of the GitHub API", async () => {
 		await yargsModule.handler({
 			token: "test",
-			owner: "test",
-			repo: "test",
-			number: 1,
+			pr: {
+				owner: "test",
+				repo: "test",
+				number: 1
+			},
 		})
 		expect(nock.isDone()).toBe(true)
 	})
