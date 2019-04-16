@@ -5,17 +5,14 @@
  * It figures out from the URL whether it's for an organisation, repository or user.
  *
  * @see: https://octokit.github.io/rest.js/#api-Projects-createForAuthenticatedUser
- * Creates an user project board. Returns a 404 Not Found status if projects are disabled for the user.
  * const result = await octokit.projects.createForAuthenticatedUser({name, [body], [per_page], [page]})
  * /user/projects
  *
  * @see: https://octokit.github.io/rest.js/#api-Projects-createForOrg
- * Creates an organization project board. Returns a 404 Not Found status if projects are disabled in the organization.
  * const result = await octokit.projects.createForOrg({org, name, [body], [per_page], [page]})
  * /orgs/:org/projects
  *
  * @see: https://octokit.github.io/rest.js/#api-Projects-createForRepo
- * Creates a repository project board. Returns a 404 Not Found status if projects are disabled in the repository.
  * const result = await octokit.projects.createForRepo({owner, repo, name, [body], [per_page], [page]})
  * /repos/:owner/:repo/projects
  */
@@ -36,9 +33,7 @@ const builder = yargs => {
 		// prettier-ignore
 		commonYargs.withToken(),
 		commonYargs.withJson(),
-		commonYargs.withGitHubUrl(),
-		commonYargs.withOwner({ demandOption: true }), // This is either an organisation or a user
-		commonYargs.withRepo(),
+		commonYargs.withGitHubUrl({ demandOption: true }),
 		commonYargs.withBody(),
 	])
 	return baseOptions(yargs).option('name', {
@@ -54,45 +49,47 @@ const builder = yargs => {
  * @param {object} argv - argv parsed and filtered by yargs
  * @param {string} argv.token
  * @param {string} argv.json
- * @param {string} argv.owner
- * @param {string} argv.repo
+ * @param {string} argv.githubUrl
  * @param {string} argv.name
  * @param {string} argv.body
- * @param {string} argv.account_type
  * @throws {Error} - Throws an error if any required properties are invalid
  */
-const handler = async ({ token, json, owner, repo, name, body, account_type }) => {
-	// Confirm that the required file exists
-	const correctFilePath = fs.existsSync(body)
-	if (!correctFilePath) {
-		throw new Error(`File path ${body} not found`)
+const handler = async ({ token, json, name, body, githubUrl }) => {
+	// The file indicated by `body` has already been tested for readability in common-yargs, but double-check anyway.
+	let bodyContent
+	try {
+		bodyContent = fs.readFileSync(body, 'utf8')
+	} catch (error) {
+		bodyContent = ''
 	}
-	const bodyContent = fs.readFileSync(body, 'utf8')
 	const inputs = {
-		owner,
 		name,
 		body: bodyContent,
-		account_type,
 	}
 	try {
 		const octokit = await authenticatedOctokit({ personalAccessToken: token })
 
+		// Detect the `owner` and `repo` from the GitHub `url`.
+		// See: https://github.com/Financial-Times/ebi/blob/master/lib/github-helpers.js
+		const parts = githubUrl.split('/')
+		console.error(parts, bodyContent)
+
 		let project
-		switch (account_type) {
-			case 'user':
-				project = await octokit.projects.createForAuthenticatedUser(inputs)
-				break
-			case 'repo':
-				inputs.repo = repo
-				project = await octokit.projects.createForRepo(inputs)
-				break
-			case 'org':
-				inputs.org = owner
-				project = await octokit.projects.createForOrg(inputs)
-				break
-			default:
-				throw new Error("Please provide a GitHub `account_type`. Either 'user', 'org' (Organisation) or 'repo' (Repository).")
-		}
+		// switch (account_type) {
+		// 	case 'user':
+		// 		project = await octokit.projects.createForAuthenticatedUser(inputs)
+		// 		break
+		// 	case 'repo':
+		// 		inputs.repo = repo
+		// 		project = await octokit.projects.createForRepo(inputs)
+		// 		break
+		// 	case 'org':
+		// 		inputs.org = owner
+		// 		project = await octokit.projects.createForOrg(inputs)
+		// 		break
+		// 	default:
+		// 		throw new Error("Please provide a GitHub `account_type`. Either 'user', 'org' (Organisation) or 'repo' (Repository).")
+		// }
 
 		const { project_id } = project.data
 
