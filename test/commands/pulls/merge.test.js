@@ -1,4 +1,3 @@
-const { fs, vol } = require('memfs')
 const nock = require('nock')
 const commonTests = require('../../common-tests')
 const yargsModule = require('../../../src/commands/pulls/merge')
@@ -11,7 +10,6 @@ nock.cleanAll()
 
 jest.spyOn(global.console, 'warn')
 afterEach(() => {
-	vol.reset()
 	fs.access.mockReset()
 	jest.clearAllMocks()
 })
@@ -22,13 +20,25 @@ afterEach(() => {
 const commandGroup = 'pulls'
 const command = 'merge'
 const requiredOptions = {
-	owner: 'test',
-	repo: 'test',
-	number: 'test',
+	token: 'test',
+	pullRequest: 'https://github.com/test/test/',
 }
 commonTests.describeYargs(yargsModule, commandGroup, command, requiredOptions)
 
 describe('Octokit', () => {
+	test('an invalid pull request URL errors', async () => {
+		expect.assertions(1)
+		try {
+			const testOptions = {
+				token: 'test',
+				pullRequest: 'foo-bar',
+			}
+			await yargsModule.handler(testOptions)
+		} catch (error) {
+			expect(error).toBeInstanceOf(Error)
+		}
+	})
+
 	// If this endpoint is not called, nock.isDone() will be false.
 	const successResponse = nock('https://api.github.com')
 		.put('/repos/test/test/pulls/1/merge')
@@ -37,9 +47,11 @@ describe('Octokit', () => {
 	test('running the command handler triggers a network request of the GitHub API', async () => {
 		await yargsModule.handler({
 			token: 'test',
-			owner: 'test',
-			repo: 'test',
-			number: 1,
+			pullRequest: {
+				owner: 'test',
+				repo: 'test',
+				number: 1,
+			},
 		})
 		expect(successResponse.isDone()).toBe(true)
 	})
