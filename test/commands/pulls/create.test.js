@@ -1,4 +1,3 @@
-const { fs, vol } = require('memfs')
 const nock = require('nock')
 const commonTests = require('../../common-tests')
 const yargsModule = require('../../../src/commands/pulls/create')
@@ -9,16 +8,9 @@ nock.disableNetConnect()
 // Reset any mocked network endpoints
 nock.cleanAll()
 
-jest.mock('fs', () => {
-	const { fs } = require('memfs');
-	jest.spyOn(fs, 'access');
-	return fs;
-});
 jest.spyOn(global.console, 'warn')
 jest.spyOn(global.console, 'log')
 afterEach(() => {
-	vol.reset()
-	fs.access.mockReset()
 	jest.clearAllMocks()
 })
 
@@ -42,9 +34,6 @@ describe('Octokit', () => {
 		.reply(200, {})
 
 	test('running the command handler triggers a network request of the GitHub API', async () => {
-		vol.fromJSON({
-			'body.txt': ''
-		})
 		await yargsModule.handler({
 			token: 'test',
 			body: 'body.txt',
@@ -75,9 +64,6 @@ describe('Error output', () => {
 		})
 
 	test('Output error responses that are returned from network requests of the GitHub API', async () => {
-		vol.fromJSON({
-			'body.txt': ''
-		})
 		await yargsModule.handler({
 			token: 'error',
 			body: 'body.txt',

@@ -14,7 +14,12 @@ const authenticatedOctokit = require('../../../lib/octokit')
  * @param {import('yargs').Yargs} yargs - Instance of yargs
  */
 const builder = yargs => {
-	const baseOptions = flow([commonYargs.withToken, commonYargs.withJson, commonYargs.withPullRequest])
+	const baseOptions = flow([
+		// prettier-ignore
+		commonYargs.withToken(),
+		commonYargs.withJson(),
+		commonYargs.withPullRequest(),
+	])
 
 	return baseOptions(yargs).option('method', {
 		describe: 'Merge method to use.',
