@@ -20,8 +20,8 @@ afterEach(() => {
 const commandGroup = 'projects'
 const command = 'add-pull-request'
 const requiredOptions = {
-	column_id: 1,
-	pull_request_id: 1,
+	'column-id': 1,
+	'pull-request-id': 1,
 }
 commonTests.describeYargs(yargsModule, commandGroup, command, requiredOptions)
 
@@ -34,8 +34,8 @@ describe('Octokit', () => {
 	test('Running the command handler triggers a network request of the GitHub API', async () => {
 		await yargsModule.handler({
 			token: 'test',
-			column_id: 1,
-			pull_request_id: 1,
+			columnId: 1,
+			pullRequestId: 1,
 		})
 		expect(successResponse.isDone()).toBe(true)
 	})
@@ -57,10 +57,10 @@ describe('Error output', () => {
 		})
 
 	test('Output error responses that are returned from network requests of the GitHub API', async () => {
-		const response = await yargsModule.handler({
+		await yargsModule.handler({
 			token: 'test',
-			column_id: 1,
-			pull_request_id: 1,
+			columnId: 1,
+			pullRequestId: 1,
 		})
 		expect(errorResponse.isDone()).toBe(true)
 		expect(console.log).toBeCalledWith(expect.stringMatching(/error/i))

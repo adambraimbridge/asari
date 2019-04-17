@@ -8,6 +8,7 @@
 const flow = require('lodash.flow')
 
 const commonYargs = require('../../../lib/common-yargs')
+const parseGitHubURL = require('../../../lib/parse-github-url')
 const printOutput = require('../../../lib/print-output')
 const authenticatedOctokit = require('../../../lib/octokit')
 
@@ -22,17 +23,28 @@ const builder = yargs => {
 		commonYargs.withToken(),
 		commonYargs.withJson(),
 	])
-	return baseOptions(yargs)
-		.option('column_id', {
-			describe: 'Project column ID',
-			demandOption: true,
-			type: 'number',
-		})
-		.option('pull_request_id', {
-			describe: 'Pull request ID',
-			demandOption: true,
-			type: 'number',
-		})
+	return (
+		baseOptions(yargs)
+			.option('column-id', {
+				describe: 'Project column ID (Either a number OR a GitHub URL that contains the column ID)',
+				demandOption: true,
+			})
+			.option('pull-request-id', {
+				describe: 'Pull request ID (Either a number OR a GitHub URL that contains the pull request ID)',
+				demandOption: true,
+			})
+			/**
+			 * Allow either integers or GitHub URLs.
+			 */
+			.coerce(['column-id', 'pull-request-id'], arg => {
+				const number = Number(arg)
+				if (Number.isInteger(number)) {
+					return arg
+				} else {
+					return parseGitHubURL(arg).value
+				}
+			})
+	)
 }
 
 /**
@@ -41,15 +53,13 @@ const builder = yargs => {
  * @param {object} argv - argv parsed and filtered by yargs
  * @param {string} argv.token
  * @param {string} argv.json
- * @param {number} argv.column_id
- * @param {number} argv.pull_request_id
- * @throws {Error} - Throws an error if any required properties are invalid
+ * @param {number} argv.columnId
+ * @param {number} argv.pullRequestId
  */
-const handler = async ({ token, json, column_id, pull_request_id }) => {
+const handler = async ({ token, json, columnId, pullRequestId }) => {
 	const inputs = {
-		column_id,
-		pull_request_id,
-		content_id: pull_request_id,
+		column_id: columnId,
+		content_id: pullRequestId,
 		content_type: 'PullRequest',
 	}
 	try {
