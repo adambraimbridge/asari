@@ -1,26 +1,22 @@
 /**
- * @see: https://octokit.github.io/rest.js/#api-Projects-update
+ * @see: https://octokit.github.io/rest.js/#octokit-routes-projects-update
  * There is no 'closed' endpoint in the Octokit API. We use 'update' with a `state` of 'closed'.
  * const result = await octokit.projects.update({project_id, name, body, state, organization_permission, private, per_page, page})
  * /projects/:project_id
  *
  * There are three 'list' endpoints for projects in the Octokit API.
  * This command uses one of these list endpoints to get all projects for `account_type`.
- * Then it can get the ID of the relevant project board, from that list.
+ * Then, from that list, it can get the ID of the relevant project board.
  *
- * If the `account_type` is 'user', it lists a user's project boards.
- * If the `account_type` is 'org', it lists a organization's project boards.
- * If the `account_type` is 'repo', it lists a repository's project boards. This type requres a `repo` argument.
- *
- * @see: https://octokit.github.io/rest.js/#api-Projects-listForUser
+ * @see: https://octokit.github.io/rest.js/#octokit-routes-projects-list-for-user
  * const result = await octokit.projects.listForUser({username, state, per_page, page})
  * /users/:username/projects
  *
- * @see: https://octokit.github.io/rest.js/#api-Projects-listForOrg
+ * @see: https://octokit.github.io/rest.js/#octokit-routes-projects-list-for-org
  * const result = await octokit.projects.listForOrg({org, state, per_page, page})
  * /orgs/:org/projects
  *
- * @see: https://octokit.github.io/rest.js/#api-Projects-listForRepo
+ * @see: https://octokit.github.io/rest.js/#octokit-routes-projects-list-for-repo
  * const result = await octokit.projects.listForRepo({owner, repo, state, per_page, page})
  * /repos/:owner/:repo/projects
  */
@@ -40,10 +36,10 @@ const builder = yargs => {
 		// prettier-ignore
 		commonYargs.withToken(),
 		commonYargs.withJson(),
-		commonYargs.withOwner({ demandOption: true }), // This is either an organisation or a user
-		commonYargs.withRepo(),
-		commonYargs.withNumber({ demandOption: true }),
-		commonYargs.withAccountType({ demandOption: true }),
+		commonYargs.withGitHubUrl({
+			demandOption: true,
+			alias: ['project-url', 'p'],
+		}),
 	])
 	return baseOptions(yargs)
 }
@@ -65,20 +61,21 @@ const getProject = (number, projects) =>
  * @param {object} argv - argv parsed and filtered by yargs
  * @param {string} argv.token
  * @param {string} argv.json
- * @param {string} argv.owner
- * @param {string} argv.repo
- * @param {string} argv.number
- * @param {string} argv.account_type
- * @throws {Error} - Throws an error if any required properties are invalid
+ * @param {object} argv.githubUrl
  */
-const handler = async ({ token, json, owner, repo, number, account_type }) => {
-	const inputs = {
-		owner,
-		number,
-		account_type,
-		state: 'all',
-		per_page: 100,
-	}
+const handler = async ({ token, json, githubUrl }) => {
+	console.error({ token, json, githubUrl })
+
+	debugger
+
+	// const inputs = {
+	// 	owner,
+	// 	pull_number: number,
+	// 	account_type,
+	// 	state: 'all',
+	// 	per_page: 100,
+	// }
+	return false // NOCOMMIT
 	try {
 		const octokit = await authenticatedOctokit({ personalAccessToken: token })
 
@@ -121,7 +118,7 @@ const handler = async ({ token, json, owner, repo, number, account_type }) => {
 }
 
 module.exports = {
-	command: 'close [options]',
+	command: 'close <github-url>',
 	desc: 'Set the state of an existing project board to `closed`',
 	builder,
 	handler,
