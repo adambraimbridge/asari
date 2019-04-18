@@ -41,6 +41,11 @@ const missingOptionWillThrow = (requiredOptions, commandGroup, command) => {
 	}
 }
 const describeYargs = (yargsModule, commandGroup, command, requiredOptions) => {
+	jest.spyOn(global.console, 'warn')
+	afterEach(() => {
+		jest.clearAllMocks()
+	})
+
 	describe('Yargs', () => {
 		commandModuleExportsObject(yargsModule, commandGroup, command)
 		commandModuleCanLoad(yargsModule, commandGroup, command)

@@ -1,7 +1,7 @@
 /**
  * This command adds a pull request to a GitHub project column.
  *
- * @see: https://octokit.github.io/rest.js/#api-Projects-createCard
+ * @see: https://octokit.github.io/rest.js/#octokit-routes-projects-create-card
  * const result = await octokit.projects.createCard({column_id, note, content_id, content_type})
  * /projects/columns/:column_id/cards
  */
@@ -25,25 +25,20 @@ const builder = yargs => {
 	])
 	return (
 		baseOptions(yargs)
-			.option('column-id', {
-				describe: 'Project column ID (Either a number OR a GitHub URL that contains the column ID)',
+			.option('column-url', {
+				alias: ['column-id', 'c'],
+				describe: 'A GitHub URL that contains the project column ID',
 				demandOption: true,
 			})
-			.option('pull-request-id', {
-				describe: 'Pull request ID (Either a number OR a GitHub URL that contains the pull request ID)',
+			.option('pull-request-url', {
+				alias: ['pull-request-id', 'p'],
+				describe: 'A GitHub URL that contains the pull request ID.',
 				demandOption: true,
 			})
 			/**
-			 * Allow either integers or GitHub URLs.
+			 * Coerce IDs from GitHub URLs.
 			 */
-			.coerce(['column-id', 'pull-request-id'], arg => {
-				const number = Number(arg)
-				if (Number.isInteger(number)) {
-					return arg
-				} else {
-					return parseGitHubURL(arg).value
-				}
-			})
+			.coerce(['column-url', 'pull-request-url'], arg => parseGitHubURL(arg).id)
 	)
 }
 

@@ -8,7 +8,6 @@ nock.disableNetConnect()
 // Reset any mocked network endpoints
 nock.cleanAll()
 
-jest.spyOn(global.console, 'warn')
 jest.spyOn(global.console, 'log')
 afterEach(() => {
 	jest.clearAllMocks()
@@ -20,8 +19,8 @@ afterEach(() => {
 const commandGroup = 'projects'
 const command = 'add-pull-request'
 const requiredOptions = {
-	'column-id': 1,
-	'pull-request-id': 1,
+	'column-url': 'https://github.com/Test-Owner/test-repository/pull/12345#column-67890',
+	'pull-request-url': 'https://github.com/Test-Owner/test-repository/pull/12345',
 }
 commonTests.describeYargs(yargsModule, commandGroup, command, requiredOptions)
 
@@ -34,8 +33,8 @@ describe('Octokit', () => {
 	test('Running the command handler triggers a network request of the GitHub API', async () => {
 		await yargsModule.handler({
 			token: 'test',
-			columnId: 1,
-			pullRequestId: 1,
+			columnId: '1',
+			pullRequestId: '1',
 		})
 		expect(successResponse.isDone()).toBe(true)
 	})
@@ -59,8 +58,8 @@ describe('Error output', () => {
 	test('Output error responses that are returned from network requests of the GitHub API', async () => {
 		await yargsModule.handler({
 			token: 'test',
-			columnId: 1,
-			pullRequestId: 1,
+			columnId: '1',
+			pullRequestId: '1',
 		})
 		expect(errorResponse.isDone()).toBe(true)
 		expect(console.log).toBeCalledWith(expect.stringMatching(/error/i))
