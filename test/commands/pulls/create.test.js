@@ -8,7 +8,6 @@ nock.disableNetConnect()
 // Reset any mocked network endpoints
 nock.cleanAll()
 
-jest.spyOn(global.console, 'warn')
 jest.spyOn(global.console, 'log')
 afterEach(() => {
 	jest.clearAllMocks()

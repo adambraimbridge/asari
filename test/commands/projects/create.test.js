@@ -8,7 +8,6 @@ nock.disableNetConnect()
 // Reset any mocked network endpoints
 nock.cleanAll()
 
-jest.spyOn(global.console, 'warn')
 jest.spyOn(global.console, 'log')
 afterEach(() => {
 	jest.clearAllMocks()
@@ -50,59 +49,53 @@ describe('StdIn-compatible options', () => {
 			expect(error.message).toEqual(expect.stringContaining('File not found'))
 		}
 	})
-	test(`Running the command handler with 'body' but WITHOUT 'stdin' does not throw an error — if the file IS found`, async () => {
-		const response = require('child_process').execSync(`${commandString} --body ./test/fixtures/body.txt`)
-
-		// TODO: Decode the buffer from .execSync() and expect _that_ to be a string of "OK"
-		expect(response).toEqual(expect.stringContaining('OK'))
-	})
-	// test.skip(`Running the command handler WITHOUT 'body' but with 'stdin' does not throw an error`, async () => {
-	// 	const optionString = Object.keys(requiredOptions)
-	// 		.map(option => `--${option} ${requiredOptions[option]}`)
-	// 		.join(' ')
-
-	// 	const response = require('child_process').execSync(`echo 'This is some test stdin body content' | ./bin/github.js ${commandGroup} ${command} ${optionString}`)
-	// 	expect(response).toEqual(expect.stringContaining('hello'))
-	// })
+	/**
+	 * Note: execSync() spawns a new process that nocks and mocks do not have access to.
+	 * So you can only test for errors.
+	 * If you test for successful execution, it will actually try to connect to GitHub.
+	 * So I'm not sure how to do the next two tests.
+	 */
+	test.todo(`Running the command handler with 'body' but WITHOUT 'stdin' does NOT throw an error — if the file IS found`)
+	test.todo(`Running the command handler WITHOUT 'body' but with 'stdin' does NOT throw an error`)
 })
 
-// describe.skip('Octokit', () => {
-// 	// If this endpoint is not called, nock.isDone() will be false.
-// 	const successResponse = nock('https://api.github.com')
-// 		.post('/user/projects')
-// 		.reply(200, {
-// 			project_id: 1,
-// 		})
-// 		.post('/projects/1/columns')
-// 		.times(3)
-// 		.reply(200, {
-// 			column_id: 1,
-// 		})
+describe.skip('Octokit', () => {
+	// If this endpoint is not called, nock.isDone() will be false.
+	const successResponse = nock('https://api.github.com')
+		.post('/user/projects')
+		.reply(200, {
+			project_id: 1,
+		})
+		.post('/projects/1/columns')
+		.times(3)
+		.reply(200, {
+			column_id: 1,
+		})
 
-// 	test('Running the command handler triggers a network request of the GitHub API', async () => {
-// 		await yargsModule.handler(requiredOptions)
-// 		expect(successResponse.isDone()).toBe(true)
-// 	})
-// })
+	test('Running the command handler triggers a network request of the GitHub API', async () => {
+		await yargsModule.handler(requiredOptions)
+		expect(successResponse.isDone()).toBe(true)
+	})
+})
 
-// describe.skip('Error output', () => {
-// 	// If this endpoint is not called, nock.isDone() will be false.
-// 	const errorResponse = nock('https://api.github.com')
-// 		.post('/orgs/test/projects')
-// 		.reply(422, {
-// 			message: 'Validation Failed',
-// 			errors: [
-// 				{
-// 					resource: 'MockResource',
-// 					code: 'custom',
-// 					message: 'This is a mock error message.',
-// 				},
-// 			],
-// 		})
+describe.skip('Error output', () => {
+	// If this endpoint is not called, nock.isDone() will be false.
+	const errorResponse = nock('https://api.github.com')
+		.post('/orgs/test/projects')
+		.reply(422, {
+			message: 'Validation Failed',
+			errors: [
+				{
+					resource: 'MockResource',
+					code: 'custom',
+					message: 'This is a mock error message.',
+				},
+			],
+		})
 
-// 	test('Output error responses that are returned from network requests of the GitHub API', async () => {
-// 		await yargsModule.handler(requiredOptions)
-// 		expect(errorResponse.isDone()).toBe(true)
-// 		expect(console.log).toBeCalledWith(expect.stringMatching(/error/i))
-// 	})
-// })
+	test('Output error responses that are returned from network requests of the GitHub API', async () => {
+		await yargsModule.handler(requiredOptions)
+		expect(errorResponse.isDone()).toBe(true)
+		expect(console.log).toBeCalledWith(expect.stringMatching(/error/i))
+	})
+})

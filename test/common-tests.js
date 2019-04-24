@@ -33,6 +33,11 @@ const missingOptionWillThrow = (requiredOptions, commandGroup, command) => {
 					.map(option => `--${option} ${testOptions[option]}`)
 					.join(' ')
 
+				/**
+				 * Note: execSync() spawns a new process that nocks and mocks do not have access to.
+				 * So you can only test for errors.
+				 * If you test for successful execution, it will actually try to connect to GitHub.
+				 */
 				require('child_process').execSync(`./bin/github.js ${commandGroup} ${command} ${optionString}`)
 			} catch (error) {
 				expect(error.message).toEqual(expect.stringContaining(option))
