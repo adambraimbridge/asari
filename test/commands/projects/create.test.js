@@ -19,6 +19,7 @@ afterEach(() => {
 const commandGroup = 'projects'
 const command = 'create'
 const requiredOptions = {
+	token: 'test',
 	name: 'Test Project',
 }
 commonTests.describeYargs(yargsModule, commandGroup, command, requiredOptions)
@@ -59,7 +60,7 @@ describe('StdIn-compatible options', () => {
 	test.todo(`Running the command handler WITHOUT 'body' but with 'stdin' does NOT throw an error`)
 })
 
-describe.skip('Octokit', () => {
+describe('Octokit', () => {
 	// If this endpoint is not called, nock.isDone() will be false.
 	const successResponse = nock('https://api.github.com')
 		.post('/user/projects')
@@ -78,10 +79,10 @@ describe.skip('Octokit', () => {
 	})
 })
 
-describe.skip('Error output', () => {
+describe('Error output', () => {
 	// If this endpoint is not called, nock.isDone() will be false.
 	const errorResponse = nock('https://api.github.com')
-		.post('/orgs/test/projects')
+		.post('/user/projects')
 		.reply(422, {
 			message: 'Validation Failed',
 			errors: [

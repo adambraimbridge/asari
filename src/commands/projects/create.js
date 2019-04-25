@@ -95,10 +95,10 @@ const handler = async ({ token, json, name, body, owner, repo }) => {
 		} else {
 			project = await octokit.projects.createForAuthenticatedUser(inputs)
 		}
-		const { id } = project.data
-		const todo = await octokit.projects.createColumn({ project_id: id, name: 'To do' })
-		const doing = await octokit.projects.createColumn({ project_id: id, name: 'In progress' })
-		const done = await octokit.projects.createColumn({ project_id: id, name: 'Done' })
+		const { project_id } = project.data
+		const todo = await octokit.projects.createColumn({ project_id, name: 'To do' })
+		const doing = await octokit.projects.createColumn({ project_id, name: 'In progress' })
+		const done = await octokit.projects.createColumn({ project_id, name: 'Done' })
 
 		// Create a default kanban three-column setup in the new project.
 		const projectWithColumns = {
