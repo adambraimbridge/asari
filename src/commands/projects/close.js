@@ -23,6 +23,7 @@
 const flow = require('lodash.flow')
 
 const commonYargs = require('../../../lib/common-yargs')
+const parseGitHubURL = require('../../../lib/parse-github-url')
 const printOutput = require('../../../lib/print-output')
 const authenticatedOctokit = require('../../../lib/octokit')
 
@@ -37,23 +38,41 @@ const builder = yargs => {
 		commonYargs.withToken(),
 		commonYargs.withJson(),
 		commonYargs.withGitHubUrl({
-			demandOption: true,
-			alias: ['project-url', 'p'],
+			describe: 'The URL of the GitHub project to close. Pattern: [https://][github.com]/[scope?]/[owner]/[repository?]/projects/[number]',
 		}),
 	])
-	return baseOptions(yargs)
+	return (
+		baseOptions(yargs)
+			/**
+			 * Coerce values from the GitHub URL.
+			 */
+			.middleware(argv => {
+				const githubData = parseGitHubURL(argv.githubUrl)
+				argv.scope = githubData.scope
+				argv.number = githubData.id
+				argv.owner = githubData.owner
+				argv.repo = githubData.repo
+			})
+	)
 }
 
 /**
  * Get a project based on its number from a list of projects.
  *
- * @param {*} number
- * @param {*} projects
+ * @param {integer} number
+ * @param {object} projects
  */
-const getProject = (number, projects) =>
-	projects.data.find(project => {
-		return project.number === number
+const getProject = (number, projects) => {
+	let integized
+	try {
+		integized = parseInt(number)
+	} catch (error) {
+		throw new Error('Could not get the project number.')
+	}
+	return projects.data.find(project => {
+		return project.number === integized
 	})
+}
 
 /**
  * Update a project board to 'status: closed'.
@@ -63,44 +82,32 @@ const getProject = (number, projects) =>
  * @param {string} argv.json
  * @param {object} argv.githubUrl
  */
-const handler = async ({ token, json, githubUrl }) => {
-	console.error({ token, json, githubUrl })
-
-	debugger
-
-	// const inputs = {
-	// 	owner,
-	// 	pull_number: number,
-	// 	account_type,
-	// 	state: 'all',
-	// 	per_page: 100,
-	// }
-	return false // NOCOMMIT
+const handler = async ({ token, json, scope, owner, repo, number }) => {
+	const inputs = {
+		state: 'all',
+		per_page: 100,
+	}
 	try {
-		const octokit = await authenticatedOctokit({ personalAccessToken: token })
-
 		/**
 		 * Find the project based on account type and number.
 		 */
+		const octokit = await authenticatedOctokit({ personalAccessToken: token })
 		let project
-		switch (account_type) {
-			case 'user':
-				inputs.username = owner
-				project = getProject(number, await octokit.projects.listForUser(inputs))
-				break
-			case 'repo':
-				inputs.repo = repo
-				project = getProject(number, await octokit.projects.listForRepo(inputs))
-				break
-			case 'org':
-				inputs.org = owner
-				project = getProject(number, await octokit.projects.listForOrg(inputs))
-				break
-			default:
-				throw new Error('Please provide a GitHub `account_type`. Either "user", "org" (Organisation) or "repo" (Repository).')
+		if (scope === 'orgs') {
+			inputs.org = owner
+			const response = await octokit.projects.listForOrg(inputs)
+			project = getProject(number, response)
+		} else if (owner) {
+			inputs.owner = owner
+			inputs.repo = repo
+			const response = await octokit.projects.listForRepo(inputs)
+			debugger // NOCOMMIT
+			project = getProject(number, response)
+		} else {
+			project = getProject(number, await octokit.projects.listForUser(inputs))
 		}
 		if (!project) {
-			throw new Error(`No project found for number: ${number}.`)
+			throw new Error(`No project found. Owner: ${owner}, repo: ${repo}, number: ${number}.`)
 		}
 
 		/**

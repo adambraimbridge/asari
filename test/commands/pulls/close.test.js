@@ -8,11 +8,6 @@ nock.disableNetConnect()
 // Reset any mocked network endpoints
 nock.cleanAll()
 
-jest.mock('fs', () => {
-	const { fs } = require('memfs')
-	jest.spyOn(fs, 'access')
-	return fs
-})
 jest.spyOn(global.console, 'warn')
 afterEach(() => {
 	jest.clearAllMocks()

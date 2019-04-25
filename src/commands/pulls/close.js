@@ -1,5 +1,5 @@
 /**
- * @see: https://octokit.github.io/rest.js/#api-Pulls-update
+ * @see: https://octokit.github.io/rest.js/#octokit-routes-pulls-update
  * There is no "closed" endpoint in the Octokit API. We use "update" with a `state` of "closed".
  * const result = await octokit.pulls.update({owner, repo, number, title, body, state, base, maintainer_can_modify})
  * /repos/:owner/:repo/pulls/:number
@@ -20,9 +20,9 @@ const builder = yargs => {
 		// prettier-ignore
 		commonYargs.withToken(),
 		commonYargs.withJson(),
-		commonYargs.withOwner(),
-		commonYargs.withRepo({ demandOption: true }),
-		commonYargs.withNumber({ demandOption: true }),
+		commonYargs.withGitHubUrl({
+			describe: 'The URL of the GitHub pull request to close. Pattern: [https://][github.com]/[owner]/[repository?]/pull/[number]',
+		}),
 	])
 	return baseOptions(yargs)
 }

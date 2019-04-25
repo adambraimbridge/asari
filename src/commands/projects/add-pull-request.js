@@ -26,19 +26,19 @@ const builder = yargs => {
 	return (
 		baseOptions(yargs)
 			.option('column-url', {
-				alias: ['column-id', 'c'],
+				alias: ['c'],
 				describe: 'A GitHub URL that contains the project column ID',
 				demandOption: true,
 			})
 			.option('pull-request-url', {
-				alias: ['pull-request-id', 'p'],
+				alias: ['p'],
 				describe: 'A GitHub URL that contains the pull request ID.',
 				demandOption: true,
 			})
 			/**
 			 * Coerce IDs from GitHub URLs.
 			 */
-			.coerce(['column-url', 'pull-request-url'], arg => parseGitHubURL(arg).id)
+			.coerce(['column-url', 'pull-request-url'], arg => parseGitHubURL(arg))
 	)
 }
 
@@ -48,13 +48,13 @@ const builder = yargs => {
  * @param {object} argv - argv parsed and filtered by yargs
  * @param {string} argv.token
  * @param {string} argv.json
- * @param {number} argv.columnId
- * @param {number} argv.pullRequestId
+ * @param {object} argv.columnUrl - an object produced by parsing the GitHub URL.
+ * @param {object} argv.pullRequestUrl - an object produced by parsing the GitHub URL.
  */
-const handler = async ({ token, json, columnId, pullRequestId }) => {
+const handler = async ({ token, json, columnUrl, pullRequestUrl }) => {
 	const inputs = {
-		column_id: columnId,
-		content_id: pullRequestId,
+		column_id: columnUrl.id,
+		content_id: pullRequestUrl.id,
 		content_type: 'PullRequest',
 	}
 	try {

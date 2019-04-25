@@ -24,6 +24,11 @@ const requiredOptions = {
 }
 commonTests.describeYargs(yargsModule, commandGroup, command, requiredOptions)
 
+const yarguments = {
+	token: 'test',
+	columnUrl: { id: '1' },
+	pullRequestUrl: { id: '1' },
+}
 describe('Octokit', () => {
 	// If this endpoint is not called, nock.isDone() will be false.
 	const successResponse = nock('https://api.github.com')
@@ -31,11 +36,7 @@ describe('Octokit', () => {
 		.reply(200)
 
 	test('Running the command handler triggers a network request of the GitHub API', async () => {
-		await yargsModule.handler({
-			token: 'test',
-			columnId: '1',
-			pullRequestId: '1',
-		})
+		await yargsModule.handler(yarguments)
 		expect(successResponse.isDone()).toBe(true)
 	})
 })
@@ -56,11 +57,7 @@ describe('Error output', () => {
 		})
 
 	test('Output error responses that are returned from network requests of the GitHub API', async () => {
-		await yargsModule.handler({
-			token: 'test',
-			columnId: '1',
-			pullRequestId: '1',
-		})
+		await yargsModule.handler(yarguments)
 		expect(errorResponse.isDone()).toBe(true)
 		expect(console.log).toBeCalledWith(expect.stringMatching(/error/i))
 	})

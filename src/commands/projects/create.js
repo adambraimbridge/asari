@@ -51,7 +51,7 @@ const builder = yargs => {
 			 * Coerce values from the GitHub URL.
 			 */
 			.middleware(argv => {
-				const githubData = parseGitHubURL(argv.GitHubURL)
+				const githubData = parseGitHubURL(argv.githubUrl)
 				argv.owner = githubData.owner
 				argv.repo = githubData.repo
 			})
