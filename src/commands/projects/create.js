@@ -65,19 +65,11 @@ const builder = yargs => {
  * @param {string} argv.token
  * @param {string} argv.json
  * @param {string} argv.name
- * @param {string} argv.body
+ * @param {string} argv.bodyContent — This is created in the withBody() yarg option middleware.
  * @param {string} argv.owner
  * @param {string} argv.repo
  */
-const handler = async ({ token, json, name, body, owner, repo }) => {
-	// The file indicated by `body` has already been tested for readability in common-yargs, but double-check anyway.
-	let bodyContent
-	try {
-		bodyContent = fs.readFileSync(body, 'utf8')
-	} catch (error) {
-		bodyContent = ''
-	}
-
+const handler = async ({ token, json, name, bodyContent, owner, repo }) => {
 	const inputs = {
 		name,
 		body: bodyContent,
@@ -116,7 +108,7 @@ const handler = async ({ token, json, name, body, owner, repo }) => {
 }
 
 module.exports = {
-	command: 'create <GitHub URL> [options]',
+	command: 'create <github-url> [options]',
 	desc: 'Create a new project',
 	builder,
 	handler,

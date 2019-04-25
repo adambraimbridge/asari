@@ -25,7 +25,7 @@ const requiredOptions = {
 commonTests.describeYargs(yargsModule, commandGroup, command, requiredOptions)
 
 describe('StdIn-compatible options', () => {
-	const commandString = `./bin/github.js ${commandGroup} ${command} https://github.com/Test-Owner/test-repository --name 'Test Project'`
+	const commandString = `./bin/github.js ${commandGroup} ${command} https://github.com/Test-Owner/Test-Repo --name 'Test Project'`
 	test(`Running the command handler without 'body' NOR 'stdin' throws an error`, async () => {
 		expect.assertions(1)
 		try {

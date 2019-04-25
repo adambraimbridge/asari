@@ -101,7 +101,6 @@ const handler = async ({ token, json, scope, owner, repo, number }) => {
 			inputs.owner = owner
 			inputs.repo = repo
 			const response = await octokit.projects.listForRepo(inputs)
-			debugger // NOCOMMIT
 			project = getProject(number, response)
 		} else {
 			project = getProject(number, await octokit.projects.listForUser(inputs))

@@ -1,5 +1,5 @@
 /**
- * @see: https://octokit.github.io/rest.js/#api-Pulls-create
+ * @see: https://octokit.github.io/rest.js/#octokit-routes-pulls-create
  * const result = await octokit.pulls.create({owner, repo, title, head, base, *body, *maintainer_can_modify})
  * /repos/:owner/:repo/pulls
  */
@@ -7,6 +7,7 @@ const flow = require('lodash.flow')
 const fs = require('fs')
 
 const commonYargs = require('../../../lib/common-yargs')
+const parseGitHubURL = require('../../../lib/parse-github-url')
 const printOutput = require('../../../lib/print-output')
 const authenticatedOctokit = require('../../../lib/octokit')
 
@@ -20,20 +21,26 @@ const builder = yargs => {
 		// prettier-ignore
 		commonYargs.withToken(),
 		commonYargs.withJson(),
+		commonYargs.withGitHubUrl({
+			describe: 'The URL of the GitHub branch to create a pull request from.',
+		}),
 		commonYargs.withBase(),
-		commonYargs.withOwner(),
-		commonYargs.withRepo(),
-		commonYargs.withReviewers(),
-		commonYargs.withTeamReviewers(),
 		commonYargs.withBody(),
-		commonYargs.withTitle(),
+		commonYargs.withTitle({ demandOption: true }),
 	])
 
-	return baseOptions(yargs).option('head', {
-		describe: 'The name of the branch where your changes are implemented.',
-		demandOption: true,
-		type: 'string',
-	})
+	return (
+		baseOptions(yargs)
+			/**
+			 * Coerce values from the GitHub URL.
+			 */
+			.middleware(argv => {
+				const githubData = parseGitHubURL(argv.githubUrl)
+				argv.owner = githubData.owner
+				argv.repo = githubData.repo
+				argv.head = githubData.value
+			})
+	)
 }
 
 /**
@@ -46,16 +53,10 @@ const builder = yargs => {
  * @param {string} argv.repo
  * @param {string} argv.title
  * @param {string} argv.head
- * @param {string} argv.body
+ * @param {string} argv.bodyContent — This is created in the withBody() yarg option middleware.
  * @param {string} [argv.base]
  */
-const handler = async ({ token, json, base, body, owner, repo, title, head }) => {
-	// Confirm that the required file exists
-	const correctFilePath = fs.existsSync(body)
-	if (!correctFilePath) {
-		throw new Error(`File path ${body} not found`)
-	}
-	const bodyContent = fs.readFileSync(body, 'utf8')
+const handler = async ({ token, json, base, bodyContent, owner, repo, title, head }) => {
 	const inputs = {
 		body: bodyContent,
 		owner,
@@ -74,7 +75,7 @@ const handler = async ({ token, json, base, body, owner, repo, title, head }) =>
 }
 
 module.exports = {
-	command: 'create [options]',
+	command: 'create <github-url> [options]',
 	desc: 'Create a new pull request',
 	builder,
 	handler,
