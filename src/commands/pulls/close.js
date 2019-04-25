@@ -32,8 +32,6 @@ const builder = yargs => {
 			 */
 			.middleware(argv => {
 				const githubData = parseGitHubURL(argv.githubUrl)
-
-				debugger
 				argv.scope = githubData.scope
 				argv.pull_number = githubData.id
 				argv.owner = githubData.owner
