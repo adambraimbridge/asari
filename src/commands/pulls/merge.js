@@ -32,7 +32,6 @@ const builder = yargs => {
  * Return the contents of a pull request body and create a pull request.
  *
  * @param {object} argv - argv parsed and filtered by yargs
- * @throws {Error} - Throws an error if any required properties are invalid
  */
 const handler = async argv => {
 	try {

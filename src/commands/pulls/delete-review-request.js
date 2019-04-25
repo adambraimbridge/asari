@@ -40,7 +40,6 @@ const builder = yargs => {
  * @param {string} argv.number
  * @param {string} [argv.reviewers]
  * @param {string} [argv.team_reviewers]
- * @throws {Error} - Throws an error if any required properties are invalid
  */
 const handler = async ({ token, json, owner, repo, number, reviewers, team_reviewers }) => {
 	const inputs = {

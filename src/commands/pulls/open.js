@@ -47,7 +47,6 @@ const builder = yargs => {
  * @param {string} [argv.body]
  * @param {string} [argv.base]
  * @param {string} [argv.maintainer_can_modify]
- * @throws {Error} - Throws an error if any required properties are invalid
  */
 const handler = async ({ token, json, owner, repo, number, title, body, base, maintainer_can_modify }) => {
 	// Confirm that the required file exists

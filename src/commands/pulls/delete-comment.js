@@ -37,7 +37,6 @@ const builder = yargs => {
  * @param {string} argv.owner
  * @param {string} argv.repo
  * @param {string} argv.comment_id
- * @throws {Error} - Throws an error if any required properties are invalid
  */
 const handler = async ({ token, json, owner, repo, comment_id }) => {
 	const inputs = {

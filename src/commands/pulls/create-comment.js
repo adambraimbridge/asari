@@ -1,5 +1,5 @@
 /**
- * @see: https://octokit.github.io/rest.js/#api-Pulls-createComment
+ * @see: https://octokit.github.io/rest.js/#octokit-routes-pulls-create-comment
  * const result = await octokit.pulls.createComment({ owner, repo, number, body, commit_id, path, position })
  * /repos/:owner/:repo/pulls/:number/comments
  */
@@ -53,7 +53,6 @@ const builder = yargs => {
  * @param {string} argv.path
  * @param {string} argv.position
  * @param {string} argv.body
- * @throws {Error} - Throws an error if any required properties are invalid
  */
 const handler = async ({ token, json, owner, repo, number, body, commit_id, path, position }) => {
 	// Confirm that the required file exists
