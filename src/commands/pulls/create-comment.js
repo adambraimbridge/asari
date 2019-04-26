@@ -1,12 +1,21 @@
 /**
- * @see: https://octokit.github.io/rest.js/#octokit-routes-pulls-create-comment
- * const result = await octokit.pulls.createComment({ owner, repo, number, body, commit_id, path, position })
- * /repos/:owner/:repo/pulls/:number/comments
+ * @see: https://octokit.github.io/rest.js/#octokit-routes-issues-create-comment
+ * const result = await octokit.issues.createComment({ owner, repo, issue_number, body })
+ *
+ * For any Pull Request, GitHub provides three kinds of comment views:
+ * 	— comments on the Pull Request as a whole,
+ *  — comments on a specific line within the Pull Request, and
+ *  — comments on a specific commit within the Pull Request.
+ * @see: https://developer.github.com/v3/guides/working-with-comments/
+ *
+ * This command adds a comment on the Pull Request as a whole.
+ * "If you only want to create a comment on a pull request, use github.issues.createComment."
+ * @see: https://github.com/octokit/rest.js/issues/712#issuecomment-359334646
  */
 const flow = require('lodash.flow')
-const fs = require('fs')
 
 const commonYargs = require('../../../lib/common-yargs')
+const parseGitHubURL = require('../../../lib/parse-github-url')
 const printOutput = require('../../../lib/print-output')
 const authenticatedOctokit = require('../../../lib/octokit')
 
@@ -20,25 +29,24 @@ const builder = yargs => {
 		// prettier-ignore
 		commonYargs.withToken(),
 		commonYargs.withJson(),
-		commonYargs.withOwner(),
-		commonYargs.withRepo(),
-		commonYargs.withNumber(),
+		commonYargs.withGitHubUrl({
+			describe: 'The URL of the GitHub pull request to add a comment to. Pattern: [https://][github.com]/[owner]/[repository?]/pull/[number]',
+		}),
 		commonYargs.withBody(),
 	])
-
-	return baseOptions(yargs)
-		.option('commit_id', {
-			describe: 'The SHA of the commit needing a comment. Not using the latest commit SHA may render your comment outdated if a subsequent commit modifies the line you specify as the position.',
-			type: 'string',
-		})
-		.option('path', {
-			describe: 'The relative path to the file that necessitates a comment.',
-			type: 'string',
-		})
-		.option('position', {
-			describe: 'The position in the diff where you want to add a review comment. Note this value is not the same as the line number in the file.',
-			type: 'integer',
-		})
+	// https://github.com/financial-times-sandbox/Western-Storm/pull/24
+	return (
+		baseOptions(yargs)
+			/**
+			 * Coerce values from the GitHub URL.
+			 */
+			.middleware(argv => {
+				const githubData = parseGitHubURL(argv.githubUrl)
+				argv.issue_number = githubData.id
+				argv.owner = githubData.owner
+				argv.repo = githubData.repo
+			})
+	)
 }
 
 /**
@@ -49,30 +57,18 @@ const builder = yargs => {
  * @param {string} argv.json
  * @param {string} argv.owner
  * @param {string} argv.repo
- * @param {string} argv.commit_id
- * @param {string} argv.path
- * @param {string} argv.position
- * @param {string} argv.body
+ * @param {string} argv.bodyContent — This is created in the withBody() yarg option middleware.
  */
-const handler = async ({ token, json, owner, repo, number, body, commit_id, path, position }) => {
-	// Confirm that the required file exists
-	const correctFilePath = fs.existsSync(body)
-	if (!correctFilePath) {
-		throw new Error(`File path ${body} not found`)
-	}
-	const bodyContent = fs.readFileSync(body, 'utf8')
+const handler = async ({ token, json, owner, repo, issue_number, bodyContent }) => {
 	const inputs = {
-		body: bodyContent,
 		owner,
 		repo,
-		number,
-		commit_id,
-		path,
-		position,
+		issue_number,
+		body: bodyContent,
 	}
 	try {
 		const octokit = await authenticatedOctokit({ personalAccessToken: token })
-		const result = await octokit.pulls.createComment(inputs)
+		const result = await octokit.issues.createComment(inputs)
 		printOutput({ json, resource: result })
 	} catch (error) {
 		printOutput({ json, error })
@@ -80,7 +76,7 @@ const handler = async ({ token, json, owner, repo, number, body, commit_id, path
 }
 
 module.exports = {
-	command: 'create-comment [options]',
+	command: 'create-comment <github-url> [options]',
 	desc: 'Create a comment on an existing pull request',
 	builder,
 	handler,
