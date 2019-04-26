@@ -23,7 +23,6 @@
 const flow = require('lodash.flow')
 
 const commonYargs = require('../../../lib/common-yargs')
-const parseGitHubURL = require('../../../lib/parse-github-url')
 const printOutput = require('../../../lib/print-output')
 const authenticatedOctokit = require('../../../lib/octokit')
 
@@ -41,19 +40,7 @@ const builder = yargs => {
 			describe: 'The URL of the GitHub project to close. Pattern: [https://][github.com]/[scope?]/[owner]/[repository?]/projects/[number]',
 		}),
 	])
-	return (
-		baseOptions(yargs)
-			/**
-			 * Coerce values from the GitHub URL.
-			 */
-			.middleware(argv => {
-				const githubData = parseGitHubURL(argv.githubUrl)
-				argv.scope = githubData.scope
-				argv.number = githubData.id
-				argv.owner = githubData.owner
-				argv.repo = githubData.repo
-			})
-	)
+	return baseOptions(yargs)
 }
 
 /**
@@ -80,9 +67,10 @@ const getProject = (number, projects) => {
  * @param {object} argv - argv parsed and filtered by yargs
  * @param {string} argv.token
  * @param {string} argv.json
- * @param {object} argv.githubUrl
+ * @param {object} argv.githubUrl - The GitHub url parsed in the withGitHubUrl() yarg option into appropriate properties, such as `owner` and `repo`.
  */
-const handler = async ({ token, json, scope, owner, repo, number }) => {
+const handler = async ({ token, json, githubUrl }) => {
+	const { scope, owner, repo, number } = githubUrl
 	const inputs = {
 		state: 'all',
 		per_page: 100,

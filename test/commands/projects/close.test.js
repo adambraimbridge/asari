@@ -27,7 +27,7 @@ const yarguments = {
 	token: 'test',
 	owner: 'test',
 	repo: 'test',
-	number: 1,
+	pull_number: 1,
 }
 describe('Octokit', () => {
 	// If this endpoint is not called, nock.isDone() will be false.
@@ -67,7 +67,7 @@ describe('Error output', () => {
 		})
 
 	test('Output error responses that are returned from network requests of the GitHub API', async () => {
-		const response = await yargsModule.handler(yarguments)
+		await yargsModule.handler(yarguments)
 		expect(errorResponse.isDone()).toBe(true)
 		expect(console.log).toBeCalledWith(expect.stringMatching(/error/i))
 	})
