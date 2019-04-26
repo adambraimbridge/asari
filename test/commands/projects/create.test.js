@@ -68,7 +68,7 @@ describe('Octokit', () => {
 	const successResponse = nock('https://api.github.com')
 		.post('/repos/Test-Owner/Test-Repo/projects')
 		.reply(200, {
-			project_id: 1,
+			id: 1,
 		})
 		.post('/projects/1/columns')
 		.times(3)
