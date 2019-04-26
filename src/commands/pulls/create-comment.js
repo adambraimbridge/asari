@@ -34,19 +34,7 @@ const builder = yargs => {
 		}),
 		commonYargs.withBody(),
 	])
-	// https://github.com/financial-times-sandbox/Western-Storm/pull/24
-	return (
-		baseOptions(yargs)
-			/**
-			 * Coerce values from the GitHub URL.
-			 */
-			.middleware(argv => {
-				const githubData = parseGitHubURL(argv.githubUrl)
-				argv.issue_number = githubData.id
-				argv.owner = githubData.owner
-				argv.repo = githubData.repo
-			})
-	)
+	return baseOptions(yargs)
 }
 
 /**
@@ -59,11 +47,12 @@ const builder = yargs => {
  * @param {string} argv.repo
  * @param {string} argv.bodyContent — This is created in the withBody() yarg option middleware.
  */
-const handler = async ({ token, json, owner, repo, issue_number, bodyContent }) => {
+const handler = async ({ token, json, githubUrl, bodyContent }) => {
+	const { owner, repo, number } = githubUrl
 	const inputs = {
 		owner,
 		repo,
-		issue_number,
+		issue_number: number,
 		body: bodyContent,
 	}
 	try {

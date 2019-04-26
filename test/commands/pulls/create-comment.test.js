@@ -28,10 +28,12 @@ describe('Octokit', () => {
 	test('running the command handler triggers a network request of the GitHub API', async () => {
 		await yargsModule.handler({
 			token: 'Test-Token',
-			owner: 'Test-Owner',
+			githubUrl: {
+				owner: 'Test-Owner',
+				repo: 'Test-Repo',
+				number: 1,
+			},
 			bodyContent: 'Test-Body',
-			repo: 'Test-Repo',
-			issue_number: 1,
 		})
 		expect(successResponse.isDone()).toBe(true)
 	})
