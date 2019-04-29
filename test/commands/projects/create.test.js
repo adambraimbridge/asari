@@ -23,6 +23,7 @@ const requiredArguments = {
 		'github-url': 'https://github.com/Test-Owner/Test-Repo',
 	},
 	options: {
+		token: 'Test-Token',
 		name: 'TestProject',
 		body: './test/fixtures/body.txt', // Note: This fixture file is intended to exist.
 	},
@@ -68,7 +69,6 @@ describe('StdIn-compatible options', () => {
 })
 
 const yarguments = Object.assign({}, requiredArguments.options, {
-	token: 'Test-Token',
 	githubUrl: { owner: 'Test-Owner', repo: 'Test-Repo' },
 })
 

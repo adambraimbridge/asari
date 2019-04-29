@@ -4,10 +4,8 @@
  * /repos/:owner/:repo/pulls
  */
 const flow = require('lodash.flow')
-const fs = require('fs')
 
 const commonYargs = require('../../../lib/common-yargs')
-const parseGitHubURL = require('../../../lib/parse-github-url')
 const printOutput = require('../../../lib/print-output')
 const authenticatedOctokit = require('../../../lib/octokit')
 
@@ -29,18 +27,7 @@ const builder = yargs => {
 		commonYargs.withTitle({ demandOption: true }),
 	])
 
-	return (
-		baseOptions(yargs)
-			/**
-			 * Coerce values from the GitHub URL.
-			 */
-			.middleware(argv => {
-				const githubData = parseGitHubURL(argv.githubUrl)
-				argv.owner = githubData.owner
-				argv.repo = githubData.repo
-				argv.head = githubData.value
-			})
-	)
+	return baseOptions(yargs).example('github-url', 'Pattern: https://github.com/[owner]/[repository]/tree/[branch]')
 }
 
 /**
@@ -49,20 +36,20 @@ const builder = yargs => {
  * @param {object} argv - argv parsed and filtered by yargs
  * @param {string} argv.token
  * @param {string} argv.json
- * @param {string} argv.owner
- * @param {string} argv.repo
  * @param {string} argv.title
- * @param {string} argv.head
+ * @param {string} argv.head - The name of the branch where your changes are implemented
+ * @param {string} argv.base - The name of the branch you want the changes pulled into (Default: master)
  * @param {string} argv.bodyContent — This is created in the withBody() yarg option middleware.
- * @param {string} [argv.base]
+ * @param {object} argv.githubUrl - The GitHub url parsed in the withGitHubUrl() yarg option into appropriate properties, such as `owner` and `repo`.
  */
-const handler = async ({ token, json, base, bodyContent, owner, repo, title, head }) => {
+const handler = async ({ token, json, bodyContent, base, title, githubUrl }) => {
+	const { owner, repo, value } = githubUrl
 	const inputs = {
 		body: bodyContent,
 		owner,
 		repo,
 		title,
-		head,
+		head: value,
 		base,
 	}
 	try {

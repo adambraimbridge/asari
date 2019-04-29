@@ -5,9 +5,7 @@
  * /repos/:owner/:repo/pulls/:number
  */
 const flow = require('lodash.flow')
-
 const commonYargs = require('../../../lib/common-yargs')
-const parseGitHubURL = require('../../../lib/parse-github-url')
 const printOutput = require('../../../lib/print-output')
 const authenticatedOctokit = require('../../../lib/octokit')
 
@@ -22,22 +20,10 @@ const builder = yargs => {
 		commonYargs.withToken(),
 		commonYargs.withJson(),
 		commonYargs.withGitHubUrl({
-			describe: 'The URL of the GitHub pull request to close. Pattern: [https://][github.com]/[owner]/[repository?]/pull/[number]',
+			describe: 'The URL of the GitHub pull request to close.',
 		}),
 	])
-	return (
-		baseOptions(yargs)
-			/**
-			 * Coerce values from the GitHub URL.
-			 */
-			.middleware(argv => {
-				const githubData = parseGitHubURL(argv.githubUrl)
-				argv.scope = githubData.scope
-				argv.pull_number = githubData.id
-				argv.owner = githubData.owner
-				argv.repo = githubData.repo
-			})
-	)
+	return baseOptions(yargs).example('github-url', 'Pattern: [https://][github.com]/[owner]/[repository?]/pull/[number]')
 }
 
 /**
@@ -46,15 +32,14 @@ const builder = yargs => {
  * @param {object} argv - argv parsed and filtered by yargs
  * @param {string} argv.token
  * @param {string} argv.json
- * @param {string} argv.owner
- * @param {string} argv.repo
- * @param {string} argv.number
+ * @param {object} argv.githubUrl - The GitHub url parsed in the withGitHubUrl() yarg option into appropriate properties, such as `owner` and `repo`.
  */
-const handler = async ({ token, json, owner, repo, pull_number }) => {
+const handler = async ({ token, json, githubUrl }) => {
+	const { owner, repo, number } = githubUrl
 	const inputs = {
 		owner,
 		repo,
-		pull_number,
+		pull_number: number,
 		state: 'closed',
 	}
 	try {

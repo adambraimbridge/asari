@@ -6,12 +6,7 @@ const yargsModule = require('../../../src/commands/pulls/delete-review-request')
 nock.disableNetConnect()
 
 // Reset any mocked network endpoints
-// nock.cleanAll()
-
-jest.spyOn(global.console, 'warn')
-afterEach(() => {
-	jest.clearAllMocks()
-})
+nock.cleanAll()
 
 /**
  * Common Yargs tests
@@ -19,9 +14,12 @@ afterEach(() => {
 const commandGroup = 'pulls'
 const command = 'delete-review-request'
 const requiredArguments = {
-	owner: 'test',
-	repo: 'test',
-	number: 1,
+	options: {
+		token: 'Test-Token',
+		owner: 'Test-Owner',
+		repo: 'Test-Repo',
+		number: 1,
+	},
 }
 commonTests.describeYargs(yargsModule, commandGroup, command, requiredArguments)
 
@@ -32,13 +30,11 @@ describe('Octokit', () => {
 		.reply(200, {})
 
 	test('Running the command handler triggers a network request of the GitHub API', async () => {
-		await yargsModule.handler({
-			token: 'test',
-			owner: 'test',
-			repo: 'test',
-			number: 1,
-			requested_reviewers: 'test',
-		})
+		await yargsModule.handler(
+			Object.keys(requiredArguments.options, {
+				requested_reviewers: 'test',
+			})
+		)
 		expect(successResponse.isDone()).toBe(true)
 	})
 })

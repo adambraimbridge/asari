@@ -1,5 +1,5 @@
 /**
- * @see: https://octokit.github.io/rest.js/#api-Pulls-deleteReviewRequest
+ * @see: https://octokit.github.io/rest.js/#octokit-routes-pulls-delete-review-request
  * const result = await octokit.pulls.deleteReviewRequest({owner, repo, number, reviewers, team_reviewers})
  * /repos/:owner/:repo/pulls/:number/requested_reviewers
  */
@@ -18,14 +18,25 @@ const builder = yargs => {
 		// prettier-ignore
 		commonYargs.withToken(),
 		commonYargs.withJson(),
-		commonYargs.withOwner(),
-		commonYargs.withRepo(),
-		commonYargs.withNumber(),
-		commonYargs.withReviewers(),
-		commonYargs.withTeamReviewers(),
+		commonYargs.withGitHubUrl({
+			describe: 'The URL of the GitHub pull request review to delete.',
+		}),
 	])
+		.option('reviewers', {
+			describe: 'The GitHub *user* account names to delete the review request from.',
+			type: 'string',
+		})
+		.option('team_reviewers', {
+			describe: 'The GitHub *team* account names to delete the review request from.',
+			type: 'string',
+		})
+		.check(argv => {
+			if (!argv.reviewers && !argv.team_reviewers) {
+				throw new Error('Either --reviewers or --team_reviewers is required.')
+			}
+		})
 
-	return baseOptions(yargs)
+	return baseOptions(yargs).example('github-url', 'Pattern: [https://][github.com]/[owner]/[repository?]/pull/[number]')
 }
 
 /**
@@ -34,14 +45,13 @@ const builder = yargs => {
  * @param {object} argv - argv parsed and filtered by yargs
  * @param {string} argv.token
  * @param {string} argv.json
- * @param {string} argv.owner
- * @param {string} argv.repo
- * @param {integer} argv.number
- * @param {string} argv.number
  * @param {string} [argv.reviewers]
  * @param {string} [argv.team_reviewers]
+ * @param {object} argv.githubUrl - The GitHub url parsed in the withGitHubUrl() yarg option into appropriate properties, such as `owner` and `repo`.
  */
-const handler = async ({ token, json, owner, repo, number, reviewers, team_reviewers }) => {
+
+const handler = async ({ token, json, reviewers, team_reviewers, githubUrl }) => {
+	const { owner, repo, number } = githubUrl
 	const inputs = {
 		owner,
 		repo,
@@ -59,7 +69,7 @@ const handler = async ({ token, json, owner, repo, number, reviewers, team_revie
 }
 
 module.exports = {
-	command: 'delete-review-request [options]',
+	command: 'delete-review-request <github-url>',
 	desc: 'Delete a requested review for a pull request',
 	builder,
 	handler,

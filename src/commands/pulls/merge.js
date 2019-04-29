@@ -1,5 +1,5 @@
 /**
- * @see: https://octokit.github.io/rest.js/#api-Pulls-merge
+ * @see: https://octokit.github.io/rest.js/#octokit-routes-pulls-merge
  * const result = await octokit.pulls.merge({ owner, repo, number, *commit_title, *commit_message, *sha, *merge_method})
  * /repos/:owner/:repo/pulls/:number/merge
  */
@@ -18,40 +18,50 @@ const builder = yargs => {
 		// prettier-ignore
 		commonYargs.withToken(),
 		commonYargs.withJson(),
-		commonYargs.withPullRequest(),
+		commonYargs.withGitHubUrl({
+			describe: 'The URL of the GitHub pull request to merge.',
+		}),
 	])
 
-	return baseOptions(yargs).option('method', {
-		describe: 'Merge method to use.',
-		choices: ['merge', 'squash', 'rebase'],
-		default: 'merge',
-	})
+	return baseOptions(yargs)
+		.option('method', {
+			describe: 'Merge method to use.',
+			choices: ['merge', 'squash', 'rebase'],
+			default: 'merge',
+		})
+		.example('github-url', 'Pattern: [https://][github.com]/[owner]/[repository?]/pull/[number]')
 }
 
 /**
  * Return the contents of a pull request body and create a pull request.
  *
  * @param {object} argv - argv parsed and filtered by yargs
+ * @param {string} argv.token
+ * @param {string} argv.json
+ * @param {object} argv.githubUrl - The GitHub url parsed in the withGitHubUrl() yarg option into appropriate properties, such as `owner` and `repo`.
  */
-const handler = async argv => {
+const handler = async ({ token, json, method, githubUrl }) => {
+	const { owner, repo, number } = githubUrl
+	const inputs = {
+		merge_method: method,
+		owner,
+		repo,
+		number,
+	}
 	try {
-		const octokit = await authenticatedOctokit({ personalAccessToken: argv.token })
+		const octokit = await authenticatedOctokit({ personalAccessToken: token })
+		const result = await octokit.pulls.merge(inputs)
 
-		const result = await octokit.pulls.merge({
-			owner: argv.pullRequest.owner,
-			repo: argv.pullRequest.repo,
-			pull_number: argv.pullRequest.number,
-			merge_method: argv.method,
-		})
-
-		printOutput({ json: argv.json, resource: result })
+		// TODO: Confirm that the github response has a "state" (of, e.g, "merged")
+		const { html_url, state } = result.data
+		printOutput({ json, resource: { html_url, state } })
 	} catch (error) {
-		throw new Error(error)
+		printOutput({ json, error })
 	}
 }
 
 module.exports = {
-	command: 'merge <pull-request>',
+	command: 'merge <github-url>',
 	desc: 'Merge an existing pull request',
 	builder,
 	handler,

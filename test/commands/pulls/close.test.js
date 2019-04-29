@@ -14,7 +14,12 @@ nock.cleanAll()
 const commandGroup = 'pulls'
 const command = 'close'
 const requiredArguments = {
-	'github-url': 'https://github.com/Test-Owner/Test-Repo/pull/1',
+	options: {
+		token: 'Test-Token',
+	},
+	positionals: {
+		'github-url': 'https://github.com/Test-Owner/Test-Repo/pull/1',
+	},
 }
 commonTests.describeYargs(yargsModule, commandGroup, command, requiredArguments)
 
@@ -26,10 +31,8 @@ describe('Octokit', () => {
 
 	test('running the command handler triggers a network request of the GitHub API', async () => {
 		await yargsModule.handler({
-			token: 'test',
-			owner: 'Test-Owner',
-			repo: 'Test-Repo',
-			pull_number: 1,
+			token: 'Test-Token',
+			githubUrl: { owner: 'Test-Owner', repo: 'Test-Repo', number: 1 },
 		})
 		expect(successResponse.isDone()).toBe(true)
 	})

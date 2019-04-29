@@ -14,8 +14,12 @@ nock.cleanAll()
 const commandGroup = 'pulls'
 const command = 'create-comment'
 const requiredArguments = {
-	body: 'Test-Body',
-	'github-url': 'https://github.com/Test-Owner/Test-Repo/pull/1',
+	options: {
+		token: 'Test-Token',
+	},
+	positionals: {
+		'github-url': 'https://github.com/Test-Owner/Test-Repo/pull/1',
+	},
 }
 commonTests.describeYargs(yargsModule, commandGroup, command, requiredArguments)
 

@@ -51,6 +51,11 @@ const getTestArguments = requiredArguments => {
  * @param {string} command
  */
 const missingOptionWillThrow = (requiredArguments, commandGroup, command) => {
+	// Testing the 'token' argument. Give execSync() env variables that do not include GITHUB_PERSONAL_ACCESS_TOKEN.
+	const testEnv = Object.assign({}, process.env)
+	delete testEnv.GITHUB_PERSONAL_ACCESS_TOKEN
+
+	// Convert requiredArguments into an array, with positionals and options in the correct order.
 	const testArguments = getTestArguments(requiredArguments)
 	testArguments.forEach(argument => {
 		const argumentName = Object.keys(argument)[0]
@@ -67,7 +72,7 @@ const missingOptionWillThrow = (requiredArguments, commandGroup, command) => {
 				 * So you can only test for errors.
 				 * If you test for successful execution, it will actually try to connect to GitHub.
 				 */
-				require('child_process').execSync(`./bin/github.js ${commandGroup} ${command} ${argumentString}`)
+				require('child_process').execSync(`./bin/github.js ${commandGroup} ${command} ${argumentString}`, { env: testEnv })
 			} catch (error) {
 				expect(error.message).toMatch(new RegExp(`Missing required argument: ${argumentName}`, 'i'))
 			}

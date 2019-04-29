@@ -8,33 +8,28 @@ nock.disableNetConnect()
 // Reset any mocked network endpoints
 nock.cleanAll()
 
-jest.spyOn(global.console, 'log')
-afterEach(() => {
-	jest.clearAllMocks()
-})
-
 /**
  * Common Yargs tests
  */
 const commandGroup = 'pulls'
 const command = 'create'
 const requiredArguments = {
-	'github-url': 'https://github.com/Test-Owner/Test-Repo/tree/Test-Branch',
-	body: 'body.txt',
-	title: 'Test-Title',
+	options: {
+		token: 'Test-Token',
+		body: 'body.txt',
+		title: 'Test-Title',
+	},
+	positionals: {
+		'github-url': 'https://github.com/Test-Owner/Test-Repo/tree/Test-Branch',
+	},
 }
 commonTests.describeYargs(yargsModule, commandGroup, command, requiredArguments)
 
-const yarguments = {
-	token: 'test',
-	body: 'body.txt',
-	bodyContent: 'This is a test',
-	owner: 'Test-Owner',
-	repo: 'Test-Repo',
-	title: 'Test-Title',
-	head: 'Test-Branch',
+const yarguments = Object.assign({}, requiredArguments.options, {
 	base: 'Test-Base',
-}
+	bodyContent: 'This is a test',
+	githubUrl: { owner: 'Test-Owner', repo: 'Test-Repo', value: 'Test-Branch' },
+})
 describe('Octokit', () => {
 	// If this endpoint is not called, nock.isDone() will be false.
 	const successResponse = nock('https://api.github.com')
@@ -64,6 +59,7 @@ describe('Error output', () => {
 		})
 
 	test('Output error responses that are returned from network requests of the GitHub API', async () => {
+		jest.spyOn(global.console, 'log')
 		await yargsModule.handler(yarguments)
 		expect(errorResponse.isDone()).toBe(true)
 		expect(console.log).toBeCalledWith(expect.stringMatching(/error/i))

@@ -8,20 +8,15 @@ nock.disableNetConnect()
 // Reset any mocked network endpoints
 nock.cleanAll()
 
-jest.spyOn(global.console, 'warn')
-afterEach(() => {
-	fs.access.mockReset()
-	jest.clearAllMocks()
-})
-
 /**
  * Common Yargs tests
  */
 const commandGroup = 'pulls'
 const command = 'merge'
 const requiredArguments = {
-	token: 'test',
-	pullRequest: 'https://github.com/test/test/',
+	positionals: {
+		'github-url': 'https://github.com/Test-Owner/Test-Repo/tree/Test-Branch',
+	},
 }
 commonTests.describeYargs(yargsModule, commandGroup, command, requiredArguments)
 
