@@ -18,12 +18,12 @@ afterEach(() => {
  */
 const commandGroup = 'pulls'
 const command = 'open'
-const requiredOptions = {
+const requiredArguments = {
 	owner: 'test',
 	repo: 'test',
 	number: 1,
 }
-commonTests.describeYargs(yargsModule, commandGroup, command, requiredOptions)
+commonTests.describeYargs(yargsModule, commandGroup, command, requiredArguments)
 
 describe('Octokit', () => {
 	// If this endpoint is not called, nock.isDone() will be false.

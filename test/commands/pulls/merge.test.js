@@ -19,11 +19,11 @@ afterEach(() => {
  */
 const commandGroup = 'pulls'
 const command = 'merge'
-const requiredOptions = {
+const requiredArguments = {
 	token: 'test',
 	pullRequest: 'https://github.com/test/test/',
 }
-commonTests.describeYargs(yargsModule, commandGroup, command, requiredOptions)
+commonTests.describeYargs(yargsModule, commandGroup, command, requiredArguments)
 
 describe('Octokit', () => {
 	test('an invalid pull request URL errors', async () => {

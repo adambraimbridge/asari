@@ -18,12 +18,12 @@ afterEach(() => {
  */
 const commandGroup = 'pulls'
 const command = 'create'
-const requiredOptions = {
+const requiredArguments = {
 	'github-url': 'https://github.com/Test-Owner/Test-Repo/tree/Test-Branch',
 	body: 'body.txt',
 	title: 'Test-Title',
 }
-commonTests.describeYargs(yargsModule, commandGroup, command, requiredOptions)
+commonTests.describeYargs(yargsModule, commandGroup, command, requiredArguments)
 
 const yarguments = {
 	token: 'test',

@@ -13,11 +13,11 @@ nock.cleanAll()
  */
 const commandGroup = 'pulls'
 const command = 'create-comment'
-const requiredOptions = {
+const requiredArguments = {
 	body: 'Test-Body',
 	'github-url': 'https://github.com/Test-Owner/Test-Repo/pull/1',
 }
-commonTests.describeYargs(yargsModule, commandGroup, command, requiredOptions)
+commonTests.describeYargs(yargsModule, commandGroup, command, requiredArguments)
 
 describe('Octokit', () => {
 	// If this endpoint is not called, nock.isDone() will be false.

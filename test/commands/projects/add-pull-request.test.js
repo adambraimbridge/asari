@@ -18,11 +18,11 @@ afterEach(() => {
  */
 const commandGroup = 'projects'
 const command = 'add-pull-request'
-const requiredOptions = {
+const requiredArguments = {
 	'column-url': 'https://github.com/Test-Owner/test-repository/pull/12345#column-67890',
 	'pull-request-url': 'https://github.com/Test-Owner/test-repository/pull/12345',
 }
-commonTests.describeYargs(yargsModule, commandGroup, command, requiredOptions)
+commonTests.describeYargs(yargsModule, commandGroup, command, requiredArguments)
 
 const yarguments = {
 	token: 'test',
