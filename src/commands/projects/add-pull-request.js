@@ -39,6 +39,8 @@ const builder = yargs => {
 			 * Coerce IDs from GitHub URLs.
 			 */
 			.coerce(['column-url', 'pull-request-url'], arg => parseGitHubURL(arg))
+			.example('pull-request-url', 'Pattern: [https://][github.com]/[owner]/[repository?]/pull/[number]')
+			.example('column-url', 'Pattern: [https://][github.com]/[owner]/[repository?]/pull/[number]#column-[number]')
 	)
 }
 

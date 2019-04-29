@@ -37,10 +37,10 @@ const builder = yargs => {
 		commonYargs.withToken(),
 		commonYargs.withJson(),
 		commonYargs.withGitHubUrl({
-			describe: 'The URL of the GitHub project to close. Pattern: [https://][github.com]/[scope?]/[owner]/[repository?]/projects/[number]',
+			describe: 'The URL of the GitHub project to close.',
 		}),
 	])
-	return baseOptions(yargs)
+	return baseOptions(yargs).example('github-url', 'Pattern: [https://][github.com]/[scope?]/[owner]/[repository?]/projects/[number]')
 }
 
 /**

@@ -37,12 +37,14 @@ const builder = yargs => {
 		}),
 		commonYargs.withBody(),
 	])
-	return baseOptions(yargs).option('name', {
-		alias: 'n',
-		describe: 'The name you wish to give the new project board',
-		demandOption: true,
-		type: 'string',
-	})
+	return baseOptions(yargs)
+		.option('name', {
+			alias: 'n',
+			describe: 'The name you wish to give the new project board',
+			demandOption: true,
+			type: 'string',
+		})
+		.example('github-url', 'Pattern: [https://][github.com]/[owner]/[repository?]')
 }
 
 /**
