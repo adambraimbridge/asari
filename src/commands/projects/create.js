@@ -17,7 +17,6 @@
  * /repos/:owner/:repo/projects
  */
 const flow = require('lodash.flow')
-const fs = require('fs')
 
 const commonYargs = require('../../../lib/common-yargs')
 const printOutput = require('../../../lib/print-output')

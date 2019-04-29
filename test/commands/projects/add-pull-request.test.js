@@ -19,15 +19,17 @@ afterEach(() => {
 const commandGroup = 'projects'
 const command = 'add-pull-request'
 const requiredArguments = {
-	'column-url': 'https://github.com/Test-Owner/test-repository/pull/12345#column-67890',
-	'pull-request-url': 'https://github.com/Test-Owner/test-repository/pull/12345',
+	options: {
+		'column-url': 'https://github.com/Test-Owner/test-repository/pull/12345#column-67890',
+		'pull-request-url': 'https://github.com/Test-Owner/test-repository/pull/12345',
+	},
 }
 commonTests.describeYargs(yargsModule, commandGroup, command, requiredArguments)
 
 const yarguments = {
-	token: 'test',
-	columnUrl: { id: '1' },
-	pullRequestUrl: { id: '1' },
+	token: 'Test-Token',
+	columnUrl: { number: '1' },
+	pullRequestUrl: { number: '1' },
 }
 describe('Octokit', () => {
 	// If this endpoint is not called, nock.isDone() will be false.

@@ -19,12 +19,14 @@ afterEach(() => {
 const commandGroup = 'projects'
 const command = 'close'
 const requiredArguments = {
-	'github-url': 'https://github.com/orgs/Test-Owner/projects/123',
+	positionals: {
+		'github-url': 'https://github.com/orgs/Test-Owner/projects/123',
+	},
 }
 commonTests.describeYargs(yargsModule, commandGroup, command, requiredArguments)
 
 const yarguments = {
-	token: 'test',
+	token: 'Test-Token',
 	githubUrl: { owner: 'Test-Owner', repo: 'Test-Repo', number: 1 },
 }
 describe('Octokit', () => {
