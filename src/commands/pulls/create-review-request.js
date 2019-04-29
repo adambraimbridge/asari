@@ -45,9 +45,7 @@ const handler = async ({ token, json, owner, repo, number, reviewers, team_revie
 	const inputs = {
 		owner,
 		repo,
-		number,
-		reviewers,
-		team_reviewers,
+		pull_number: number,
 	}
 	try {
 		const octokit = await authenticatedOctokit({ personalAccessToken: token })

@@ -53,8 +53,8 @@ const builder = yargs => {
  */
 const handler = async ({ token, json, columnUrl, pullRequestUrl }) => {
 	const inputs = {
-		column_id: columnUrl.id,
-		content_id: pullRequestUrl.id,
+		column_id: columnUrl.number,
+		content_id: pullRequestUrl.number,
 		content_type: 'PullRequest',
 	}
 	try {
