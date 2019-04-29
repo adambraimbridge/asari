@@ -21,16 +21,45 @@ const commandModuleCanLoad = (yargsModule, commandGroup, command) => {
 		expect(console.warn).not.toBeCalled()
 	})
 }
-const missingOptionWillThrow = (requiredOptions, commandGroup, command) => {
-	for (let option of Object.keys(requiredOptions)) {
-		test(`Running the command handler without '${option}' throws an error`, async () => {
+
+/**
+ * When testing <positional> vs. --optional arguments, positional arguments need to be at the beginning.
+ * @param {object} requiredArguments
+ */
+const getTestArguments = requiredArguments => {
+	const testArguments = []
+	if (requiredArguments.positionals) {
+		Object.keys(requiredArguments.positionals).forEach(argument =>
+			testArguments.push({
+				[argument]: requiredArguments.positionals[argument],
+			})
+		)
+	}
+	if (requiredArguments.options) {
+		Object.keys(requiredArguments.options).forEach(argument =>
+			testArguments.push({
+				[argument]: `--${argument} ${requiredArguments.options[argument]}`,
+			})
+		)
+	}
+	return testArguments
+}
+/**
+ * Test that each required argument will throw the expected error if it is missing.
+ * @param {object} requiredArguments
+ * @param {string} commandGroup
+ * @param {string} command
+ */
+const missingOptionWillThrow = (requiredArguments, commandGroup, command) => {
+	const testArguments = getTestArguments(requiredArguments)
+	testArguments.forEach(argument => {
+		const argumentName = Object.keys(argument)[0]
+		test(`Running the command handler without ${argumentName} throws an error`, async () => {
 			expect.assertions(1)
 			try {
-				const testOptions = Object.assign({}, requiredOptions)
-				delete testOptions[option]
-
-				const optionString = Object.keys(testOptions)
-					.map(option => `--${option} ${testOptions[option]}`)
+				const argumentString = testArguments
+					.filter(a => Object.keys(a)[0] != argumentName)
+					.map(a => Object.values(a)[0])
 					.join(' ')
 
 				/**
@@ -38,14 +67,14 @@ const missingOptionWillThrow = (requiredOptions, commandGroup, command) => {
 				 * So you can only test for errors.
 				 * If you test for successful execution, it will actually try to connect to GitHub.
 				 */
-				require('child_process').execSync(`./bin/github.js ${commandGroup} ${command} ${optionString}`)
+				require('child_process').execSync(`./bin/github.js ${commandGroup} ${command} ${argumentString}`)
 			} catch (error) {
-				expect(error.message).toEqual(expect.stringContaining(option))
+				expect(error.message).toMatch(new RegExp(`Missing required argument: ${argumentName}`, 'i'))
 			}
 		})
-	}
+	})
 }
-const describeYargs = (yargsModule, commandGroup, command, requiredOptions) => {
+const describeYargs = (yargsModule, commandGroup, command, requiredArguments) => {
 	jest.spyOn(global.console, 'warn')
 	afterEach(() => {
 		jest.clearAllMocks()
@@ -54,7 +83,7 @@ const describeYargs = (yargsModule, commandGroup, command, requiredOptions) => {
 	describe('Yargs', () => {
 		commandModuleExportsObject(yargsModule, commandGroup, command)
 		commandModuleCanLoad(yargsModule, commandGroup, command)
-		missingOptionWillThrow(requiredOptions, commandGroup, command)
+		missingOptionWillThrow(requiredArguments, commandGroup, command)
 	})
 }
 module.exports = {

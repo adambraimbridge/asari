@@ -18,11 +18,18 @@ afterEach(() => {
  */
 const commandGroup = 'projects'
 const command = 'create'
-const requiredOptions = {
-	token: 'test',
-	name: 'Test Project',
+const requiredArguments = {
+	positionals: {
+		'github-url': 'https://github.com/Test-Owner/Test-Repo',
+	},
+	options: {
+		name: 'TestProject',
+		body: './test/fixtures/body.txt', // Note: This fixture file is intended to exist.
+	},
 }
-commonTests.describeYargs(yargsModule, commandGroup, command, requiredOptions)
+commonTests.describeYargs(yargsModule, commandGroup, command, requiredArguments)
+
+// Todo: Add a test for options with spaces, e.g. { name: 'Test Project' }
 
 describe('StdIn-compatible options', () => {
 	const commandString = `./bin/github.js ${commandGroup} ${command} https://github.com/Test-Owner/Test-Repo --name 'Test Project'`
@@ -31,7 +38,7 @@ describe('StdIn-compatible options', () => {
 		try {
 			require('child_process').execSync(commandString)
 		} catch (error) {
-			expect(error.message).toEqual(expect.stringContaining('Body required.'))
+			expect(error.message).toEqual(expect.stringContaining('Missing required argument: body.'))
 		}
 	})
 	test(`Running the command handler with 'body' AND 'stdin' throws an error`, async () => {
@@ -60,9 +67,11 @@ describe('StdIn-compatible options', () => {
 	test.todo(`Running the command handler WITHOUT 'body' but with 'stdin' does NOT throw an error`)
 })
 
-const yarguments = Object.assign({}, requiredOptions, {
+const yarguments = Object.assign({}, requiredArguments.options, {
+	token: 'Test-Token',
 	githubUrl: { owner: 'Test-Owner', repo: 'Test-Repo' },
 })
+
 describe('Octokit', () => {
 	// If this endpoint is not called, nock.isDone() will be false.
 	const successResponse = nock('https://api.github.com')
