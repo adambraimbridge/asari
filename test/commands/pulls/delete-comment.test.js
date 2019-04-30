@@ -16,13 +16,16 @@ const command = 'delete-comment'
 const requiredArguments = {
 	options: {
 		token: 'Test-Token',
-		owner: 'Test-Owner',
-		repo: 'Test-Repo',
-		comment_id: 1,
+	},
+	positionals: {
+		'github-url': 'https://github.com/Test-Owner/Test-Repo/pull/1#issuecomment-1',
 	},
 }
-
 commonTests.describeYargs(yargsModule, commandGroup, command, requiredArguments)
+
+const yarguments = Object.assign({}, requiredArguments.options, {
+	githubUrl: { owner: 'Test-Owner', repo: 'Test-Repo', number: 1 },
+})
 
 describe('Octokit', () => {
 	// If this endpoint is not called, nock.isDone() will be false.
@@ -30,12 +33,8 @@ describe('Octokit', () => {
 		.delete('/repos/Test-Owner/Test-Repo/pulls/comments/1')
 		.reply(200, {})
 
-	test('running the command handler triggers a network request of the GitHub API', async () => {
-		await yargsModule.handler(
-			Object.keys(requiredArguments.options, {
-				token: 'Test-Token',
-			})
-		)
+	test('Running the command handler triggers a network request of the GitHub API', async () => {
+		await yargsModule.handler(yarguments)
 		expect(successResponse.isDone()).toBe(true)
 	})
 })

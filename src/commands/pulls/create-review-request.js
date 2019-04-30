@@ -34,7 +34,7 @@ const builder = yargs => {
 		})
 		.check(argv => {
 			if (!argv.reviewers && !argv.team_reviewers) {
-				throw new Error('Either --reviewers or --team_reviewers is required.')
+				throw new Error('Missing required argument: Either reviewers or team_reviewers.')
 			}
 		})
 		.example('github-url', 'Pattern: [https://][github.com]/[owner]/[repository?]/pull/[number]')

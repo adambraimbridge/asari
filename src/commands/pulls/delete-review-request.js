@@ -55,7 +55,7 @@ const handler = async ({ token, json, reviewers, team_reviewers, githubUrl }) =>
 	const inputs = {
 		owner,
 		repo,
-		number,
+		pull_nuber: number,
 		reviewers,
 		team_reviewers,
 	}

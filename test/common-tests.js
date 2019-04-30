@@ -74,7 +74,7 @@ const missingOptionWillThrow = (requiredArguments, commandGroup, command) => {
 				 */
 				require('child_process').execSync(`./bin/github.js ${commandGroup} ${command} ${argumentString}`, { env: testEnv })
 			} catch (error) {
-				expect(error.message).toMatch(new RegExp(`Missing required argument: ${argumentName}`, 'i'))
+				expect(error.message).toMatch(new RegExp(`Missing required argument:\(\[a\-z\\s\]\+\)${argumentName}`, 'i'))
 			}
 		})
 	})
