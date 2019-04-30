@@ -22,20 +22,15 @@ const builder = yargs => {
 		commonYargs.withGitHubUrl({
 			describe: 'The URL of the GitHub pull request to assign a review request to.',
 		}),
+		commonYargs.withReviewers(),
+		commonYargs.withTeamReviewers(),
 	])
 	return baseOptions(yargs)
-		.option('reviewers', {
-			describe: 'The GitHub *user* account names to assign the review to.',
-			type: 'string',
-		})
-		.option('team_reviewers', {
-			describe: 'The GitHub *team* account names to assign the review to.',
-			type: 'string',
-		})
 		.check(argv => {
-			if (!argv.reviewers && !argv.team_reviewers) {
-				throw new Error('Missing required argument: Either reviewers or team_reviewers.')
+			if (!argv.reviewers && !argv.teamReviewers) {
+				throw new Error('Missing required argument: Either reviewers or team-reviewers.')
 			}
+			return true
 		})
 		.example('github-url', 'Pattern: [https://][github.com]/[owner]/[repository?]/pull/[number]')
 }
@@ -46,14 +41,18 @@ const builder = yargs => {
  * @param {object} argv - argv parsed and filtered by yargs
  * @param {string} argv.token
  * @param {string} argv.json
+ * @param {string} argv.reviewers
+ * @param {string} argv.teamReviewers
  * @param {object} argv.githubUrl - The GitHub url parsed in the withGitHubUrl() yarg option into appropriate properties, such as `owner` and `repo`.
  */
-const handler = async ({ token, json, githubUrl }) => {
+const handler = async ({ token, json, reviewers, team_reviewers, githubUrl }) => {
 	const { owner, repo, number } = githubUrl
 	const inputs = {
 		owner,
 		repo,
 		pull_number: number,
+		reviewers,
+		team_reviewers,
 	}
 	try {
 		const octokit = await authenticatedOctokit({ personalAccessToken: token })
@@ -65,7 +64,7 @@ const handler = async ({ token, json, githubUrl }) => {
 }
 
 module.exports = {
-	command: 'create-review-request <github-url> [options]',
+	command: 'create-review-request <github-url> [reviewers|team-reviewers]',
 	desc: 'Request a review for a pull request',
 	builder,
 	handler,

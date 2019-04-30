@@ -16,6 +16,7 @@ const command = 'delete-review-request'
 const requiredArguments = {
 	options: {
 		token: 'Test-Token',
+		reviewers: 'Test-Reviewer',
 	},
 	positionals: {
 		'github-url': 'https://github.com/Test-Owner/Test-Repo/pull/1',
@@ -30,7 +31,7 @@ const yarguments = Object.assign({}, requiredArguments.options, {
 describe('Octokit', () => {
 	// If this endpoint is not called, nock.isDone() will be false.
 	const successResponse = nock('https://api.github.com')
-		.delete('/repos/test/test/pulls/1/requested_reviewers')
+		.delete('/repos/Test-Owner/Test-Repo/pulls/1/requested_reviewers')
 		.reply(200, {})
 
 	test('Running the command handler triggers a network request of the GitHub API', async () => {
