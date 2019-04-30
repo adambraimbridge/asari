@@ -46,7 +46,7 @@ const handler = async ({ token, json, method, githubUrl }) => {
 		merge_method: method,
 		owner,
 		repo,
-		number,
+		pull_number: number,
 	}
 	try {
 		const octokit = await authenticatedOctokit({ personalAccessToken: token })
@@ -61,7 +61,7 @@ const handler = async ({ token, json, method, githubUrl }) => {
 }
 
 module.exports = {
-	command: 'merge <github-url>',
+	command: 'merge <github-url> [options]',
 	desc: 'Merge an existing pull request',
 	builder,
 	handler,

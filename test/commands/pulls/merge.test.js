@@ -14,40 +14,44 @@ nock.cleanAll()
 const commandGroup = 'pulls'
 const command = 'merge'
 const requiredArguments = {
+	options: {
+		token: 'Test-Token',
+	},
 	positionals: {
 		'github-url': 'https://github.com/Test-Owner/Test-Repo/tree/Test-Branch',
 	},
 }
 commonTests.describeYargs(yargsModule, commandGroup, command, requiredArguments)
 
-describe('Octokit', () => {
-	test('an invalid pull request URL errors', async () => {
-		expect.assertions(1)
-		try {
-			const testOptions = {
-				token: 'test',
-				pullRequest: 'foo-bar',
-			}
-			await yargsModule.handler(testOptions)
-		} catch (error) {
-			expect(error).toBeInstanceOf(Error)
-		}
-	})
+const yarguments = Object.assign({}, requiredArguments.options, {
+	githubUrl: { owner: 'Test-Owner', repo: 'Test-Repo', number: 1 },
+	method: 'merge',
+})
 
+describe('Octokit', () => {
 	// If this endpoint is not called, nock.isDone() will be false.
 	const successResponse = nock('https://api.github.com')
-		.put('/repos/test/test/pulls/1/merge')
+		.put('/repos/Test-Owner/Test-Repo/pulls/1/merge')
 		.reply(200, {})
 
 	test('running the command handler triggers a network request of the GitHub API', async () => {
-		await yargsModule.handler({
-			token: 'test',
-			pullRequest: {
-				owner: 'test',
-				repo: 'test',
-				number: 1,
-			},
-		})
+		await yargsModule.handler(yarguments)
 		expect(successResponse.isDone()).toBe(true)
+	})
+})
+
+describe('Error output', () => {
+	test(`Running the command handler with an invalid github-url throws an error`, async () => {
+		expect.assertions(1)
+		try {
+			/**
+			 * Note: execSync() spawns a new process that nocks and mocks do not have access to.
+			 * So you can only test for errors.
+			 * If you test for successful execution, it will actually try to connect to GitHub.
+			 */
+			require('child_process').execSync(`./bin/github.js ${commandGroup} ${command} this-is-an-unvalid-github-url`)
+		} catch (error) {
+			expect(error.message).toMatch(new RegExp(`Invalid GitHub URL`, 'i'))
+		}
 	})
 })

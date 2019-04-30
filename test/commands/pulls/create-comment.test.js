@@ -25,6 +25,7 @@ commonTests.describeYargs(yargsModule, commandGroup, command, requiredArguments)
 
 const yarguments = Object.assign({}, requiredArguments.options, {
 	githubUrl: { owner: 'Test-Owner', repo: 'Test-Repo', number: 1 },
+	bodyContent: 'Test-Body-Content',
 })
 
 describe('Octokit', () => {

@@ -39,7 +39,7 @@ const handler = async ({ token, json, githubUrl }) => {
 	const inputs = {
 		owner,
 		repo,
-		number,
+		pull_number: number,
 		state: 'open',
 	}
 	try {
