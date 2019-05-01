@@ -5,9 +5,6 @@
  * const result = await octokit.projects.createCard({column_id, note, content_id, content_type})
  * /projects/columns/:column_id/cards
  */
-const flow = require('lodash.flow')
-
-const commonYargs = require('../../../lib/common-yargs')
 const parseGitHubURL = require('../../../lib/parse-github-url')
 const printOutput = require('../../../lib/print-output')
 const authenticatedOctokit = require('../../../lib/octokit')
@@ -17,32 +14,24 @@ const authenticatedOctokit = require('../../../lib/octokit')
  *
  * @param {import('yargs').Yargs} yargs - Instance of yargs
  */
-const builder = yargs => {
-	const baseOptions = flow([
-		// prettier-ignore
-		commonYargs.withToken(),
-		commonYargs.withJson(),
-	])
-	return (
-		baseOptions(yargs)
-			.option('column-url', {
-				alias: ['c'],
-				describe: 'A GitHub URL that contains the project column ID',
-				demandOption: true,
-			})
-			.option('pull-request-url', {
-				alias: ['p'],
-				describe: 'A GitHub URL that contains the pull request ID.',
-				demandOption: true,
-			})
-			/**
-			 * Coerce IDs from GitHub URLs.
-			 */
-			.coerce(['column-url', 'pull-request-url'], arg => parseGitHubURL(arg))
-			.example('pull-request-url', 'Pattern: [https://][github.com]/[owner]/[repository?]/pull/[number]')
-			.example('column-url', 'Pattern: [https://][github.com]/[owner]/[repository?]/pull/[number]#column-[number]')
-	)
-}
+const builder = yargs =>
+	yargs
+		.option('column-url', {
+			alias: ['c'],
+			describe: 'A GitHub URL that contains the project column ID',
+			demandOption: true,
+		})
+		.option('pull-request-url', {
+			alias: ['p'],
+			describe: 'A GitHub URL that contains the pull request ID.',
+			demandOption: true,
+		})
+		/**
+		 * Coerce IDs from GitHub URLs.
+		 */
+		.coerce(['column-url', 'pull-request-url'], arg => parseGitHubURL(arg))
+		.example('column-url', 'Pattern: [https://][github.com]/[owner]/[repository?]/pull/[number]#column-[number]')
+		.example('pull-request-url', 'Pattern: [https://][github.com]/[owner]/[repository?]/pull/[number]')
 
 /**
  * Add a pull request to a GitHub project column.
@@ -69,7 +58,7 @@ const handler = async ({ token, json, columnUrl, pullRequestUrl }) => {
 }
 
 module.exports = {
-	command: 'add-pull-request [options]',
+	command: 'add-pull-request [--column-url] [--pull-request-url]',
 	desc: 'Add a pull request to a GitHub project column',
 	builder,
 	handler,

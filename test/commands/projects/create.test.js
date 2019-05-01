@@ -16,8 +16,7 @@ afterEach(() => {
 /**
  * Common Yargs tests
  */
-const commandGroup = 'projects'
-const command = 'create'
+const command = 'create-project'
 const requiredArguments = {
 	positionals: {
 		'github-url': 'https://github.com/Test-Owner/Test-Repo',
@@ -28,12 +27,12 @@ const requiredArguments = {
 		body: './test/fixtures/body.txt', // Note: This fixture file is intended to exist.
 	},
 }
-commonTests.describeYargs(yargsModule, commandGroup, command, requiredArguments)
+commonTests.describeYargs(yargsModule, command, requiredArguments)
 
 // Todo: Add a test for options with spaces, e.g. { name: 'Test Project' }
 
 describe('StdIn-compatible options', () => {
-	const commandString = `./bin/github.js ${commandGroup} ${command} https://github.com/Test-Owner/Test-Repo --name 'Test Project' --token 'Test-Token'`
+	const commandString = `./bin/github.js ${command} https://github.com/Test-Owner/Test-Repo --name 'Test Project' --token 'Test-Token'`
 	test(`Running the command handler without 'body' NOR 'stdin' throws an error`, async () => {
 		expect.assertions(1)
 		try {

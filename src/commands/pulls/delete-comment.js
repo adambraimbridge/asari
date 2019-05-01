@@ -15,9 +15,6 @@ const authenticatedOctokit = require('../../../lib/octokit')
  */
 const builder = yargs => {
 	const baseOptions = flow([
-		// prettier-ignore
-		commonYargs.withToken(),
-		commonYargs.withJson(),
 		commonYargs.withGitHubUrl({
 			describe: 'The URL of the GitHub pull request comment to delete.',
 		}),

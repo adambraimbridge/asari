@@ -16,14 +16,13 @@ afterEach(() => {
 /**
  * Common Yargs tests
  */
-const commandGroup = 'projects'
-const command = 'close'
+const command = 'close-project'
 const requiredArguments = {
 	positionals: {
 		'github-url': 'https://github.com/orgs/Test-Owner/projects/123',
 	},
 }
-commonTests.describeYargs(yargsModule, commandGroup, command, requiredArguments)
+commonTests.describeYargs(yargsModule, command, requiredArguments)
 
 const yarguments = {
 	token: 'Test-Token',

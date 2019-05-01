@@ -16,7 +16,6 @@ afterEach(() => {
 /**
  * Common Yargs tests
  */
-const commandGroup = 'projects'
 const command = 'add-pull-request'
 const requiredArguments = {
 	options: {
@@ -24,7 +23,7 @@ const requiredArguments = {
 		'pull-request-url': 'https://github.com/Test-Owner/test-repository/pull/12345',
 	},
 }
-commonTests.describeYargs(yargsModule, commandGroup, command, requiredArguments)
+commonTests.describeYargs(yargsModule, command, requiredArguments)
 
 const yarguments = {
 	token: 'Test-Token',

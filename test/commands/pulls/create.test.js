@@ -11,8 +11,7 @@ nock.cleanAll()
 /**
  * Common Yargs tests
  */
-const commandGroup = 'pulls'
-const command = 'create'
+const command = 'create-pull-request'
 const requiredArguments = {
 	options: {
 		token: 'Test-Token',
@@ -23,7 +22,7 @@ const requiredArguments = {
 		'github-url': 'https://github.com/Test-Owner/Test-Repo/tree/Test-Branch',
 	},
 }
-commonTests.describeYargs(yargsModule, commandGroup, command, requiredArguments)
+commonTests.describeYargs(yargsModule, command, requiredArguments)
 
 const yarguments = Object.assign({}, requiredArguments.options, {
 	base: 'Test-Base',

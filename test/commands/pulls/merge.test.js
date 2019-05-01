@@ -11,8 +11,7 @@ nock.cleanAll()
 /**
  * Common Yargs tests
  */
-const commandGroup = 'pulls'
-const command = 'merge'
+const command = 'merge-pull-request'
 const requiredArguments = {
 	options: {
 		token: 'Test-Token',
@@ -21,7 +20,7 @@ const requiredArguments = {
 		'github-url': 'https://github.com/Test-Owner/Test-Repo/tree/Test-Branch',
 	},
 }
-commonTests.describeYargs(yargsModule, commandGroup, command, requiredArguments)
+commonTests.describeYargs(yargsModule, command, requiredArguments)
 
 const yarguments = Object.assign({}, requiredArguments.options, {
 	githubUrl: { owner: 'Test-Owner', repo: 'Test-Repo', number: 1 },
@@ -49,7 +48,7 @@ describe('Error output', () => {
 			 * So you can only test for errors.
 			 * If you test for successful execution, it will actually try to connect to GitHub.
 			 */
-			require('child_process').execSync(`./bin/github.js ${commandGroup} ${command} this-is-an-unvalid-github-url`)
+			require('child_process').execSync(`./bin/github.js ${command} this-is-an-unvalid-github-url`)
 		} catch (error) {
 			expect(error.message).toMatch(new RegExp(`Invalid GitHub URL`, 'i'))
 		}

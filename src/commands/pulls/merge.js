@@ -15,9 +15,6 @@ const authenticatedOctokit = require('../../../lib/octokit')
  */
 const builder = yargs => {
 	const baseOptions = flow([
-		// prettier-ignore
-		commonYargs.withToken(),
-		commonYargs.withJson(),
 		commonYargs.withGitHubUrl({
 			describe: 'The URL of the GitHub pull request to merge.',
 		}),
@@ -61,7 +58,7 @@ const handler = async ({ token, json, method, githubUrl }) => {
 }
 
 module.exports = {
-	command: 'merge <github-url> [options]',
+	command: 'merge-pull-request <github-url> [--method]',
 	desc: 'Merge an existing pull request',
 	builder,
 	handler,

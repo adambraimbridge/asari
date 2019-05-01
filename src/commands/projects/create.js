@@ -30,8 +30,7 @@ const authenticatedOctokit = require('../../../lib/octokit')
 const builder = yargs => {
 	const baseOptions = flow([
 		// prettier-ignore
-		commonYargs.withToken(),
-		commonYargs.withJson(),
+
 		commonYargs.withGitHubUrl({
 			describe: 'The URL of the GitHub organisation, user or repository for the new project board.',
 		}),
@@ -97,7 +96,7 @@ const handler = async ({ token, json, name, bodyContent, githubUrl }) => {
 }
 
 module.exports = {
-	command: 'create <github-url> [options]',
+	command: 'create-project <github-url> [--body]',
 	desc: 'Create a new project',
 	builder,
 	handler,

@@ -25,9 +25,6 @@ const authenticatedOctokit = require('../../../lib/octokit')
  */
 const builder = yargs => {
 	const baseOptions = flow([
-		// prettier-ignore
-		commonYargs.withToken(),
-		commonYargs.withJson(),
 		commonYargs.withGitHubUrl({
 			describe: 'The URL of the GitHub pull request to add a comment to.',
 		}),
@@ -63,7 +60,7 @@ const handler = async ({ token, json, githubUrl, bodyContent }) => {
 }
 
 module.exports = {
-	command: 'create-comment <github-url> [options]',
+	command: 'create-comment <github-url> [--body]',
 	desc: 'Create a comment on an existing pull request',
 	builder,
 	handler,

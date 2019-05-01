@@ -1,8 +1,8 @@
 /* global expect */
 const yargs = require('yargs')
 
-const commandModuleExportsObject = (yargsModule, commandGroup, command) => {
-	test(`The "${commandGroup} ${command}" command module exports an object that can be used by yargs`, () => {
+const commandModuleExportsObject = (yargsModule, command) => {
+	test(`The "${command}" command module exports an object that can be used by yargs`, () => {
 		expect(yargsModule).toEqual(
 			expect.objectContaining({
 				command: expect.stringContaining(command),
@@ -13,8 +13,8 @@ const commandModuleExportsObject = (yargsModule, commandGroup, command) => {
 		)
 	})
 }
-const commandModuleCanLoad = (yargsModule, commandGroup, command) => {
-	test(`yargs can load the "${commandGroup} ${command}" command without any errors or warnings`, () => {
+const commandModuleCanLoad = (yargsModule, command) => {
+	test(`yargs can load the "${command}" command without any errors or warnings`, () => {
 		expect(() => {
 			yargs.command(yargsModule).argv
 		}).not.toThrow()
@@ -47,10 +47,9 @@ const getTestArguments = requiredArguments => {
 /**
  * Test that each required argument will throw the expected error if it is missing.
  * @param {object} requiredArguments
- * @param {string} commandGroup
  * @param {string} command
  */
-const missingOptionWillThrow = (requiredArguments, commandGroup, command) => {
+const missingOptionWillThrow = (requiredArguments, command) => {
 	// Testing the 'token' argument. Give execSync() env variables that do not include GITHUB_PERSONAL_ACCESS_TOKEN.
 	const testEnv = Object.assign({}, process.env)
 	delete testEnv.GITHUB_PERSONAL_ACCESS_TOKEN
@@ -72,23 +71,23 @@ const missingOptionWillThrow = (requiredArguments, commandGroup, command) => {
 				 * So you can only test for errors.
 				 * If you test for successful execution, it will actually try to connect to GitHub.
 				 */
-				require('child_process').execSync(`./bin/github.js ${commandGroup} ${command} ${argumentString}`, { env: testEnv })
+				require('child_process').execSync(`./bin/github.js ${command} ${argumentString}`, { env: testEnv })
 			} catch (error) {
 				expect(error.message).toMatch(new RegExp(`Missing required argument:\(\[a\-z\\s\]\+\)${argumentName}`, 'i'))
 			}
 		})
 	})
 }
-const describeYargs = (yargsModule, commandGroup, command, requiredArguments) => {
+const describeYargs = (yargsModule, command, requiredArguments) => {
 	jest.spyOn(global.console, 'warn')
 	afterEach(() => {
 		jest.clearAllMocks()
 	})
 
 	describe('Yargs', () => {
-		commandModuleExportsObject(yargsModule, commandGroup, command)
-		commandModuleCanLoad(yargsModule, commandGroup, command)
-		missingOptionWillThrow(requiredArguments, commandGroup, command)
+		commandModuleExportsObject(yargsModule, command)
+		commandModuleCanLoad(yargsModule, command)
+		missingOptionWillThrow(requiredArguments, command)
 	})
 }
 module.exports = {

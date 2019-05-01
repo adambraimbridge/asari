@@ -11,7 +11,6 @@ nock.cleanAll()
 /**
  * Common Yargs tests
  */
-const commandGroup = 'pulls'
 const command = 'create-review-request'
 const requiredArguments = {
 	options: {
@@ -22,7 +21,7 @@ const requiredArguments = {
 		'github-url': 'https://github.com/Test-Owner/Test-Repo/pull/1',
 	},
 }
-commonTests.describeYargs(yargsModule, commandGroup, command, requiredArguments)
+commonTests.describeYargs(yargsModule, command, requiredArguments)
 
 const yarguments = Object.assign({}, requiredArguments.options, {
 	githubUrl: { owner: 'Test-Owner', repo: 'Test-Repo', number: 1 },

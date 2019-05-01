@@ -16,9 +16,6 @@ const authenticatedOctokit = require('../../../lib/octokit')
  */
 const builder = yargs => {
 	const baseOptions = flow([
-		// prettier-ignore
-		commonYargs.withToken(),
-		commonYargs.withJson(),
 		commonYargs.withGitHubUrl({
 			describe: 'The URL of the GitHub pull request to close.',
 		}),
@@ -53,7 +50,7 @@ const handler = async ({ token, json, githubUrl }) => {
 }
 
 module.exports = {
-	command: 'close <github-url>',
+	command: 'close-pull-request <github-url>',
 	desc: 'Set the state of an existing pull request to `closed`',
 	builder,
 	handler,

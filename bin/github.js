@@ -1,47 +1,49 @@
 #!/usr/bin/env node
+const flow = require('lodash.flow')
 const updateNotifier = require('update-notifier')
 const yargs = require('yargs')
 const yargsCommandsDirectoryPath = '../src/commands'
-const { descriptions } = require('../lib/common-yargs')
+const commonYargs = require('../lib/common-yargs')
 
 /**
  * Configure yargs.
  *
  * @see http://yargs.js.org/docs/
  */
-yargs
+const baseOptions = flow([
+	// prettier-ignore
+	commonYargs.withToken(),
+	commonYargs.withJson(),
+])
+baseOptions(yargs)
+	/**
+	 * The --version argument only makes sense as an option for the main `github` command.
+	 */
+	.command('[--version]', 'Show the version number.')
+	.hide('version')
 	/**
 	 * Load our yargs command modules from a directory.
 	 *
 	 * @see https://github.com/yargs/yargs/blob/master/docs/advanced.md#commanddirdirectory-opts
 	 */
-	.commandDir(yargsCommandsDirectoryPath)
-	/**
-	 * Set a usage message and description.
-	 */
-	.usage('$0 <command> <subcommand> [arguments]', 'Work with GitHub from the command line.')
+	.commandDir(yargsCommandsDirectoryPath, { recurse: true })
 	/**
 	 * Maximize the width of yargs’ usage instructions.
 	 */
 	.wrap(yargs.terminalWidth())
 	/**
-	 * Always require a command to be specified.
+	 * Show help if no command is specified, or on any error; making --help redundant.
 	 */
-	.demandCommand()
+	.demandCommand(1, '')
+	.help(false)
 	/**
 	 * Group global options in usage output.
 	 */
 	.group(['token', 'json'], 'Global Options:')
-	.describe('token', descriptions.token)
-	.describe('json', descriptions.json)
 	/**
 	 * Report unrecognized commands as errors.
 	 */
 	.strict()
-	/**
-	 * Enable the display of help with the `--help` option.
-	 */
-	.help()
 
 /**
  * Parse command line arguments and handle them.

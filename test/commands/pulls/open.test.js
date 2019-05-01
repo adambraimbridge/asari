@@ -11,8 +11,7 @@ nock.cleanAll()
 /**
  * Common Yargs tests
  */
-const commandGroup = 'pulls'
-const command = 'open'
+const command = 'open-pull-request'
 const requiredArguments = {
 	options: {
 		token: 'Test-Token',
@@ -21,7 +20,7 @@ const requiredArguments = {
 		'github-url': 'https://github.com/Test-Owner/Test-Repo/pull/1',
 	},
 }
-commonTests.describeYargs(yargsModule, commandGroup, command, requiredArguments)
+commonTests.describeYargs(yargsModule, command, requiredArguments)
 
 describe('Octokit', () => {
 	// If this endpoint is not called, nock.isDone() will be false.

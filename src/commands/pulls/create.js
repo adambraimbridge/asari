@@ -16,9 +16,6 @@ const authenticatedOctokit = require('../../../lib/octokit')
  */
 const builder = yargs => {
 	const baseOptions = flow([
-		// prettier-ignore
-		commonYargs.withToken(),
-		commonYargs.withJson(),
 		commonYargs.withGitHubUrl({
 			describe: 'The URL of the GitHub branch to create a pull request from.',
 		}),
@@ -62,7 +59,7 @@ const handler = async ({ token, json, bodyContent, base, title, githubUrl }) => 
 }
 
 module.exports = {
-	command: 'create <github-url> [options]',
+	command: 'create-pull-request <github-url> [--base] [--body] [--title]',
 	desc: 'Create a new pull request',
 	builder,
 	handler,

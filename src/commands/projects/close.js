@@ -34,8 +34,7 @@ const authenticatedOctokit = require('../../../lib/octokit')
 const builder = yargs => {
 	const baseOptions = flow([
 		// prettier-ignore
-		commonYargs.withToken(),
-		commonYargs.withJson(),
+
 		commonYargs.withGitHubUrl({
 			describe: 'The URL of the GitHub project to close.',
 		}),
@@ -112,7 +111,7 @@ const handler = async ({ token, json, githubUrl }) => {
 }
 
 module.exports = {
-	command: 'close <github-url>',
+	command: 'close-project <github-url>',
 	desc: 'Set the state of an existing project board to `closed`',
 	builder,
 	handler,
