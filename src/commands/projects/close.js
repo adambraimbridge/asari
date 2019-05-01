@@ -49,15 +49,7 @@ const builder = yargs => {
  * @param {object} projects
  */
 const getProject = (number, projects) => {
-	let integized
-	try {
-		integized = parseInt(number)
-	} catch (error) {
-		throw new Error('Could not get the project number.')
-	}
-	return projects.data.find(project => {
-		return project.number === integized
-	})
+	return projects.data.find(project => project.number === number)
 }
 
 /**
