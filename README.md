@@ -169,6 +169,10 @@ This project loosely follows the example provided in the Yargs documentation for
 
   - @see: https://github.com/prettier/eslint-config-prettier#cli-helper-tool
 
+- The `prettier` tool uses the "@adambraimbridge/prettierrc-2019-05" configuration.
+
+    - @see: https://www.npmjs.com/package/@adambraimbridge/prettierrc-2019-05
+
 - If you use Visual Studio Code, consider installing the "Prettier - Code formatter" plugin.
 
   - @see: https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode
