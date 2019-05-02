@@ -169,6 +169,10 @@ This project loosely follows the example provided in the Yargs documentation for
 
   - @see: https://eslint.org/
 
+- Consider installing `eslint` in your editor. Plugins are available for most popular editors.
+
+  - @see: https://eslint.org/docs/user-guide/integrations#editors
+
 - Note: `.eslintrc.js` extends the `prettier` tool, which applies code formatting rules.
 
   - @see: https://prettier.io/docs/en/integrating-with-linters.html
@@ -179,7 +183,7 @@ This project loosely follows the example provided in the Yargs documentation for
 
 - The `prettier` tool uses the "@adambraimbridge/prettierrc-2019-05" configuration.
 
-    - @see: https://www.npmjs.com/package/@adambraimbridge/prettierrc-2019-05
+  - @see: https://www.npmjs.com/package/@adambraimbridge/prettierrc-2019-05
 
 - Consider installing `prettier` in your editor. Plugins are available for most popular editors.
 
