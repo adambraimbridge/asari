@@ -14,7 +14,7 @@ const config = {
 		'guard-for-in': 2,
 		'new-cap': 0,
 		'no-caller': 2,
-		'no-console': 2,
+		'no-console': 0,
 		'no-extend-native': 2,
 		'no-irregular-whitespace': 2,
 		'no-loop-func': 2,

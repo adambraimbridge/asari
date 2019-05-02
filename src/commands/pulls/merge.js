@@ -4,9 +4,9 @@
  * /repos/:owner/:repo/pulls/:number/merge
  */
 const flow = require('lodash.flow')
-const commonYargs = require('../../../lib/common-yargs')
-const printOutput = require('../../../lib/print-output')
-const authenticatedOctokit = require('../../../lib/octokit')
+const commonYargs = require('../../lib/common-yargs')
+const printOutput = require('../../lib/print-output')
+const authenticatedOctokit = require('../../lib/octokit')
 
 /**
  * yargs builder function.

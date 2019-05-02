@@ -62,7 +62,7 @@ const missingOptionWillThrow = (requiredArguments, command) => {
 			expect.assertions(1)
 			try {
 				const argumentString = testArguments
-					.filter(a => Object.keys(a)[0] != argumentName)
+					.filter(a => Object.keys(a)[0] !== argumentName)
 					.map(a => Object.values(a)[0])
 					.join(' ')
 

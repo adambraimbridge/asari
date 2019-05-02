@@ -3,7 +3,7 @@ const flow = require('lodash.flow')
 const updateNotifier = require('update-notifier')
 const yargs = require('yargs')
 const yargsCommandsDirectoryPath = '../src/commands'
-const commonYargs = require('../lib/common-yargs')
+const commonYargs = require('../src/lib/common-yargs')
 
 /**
  * Configure yargs.

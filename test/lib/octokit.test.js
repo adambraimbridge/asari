@@ -1,5 +1,5 @@
 const nock = require('nock')
-const authenticatedOctokit = require('../../lib/octokit')
+const authenticatedOctokit = require('../../src/lib/octokit')
 
 // Don't let Octokit make network requests
 nock.disableNetConnect()
@@ -8,7 +8,7 @@ describe('lib/octokit.js', () => {
 	test('Calling octokit() without a personalAccessToken throws an error', async () => {
 		expect.assertions(1)
 		try {
-			await octokit({})
+			await authenticatedOctokit({})
 		} catch (error) {
 			expect(error).toBeInstanceOf(Error)
 		}

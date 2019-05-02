@@ -1,8 +1,8 @@
 # GitHub Command Line Tool
 
-A human-friendly\* command line tool for the GitHub API.
+A human-friendly<sup>1</sup> command line tool for the GitHub API.
 
-\* it's script-friendly too.
+<sup>1</sup> script-friendly too :)
 
 ![image](https://user-images.githubusercontent.com/224547/57020759-3b3c3480-6c22-11e9-8907-565a929d3cd9.png)
 
@@ -182,17 +182,17 @@ npm run test
 ```bash
 npm run lint
 
-# eslint src/
+# eslint src/ bin/ test/
 ```
 
 ```bash
 npm run lint-fix
 
-# eslint --fix src/
+# eslint --fix eslint --fix src/ bin/ test/
 ```
 
 ```bash
 npm run eslint-check
 
-# eslint --print-config . | eslint-config-prettier-chec
+# eslint --print-config . | eslint-config-prettier-check
 ```

@@ -7,8 +7,8 @@
 	"scripts": {
 		"test": "npm run lint && npm run unit-test",
 		"unit-test": "jest --coverage",
-		"lint": "eslint src/",
-		"lint-fix": "eslint --fix src/",
+		"lint": "eslint src/ bin/ test/",
+		"lint-fix": "eslint --fix src/ bin/ test/",
 		"eslint-check": "eslint --print-config . | eslint-config-prettier-check"
 	},
 	"keywords": [],

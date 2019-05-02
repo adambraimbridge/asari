@@ -5,9 +5,9 @@
  * const result = await octokit.projects.createCard({column_id, note, content_id, content_type})
  * /projects/columns/:column_id/cards
  */
-const parseGitHubURL = require('../../../lib/parse-github-url')
-const printOutput = require('../../../lib/print-output')
-const authenticatedOctokit = require('../../../lib/octokit')
+const parseGitHubURL = require('../../lib/parse-github-url')
+const printOutput = require('../../lib/print-output')
+const authenticatedOctokit = require('../../lib/octokit')
 
 /**
  * yargs builder function.
