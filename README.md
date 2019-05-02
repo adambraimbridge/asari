@@ -133,10 +133,11 @@ github open-pull-request <github-url>
 
 ## Command hierarchy and directory structure
 
-This project follows the example provided in the Yargs documentation for command hierarchy and directory structure.
+This project loosely follows the example provided in the Yargs documentation for command hierarchy and directory structure.
 
 - @see: https://github.com/yargs/yargs/blob/master/docs/advanced.md#commanddirdirectory-opts
-- @see: [`src/commands`](https://github.com/Financial-Times/github/blob/master/src/commands/) for all available commands.
+- @see: [`bin/github.js`](https://github.com/Financial-Times/github/blob/master/bin/github.js) for the root `github` command.
+- @see: [`src/commands`](https://github.com/Financial-Times/github/blob/master/src/commands/) for the `github <command>` commands.
 
 ## Conventions
 
@@ -146,6 +147,24 @@ This project follows the example provided in the Yargs documentation for command
 - All function names and variables are in `camelCase`.
 - The parameters used by Octokit are in `under_score` format.
 
-### Code formatting
+### Code formatting and linting
 
-- The [.vscode/settings.json](https://github.com/Financial-Times/github/blob/master/.vscode/settings.json) file contains the Visual Studio Code settings for the styling conventions used in this repository.
+- The [.editorconfig](https://github.com/Financial-Times/github/blob/master/.editorconfig) file contains configuration for the styling conventions used in this repository.
+
+  - @see: https://docs.microsoft.com/en-us/visualstudio/mac/editorconfig
+
+- The [.eslintrc.js](https://github.com/Financial-Times/github/blob/master/.eslintrc.js) file contains the settings for code linting.
+
+  - @see: https://eslint.org/
+
+- Note: `.eslintrc.js` extends the `prettier` tool, which applies code formatting rules.
+
+  - @see: https://prettier.io/docs/en/integrating-with-linters.html
+
+- You can `npm run eslint-check` to check there are no conflicts between eslint and prettier.
+
+  - @see: https://github.com/prettier/eslint-config-prettier#cli-helper-tool
+
+- If you use Visual Studio Code, consider installing the "Prettier - Code formatter" plugin.
+
+  - @see: https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode
