@@ -43,15 +43,15 @@ const parseGitHubURL = arg => {
 	if (parts[0] === 'orgs') {
 		// Project: https://github.com/orgs/[owner]/projects/[id]
 		// Project column: https://github.com/orgs/[owner]/projects/[id]#column-[columnId]
-		const { 0: scope, 1: owner, 2: endpoint, 3: number } = parts
+		const [scope, owner, endpoint, number] = parts
 		Object.assign(parsed, { scope, owner, endpoint, number: getNumber(number) })
 	} else if (['projects', 'pull'].includes(parts[2])) {
 		// Pull request ID: https://github.com/[owner]/[repo]/pull/[id]
-		const { 0: owner, 1: repo, 2: endpoint, 3: number } = parts
+		const [owner, repo, endpoint, number] = parts
 		Object.assign(parsed, { owner, repo, endpoint, number: getNumber(number) })
 	} else {
 		// Some other GitHub URL, e.g: https://github.com/[owner]/[repo]/tree/[value]
-		const { 0: owner, 1: repo, 2: endpoint, 3: value } = parts
+		const [owner, repo, endpoint, value] = parts
 		Object.assign(parsed, { owner, repo, endpoint, value })
 	}
 	return parsed
