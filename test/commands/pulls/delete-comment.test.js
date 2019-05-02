@@ -29,7 +29,7 @@ const yarguments = Object.assign({}, requiredArguments.options, {
 describe('Octokit', () => {
 	// If this endpoint is not called, nock.isDone() will be false.
 	const successResponse = nock('https://api.github.com')
-		.delete('/repos/Test-Owner/Test-Repo/pulls/comments/1')
+		.delete('/repos/Test-Owner/Test-Repo/issues/comments/1')
 		.reply(200, {})
 
 	test('Running the command handler triggers a network request of the GitHub API', async () => {

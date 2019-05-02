@@ -41,7 +41,7 @@ const handler = async ({ token, json, githubUrl }) => {
 	}
 	try {
 		const octokit = await authenticatedOctokit({ personalAccessToken: token })
-		const result = await octokit.pulls.deleteComment(inputs)
+		const result = await octokit.issues.deleteComment(inputs)
 		printOutput({ json, resource: result })
 	} catch (error) {
 		printOutput({ json, error })
