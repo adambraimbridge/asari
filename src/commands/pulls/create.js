@@ -1,14 +1,13 @@
 /**
- * @see: https://octokit.github.io/rest.js/#api-Pulls-create
+ * @see: https://octokit.github.io/rest.js/#octokit-routes-pulls-create
  * const result = await octokit.pulls.create({owner, repo, title, head, base, *body, *maintainer_can_modify})
  * /repos/:owner/:repo/pulls
  */
-const flow = require("lodash.flow")
-const fs = require("fs")
+const flow = require('lodash.flow')
 
-const commonYargs = require("../../../lib/common-yargs")
-const printOutput = require("../../../lib/print-output")
-const authenticatedOctokit = require("../../../lib/octokit")
+const commonYargs = require('../../lib/common-yargs')
+const printOutput = require('../../lib/print-output')
+const authenticatedOctokit = require('../../lib/octokit')
 
 /**
  * yargs builder function.
@@ -17,23 +16,15 @@ const authenticatedOctokit = require("../../../lib/octokit")
  */
 const builder = yargs => {
 	const baseOptions = flow([
-		commonYargs.withToken,
-		commonYargs.withJson,
-		commonYargs.withBase,
-		commonYargs.withOwner,
-		commonYargs.withRepo,
-		commonYargs.withReviewers,
-		commonYargs.withTeamReviewers,
-		commonYargs.withBody,
-		commonYargs.withTitle,
+		commonYargs.withGitHubUrl({
+			describe: 'The URL of the GitHub branch to create a pull request from.',
+		}),
+		commonYargs.withBase(),
+		commonYargs.withBody(),
+		commonYargs.withTitle({ demandOption: true }),
 	])
 
-	return baseOptions(yargs)
-		.option("head", {
-			describe: "The name of the branch where your changes are implemented.",
-			demandOption: true,
-			type: "string"
-		})
+	return baseOptions(yargs).example('github-url', 'Pattern: https://github.com/[owner]/[repository]/tree/[branch]')
 }
 
 /**
@@ -42,54 +33,34 @@ const builder = yargs => {
  * @param {object} argv - argv parsed and filtered by yargs
  * @param {string} argv.token
  * @param {string} argv.json
- * @param {string} argv.owner
- * @param {string} argv.repo
  * @param {string} argv.title
- * @param {string} argv.head
- * @param {string} argv.body
- * @param {string} [argv.base]
- * @throws {Error} - Throws an error if any required properties are invalid
+ * @param {string} argv.head - The name of the branch where your changes are implemented
+ * @param {string} argv.base - The name of the branch you want the changes pulled into (Default: master)
+ * @param {string} argv.bodyContent — This is created in the withBody() yarg option middleware.
+ * @param {object} argv.githubUrl - The GitHub url parsed in the withGitHubUrl() yarg option into appropriate properties, such as `owner` and `repo`.
  */
-const handler = async ({ token, json, base, body, owner, repo, title, head }) => {
-
-	// Ensure that all required properties have values
-	const requiredProperties = {
-		body,
+const handler = async ({ token, json, bodyContent, base, title, githubUrl }) => {
+	const { owner, repo, value } = githubUrl
+	const inputs = {
+		body: bodyContent,
 		owner,
 		repo,
 		title,
-		head,
-	}
-	if (Object.values(requiredProperties).some(property => !property)) {
-		throw new Error(`Please provide all required properties: ${Object.keys(requiredProperties).join(", ")}`)
-	}
-
-	// Confirm that the required file exists
-	const correctFilePath = fs.existsSync(body)
-	if (!correctFilePath) {
-		throw new Error(`File path ${body} not found`)
-	}
-
-	const bodyContent = fs.readFileSync(body, "utf8")
-	const inputs = Object.assign({}, requiredProperties, {
-		body: bodyContent,
-		head,
+		head: value,
 		base,
-	})
-
+	}
 	try {
 		const octokit = await authenticatedOctokit({ personalAccessToken: token })
 		const result = await octokit.pulls.create(inputs)
 		printOutput({ json, resource: result })
-	}
-	catch (error) {
+	} catch (error) {
 		printOutput({ json, error })
 	}
 }
 
 module.exports = {
-	command: "create",
-	desc: "Create a new pull request",
+	command: 'create-pull-request <github-url> [--base] [--body] [--title]',
+	desc: 'Create a new pull request',
 	builder,
-	handler
+	handler,
 }

@@ -1,15 +1,13 @@
 /**
- * @see: https://octokit.github.io/rest.js/#api-Pulls-update 
+ * @see: https://octokit.github.io/rest.js/#octokit-routes-pulls-update
  * There is no "closed" endpoint in the Octokit API. We use "update" with a `state` of "closed".
  * const result = await octokit.pulls.update({owner, repo, number, title, body, state, base, maintainer_can_modify})
  * /repos/:owner/:repo/pulls/:number
  */
-const flow = require("lodash.flow")
-const fs = require("fs")
-
-const commonYargs = require("../../../lib/common-yargs")
-const printOutput = require("../../../lib/print-output")
-const authenticatedOctokit = require("../../../lib/octokit")
+const flow = require('lodash.flow')
+const commonYargs = require('../../lib/common-yargs')
+const printOutput = require('../../lib/print-output')
+const authenticatedOctokit = require('../../lib/octokit')
 
 /**
  * yargs builder function.
@@ -18,20 +16,11 @@ const authenticatedOctokit = require("../../../lib/octokit")
  */
 const builder = yargs => {
 	const baseOptions = flow([
-		commonYargs.withToken,
-		commonYargs.withJson,
-		commonYargs.withBase,
-		commonYargs.withOwner,
-		commonYargs.withRepo,
-		commonYargs.withNumber,
-		commonYargs.withBody,
-		commonYargs.withTitle,
+		commonYargs.withGitHubUrl({
+			describe: 'The URL of the GitHub pull request to close.',
+		}),
 	])
-	return baseOptions(yargs)
-		.option("maintainer_can_modify", {
-			describe: "Indicates whether maintainers can modify the pull request.",
-			type: "string",
-		})
+	return baseOptions(yargs).example('github-url', 'Pattern: [https://][github.com]/[owner]/[repository?]/pull/[number]')
 }
 
 /**
@@ -40,56 +29,29 @@ const builder = yargs => {
  * @param {object} argv - argv parsed and filtered by yargs
  * @param {string} argv.token
  * @param {string} argv.json
- * @param {string} argv.owner
- * @param {string} argv.repo
- * @param {string} argv.number
- * @param {string} [argv.title]
- * @param {string} [argv.body]
- * @param {string} [argv.base]
- * @param {string} [argv.maintainer_can_modify]
- * @throws {Error} - Throws an error if any required properties are invalid
+ * @param {object} argv.githubUrl - The GitHub url parsed in the withGitHubUrl() yarg option into appropriate properties, such as `owner` and `repo`.
  */
-const handler = async ({ token, json, owner, repo, number, title, body, base, maintainer_can_modify }) => {
-
-	// Ensure that all required properties have values
-	const requiredProperties = {
+const handler = async ({ token, json, githubUrl }) => {
+	const { owner, repo, number } = githubUrl
+	const inputs = {
 		owner,
 		repo,
-		number,
+		pull_number: number,
+		state: 'closed',
 	}
-	if (Object.values(requiredProperties).some(property => !property)) {
-		throw new Error(`Please provide all required properties: ${Object.keys(requiredProperties).join(", ")}`)
-	}
-
-	// Confirm that the required file exists
-	let bodyContent;
-	if (body) {
-		const correctFilePath = fs.existsSync(body)
-		if (!correctFilePath) {
-			throw new Error(`File path ${body} not found`)
-		}
-		bodyContent = fs.readFileSync(body, "utf8")
-	}
-	const inputs = Object.assign({}, requiredProperties, {
-		title,
-		body: bodyContent,
-		base,
-		maintainer_can_modify,
-		state: "closed",
-	})
 	try {
 		const octokit = await authenticatedOctokit({ personalAccessToken: token })
 		const result = await octokit.pulls.update(inputs)
-		printOutput({ json, resource: result })
-	}
-	catch (error) {
-		throw new Error(error)
+		const { html_url, state } = result.data
+		printOutput({ json, resource: { html_url, state } })
+	} catch (error) {
+		printOutput({ json, error })
 	}
 }
 
 module.exports = {
-	command: "close",
-	desc: "Set the state of an existing pull request to `closed`",
+	command: 'close-pull-request <github-url>',
+	desc: 'Set the state of an existing pull request to `closed`',
 	builder,
-	handler
+	handler,
 }

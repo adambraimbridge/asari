@@ -1,86 +1,56 @@
-const yargs = require("yargs")
-const nock = require('nock');
-const yargsModule = require("../../../src/commands/pulls/merge")
+const nock = require('nock')
+const commonTests = require('../../common-tests')
+const yargsModule = require('../../../src/commands/pulls/merge')
 
 // Don't let Octokit make network requests
-nock.disableNetConnect();
+nock.disableNetConnect()
 
-jest.spyOn(global.console, "warn");
-afterEach(() => {
-	jest.clearAllMocks();
-});
+// Reset any mocked network endpoints
+nock.cleanAll()
 
-describe("Yargs", () => {
-	test("`pulls merge` command module exports an object that can be used by yargs", () => {
-		expect(yargsModule).toEqual(
-			expect.objectContaining({
-				command: expect.stringMatching("merge"),
-				desc: expect.any(String),
-				builder: expect.any(Function),
-				handler: expect.any(Function),
-			})
-		)
-	})
+/**
+ * Common Yargs tests
+ */
+const command = 'merge-pull-request'
+const requiredArguments = {
+	options: {
+		token: 'Test-Token',
+	},
+	positionals: {
+		'github-url': 'https://github.com/Test-Owner/Test-Repo/tree/Test-Branch',
+	},
+}
+commonTests.describeYargs(yargsModule, command, requiredArguments)
 
-	test("yargs can load the `pulls merge` command without any errors or warnings", () => {
-		expect(() => {
-			yargs.command(
-				yargsModule.command,
-				yargsModule.desc,
-				yargsModule.builder,
-				yargsModule.handler
-			).argv
-		}).not.toThrow()
-		expect(console.warn).not.toBeCalled()
-	})
-
-	test("an invalid pull request URL errors", async () => {
-		expect.assertions(1)
-		try {
-			const testOptions = {
-				token: "test",
-				pullRequest: "foo-bar",
-			};
-			await yargsModule.handler(testOptions)
-		} catch (error) {
-			expect(error).toBeInstanceOf(Error)
-		}
-	})
-
-	const requiredOptions = {
-		token: "test",
-		pullRequest: "https://github.com/test/test/",
-	}
-	for (let option of Object.keys(requiredOptions)) {
-		test(`Running the command handler without '${option}' throws an error`, async () => {
-			expect.assertions(1)
-			try {
-				const testOptions = Object.assign({}, requiredOptions)
-				delete testOptions[option]
-				await yargsModule.handler(testOptions)
-			} catch (error) {
-				expect(error).toBeInstanceOf(Error)
-			}
-		})
-	}
+const yarguments = Object.assign({}, requiredArguments.options, {
+	githubUrl: { owner: 'Test-Owner', repo: 'Test-Repo', number: 1 },
+	method: 'merge',
 })
 
-describe("Octokit", () => {
+describe('Octokit', () => {
 	// If this endpoint is not called, nock.isDone() will be false.
-	nock('https://api.github.com')
-		.persist()
-		.put('/repos/test/test/pulls/1/merge')
+	const successResponse = nock('https://api.github.com')
+		.put('/repos/Test-Owner/Test-Repo/pulls/1/merge')
 		.reply(200, {})
 
-	test("running the command handler triggers a network request of the GitHub API", async () => {
-		await yargsModule.handler({
-			token: "test",
-			pullRequest: {
-				owner: "test",
-				repo: "test",
-				number: 1
-			},
-		})
-		expect(nock.isDone()).toBe(true)
+	test('running the command handler triggers a network request of the GitHub API', async () => {
+		await yargsModule.handler(yarguments)
+		expect(successResponse.isDone()).toBe(true)
+	})
+})
+
+describe('Error output', () => {
+	test(`Running the command handler with an invalid github-url throws an error`, async () => {
+		expect.assertions(1)
+		try {
+			/**
+			 * Note: execSync() spawns a new process that nocks and mocks do not have access to.
+			 * So you can only test for errors.
+			 * If you test for successful execution, it will actually try to connect to GitHub.
+			 */
+			require('child_process').execSync(`./bin/github.js ${command} this-is-an-unvalid-github-url`)
+		} catch (error) {
+			expect(error.message).toMatch(new RegExp(`Invalid GitHub URL`, 'i'))
+		}
 	})
 })

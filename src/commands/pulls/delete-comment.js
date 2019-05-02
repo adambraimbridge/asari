@@ -1,12 +1,12 @@
 /**
- * @see: https://octokit.github.io/rest.js/#api-Pulls-deleteComment
+ * @see: https://octokit.github.io/rest.js/#octokit-routes-pulls-delete-comment
  * const result = await octokit.pulls.deleteComment({owner, repo, comment_id})
  * /repos/:owner/:repo/pulls/comments/:comment_id
  */
-const flow = require("lodash.flow")
-const commonYargs = require("../../../lib/common-yargs")
-const printOutput = require("../../../lib/print-output")
-const authenticatedOctokit = require("../../../lib/octokit")
+const flow = require('lodash.flow')
+const commonYargs = require('../../lib/common-yargs')
+const printOutput = require('../../lib/print-output')
+const authenticatedOctokit = require('../../lib/octokit')
 
 /**
  * yargs builder function.
@@ -15,17 +15,12 @@ const authenticatedOctokit = require("../../../lib/octokit")
  */
 const builder = yargs => {
 	const baseOptions = flow([
-		commonYargs.withToken,
-		commonYargs.withJson,
-		commonYargs.withOwner,
-		commonYargs.withRepo,
+		commonYargs.withGitHubUrl({
+			describe: 'The URL of the GitHub pull request comment to delete.',
+		}),
 	])
 
-	return baseOptions(yargs)
-		.option("comment_id", {
-			describe: "The ID of the comment to be deleted.",
-			type: "integer",
-		})
+	return baseOptions(yargs).example('github-url', 'Pattern: [https://][github.com]/[owner]/[repository?]/pull/[number]#issuecomment-[number]')
 }
 
 /**
@@ -34,35 +29,28 @@ const builder = yargs => {
  * @param {object} argv - argv parsed and filtered by yargs
  * @param {string} argv.token
  * @param {string} argv.json
- * @param {string} argv.owner
- * @param {string} argv.repo
- * @param {string} argv.comment_id
- * @throws {Error} - Throws an error if any required properties are invalid
+ * @param {object} argv.githubUrl - The GitHub url parsed in the withGitHubUrl() yarg option into appropriate properties, such as `owner` and `repo`.
  */
-const handler = async ({ token, json, owner, repo, comment_id }) => {
 
-	// Ensure that all required properties have values
-	const requiredProperties = {
+const handler = async ({ token, json, githubUrl }) => {
+	const { owner, repo, number } = githubUrl
+	const inputs = {
 		owner,
 		repo,
-		comment_id,
-	}
-	if (Object.values(requiredProperties).some(property => !property)) {
-		throw new Error(`Please provide all required properties: ${Object.keys(requiredProperties).join(", ")}`)
+		comment_id: number,
 	}
 	try {
 		const octokit = await authenticatedOctokit({ personalAccessToken: token })
-		const result = await octokit.pulls.deleteComment(requiredProperties)
+		const result = await octokit.issues.deleteComment(inputs)
 		printOutput({ json, resource: result })
-	}
-	catch (error) {
-		throw new Error(error)
+	} catch (error) {
+		printOutput({ json, error })
 	}
 }
 
 module.exports = {
-	command: "delete-comment",
-	desc: "Delete a comment on an existing pull request",
+	command: 'delete-comment <github-url>',
+	desc: 'Delete a comment on an existing pull request',
 	builder,
 	handler,
 }

@@ -2,14 +2,12 @@ const Octokit = require('@octokit/rest')
 
 module.exports = async ({ personalAccessToken }) => {
 	if (!personalAccessToken) {
-		throw new Error(
-			'github tooling helper: Missing personalAccessToken option - https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/'
-		)
+		throw new Error('Missing personalAccessToken option - https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/')
 	}
 
 	/**
-	* Return an authenticated instance of Octokit
-	*/
+	 * Return an authenticated instance of Octokit
+	 */
 	try {
 		return await new Octokit({
 			previews: [
@@ -26,10 +24,8 @@ module.exports = async ({ personalAccessToken }) => {
 			 * @see https://github.com/octokit/rest.js#authentication
 			 */
 			auth: `token ${personalAccessToken}`,
-
-			// Todo: Allow emojis. @see https://developer.github.com/v3/pulls/review_requests/#create-a-review-request
-			// header: 'application / vnd.github.symmetra - preview + json',
 		})
+	} catch (error) {
+		throw new Error(error)
 	}
-	catch (error) { throw new Error(error) }
 }

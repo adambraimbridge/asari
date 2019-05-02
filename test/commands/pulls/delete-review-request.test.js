@@ -1,83 +1,40 @@
-const yargs = require("yargs")
-const nock = require('nock');
-const yargsModule = require("../../../src/commands/pulls/create-review-request")
+const nock = require('nock')
+const commonTests = require('../../common-tests')
+const yargsModule = require('../../../src/commands/pulls/delete-review-request')
 
 // Don't let Octokit make network requests
-nock.disableNetConnect();
+nock.disableNetConnect()
 
-jest.spyOn(global.console, "warn");
-afterEach(() => {
-	jest.clearAllMocks();
-});
+// Reset any mocked network endpoints
+nock.cleanAll()
 
-describe("Yargs", () => {
-	test("`pulls create-review-request` command module exports an object that can be used by yargs", () => {
-		expect(yargsModule).toEqual(
-			expect.objectContaining({
-				command: expect.stringMatching("create-review-request"),
-				desc: expect.any(String),
-				builder: expect.any(Function),
-				handler: expect.any(Function),
-			})
-		)
-	})
+/**
+ * Common Yargs tests
+ */
+const command = 'delete-review-request'
+const requiredArguments = {
+	options: {
+		token: 'Test-Token',
+		reviewers: 'Test-Reviewer',
+	},
+	positionals: {
+		'github-url': 'https://github.com/Test-Owner/Test-Repo/pull/1',
+	},
+}
+commonTests.describeYargs(yargsModule, command, requiredArguments)
 
-	test("yargs can load the `pulls create-review-request` command without any errors or warnings", () => {
-		expect(() => {
-			yargs.command(
-				yargsModule.command,
-				yargsModule.desc,
-				yargsModule.builder,
-				yargsModule.handler
-			).argv
-		}).not.toThrow()
-		expect(console.warn).not.toBeCalled()
-	})
-
-	const requiredOptions = {
-		token: "test",
-		owner: "test",
-		repo: "test",
-		number: 1,
-	}
-	for (let option of Object.keys(requiredOptions)) {
-		test(`Running the command handler without '${option}' throws an error`, async () => {
-			expect.assertions(1)
-			try {
-				const testOptions = Object.assign({}, requiredOptions)
-				delete testOptions[option]
-				await yargsModule.handler(testOptions)
-			} catch (error) {
-				expect(error).toBeInstanceOf(Error)
-			}
-		})
-	}
-	test(`Running the command handler without 'reviewers' or 'team_reviewers' throws an error`, async () => {
-		expect.assertions(1)
-		try {
-			await yargsModule.handler(requiredOptions)
-		} catch (error) {
-			expect(error).toBeInstanceOf(Error)
-		}
-	})
+const yarguments = Object.assign({}, requiredArguments.options, {
+	githubUrl: { owner: 'Test-Owner', repo: 'Test-Repo', number: 1 },
 })
 
-describe("Octokit", () => {
-
+describe('Octokit', () => {
 	// If this endpoint is not called, nock.isDone() will be false.
-	nock('https://api.github.com')
-		.persist()
-		.post('/repos/test/test/pulls/1/requested_reviewers')
+	const successResponse = nock('https://api.github.com')
+		.delete('/repos/Test-Owner/Test-Repo/pulls/1/requested_reviewers')
 		.reply(200, {})
 
-	test("Running the command handler triggers a network request of the GitHub API", async () => {
-		await yargsModule.handler({
-			token: "test",
-			owner: "test",
-			repo: "test",
-			number: 1,
-			reviewers: "test",
-		})
-		expect(nock.isDone()).toBe(true)
+	test('Running the command handler triggers a network request of the GitHub API', async () => {
+		await yargsModule.handler(yarguments)
+		expect(successResponse.isDone()).toBe(true)
 	})
 })

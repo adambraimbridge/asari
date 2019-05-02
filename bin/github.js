@@ -1,42 +1,49 @@
 #!/usr/bin/env node
-
-const updateNotifier = require("update-notifier");
-const yargs = require("yargs");
-
-const options = require('../src/lib/helpers/yargs/options');
-
-const yargsCommandsDirectoryPath = "../src/commands";
+const flow = require('lodash.flow')
+const updateNotifier = require('update-notifier')
+const yargs = require('yargs')
+const yargsCommandsDirectoryPath = '../src/commands'
+const commonYargs = require('../src/lib/common-yargs')
 
 /**
  * Configure yargs.
  *
  * @see http://yargs.js.org/docs/
  */
-yargs
+const baseOptions = flow([
+	// prettier-ignore
+	commonYargs.withToken(),
+	commonYargs.withJson(),
+])
+baseOptions(yargs)
+	/**
+	 * The --version argument only makes sense as an option for the main `github` command.
+	 */
+	.command('[--version]', 'Show the version number.')
+	.hide('version')
 	/**
 	 * Load our yargs command modules from a directory.
 	 *
 	 * @see https://github.com/yargs/yargs/blob/master/docs/advanced.md#commanddirdirectory-opts
 	 */
-	.commandDir(yargsCommandsDirectoryPath)
+	.commandDir(yargsCommandsDirectoryPath, { recurse: true })
 	/**
-	 * Always require a command to be specified.
+	 * Maximize the width of yargs’ usage instructions.
 	 */
-	.demandCommand()
+	.wrap(yargs.terminalWidth())
+	/**
+	 * Show help if no command is specified, or on any error; making --help redundant.
+	 */
+	.demandCommand(1, '')
+	.help(false)
 	/**
 	 * Group global options in usage output.
 	 */
-	.group(["token", "json"], "Global Options:")
-	.describe("token", options.descriptions.token)
-	.describe("json", options.descriptions.json)
+	.group(['token', 'json'], 'Global Options:')
 	/**
 	 * Report unrecognized commands as errors.
 	 */
 	.strict()
-	/**
-	 * Enable the display of help with the `--help` option.
-	 */
-	.help();
 
 /**
  * Parse command line arguments and handle them.
@@ -46,7 +53,7 @@ yargs
  *
  * @see https://nodejs.org/dist/latest/docs/api/process.html#process_process_argv
  */
-yargs.parse();
+yargs.parse()
 
 /**
  * Display a notification if a newer version of this package is available to install.
@@ -62,5 +69,5 @@ yargs.parse();
  *
  * @see https://www.npmjs.com/package/update-notifier
  */
-const packageJson = require("../package.json");
-updateNotifier({ pkg: packageJson }).notify();
+const packageJson = require('../package.json')
+updateNotifier({ pkg: packageJson }).notify()
