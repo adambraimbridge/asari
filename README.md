@@ -181,9 +181,9 @@ This project loosely follows the example provided in the Yargs documentation for
 
     - @see: https://www.npmjs.com/package/@adambraimbridge/prettierrc-2019-05
 
-- If you use Visual Studio Code, consider installing the "Prettier - Code formatter" plugin.
+- Consider installing `prettier` in your editor. Plugins are available for most popular editors.
 
-  - @see: https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode
+  - @see: https://prettier.io/docs/en/editors.html
 
 ## Package.json scripts
 
