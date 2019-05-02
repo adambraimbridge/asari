@@ -21,7 +21,7 @@ const withToken = options => yargs =>
 			}
 			return true
 		})
-		.default('token', process.env.GITHUB_PERSONAL_ACCESS_TOKEN, 'process.env.GITHUB_PERSONAL_ACCESS_TOKEN')
+		.default('token', process.env.GITHUB_PERSONAL_ACCESS_TOKEN, '$GITHUB_PERSONAL_ACCESS_TOKEN')
 
 const withJson = options => yargs =>
 	yargs.option(
