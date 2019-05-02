@@ -117,16 +117,24 @@ github open-pull-request <github-url>
 ### Global Options
 
 ```bash
+--json
+
+# Format command output as JSON string.
+```
+
+```bash
 --token
 
 # GitHub personal access token.
 # Generate one at https://github.com/settings/tokens
 ```
 
-```bash
---json
+> Note: You can omit the `--token` argument, because it will default to  `process.env.GITHUB_PERSONAL_ACCESS_TOKEN`.
+>
+> In that case you will need to export the token to your environment:
 
-# Format command output as JSON string.
+```bash
+export $GITHUB_PERSONAL_ACCESS_TOKEN=[your token here]
 ```
 
 # Developers
