@@ -48,6 +48,8 @@ github --version
 # Show the version number.
 ```
 
+### Working with GitHub Projects
+
 ```bash
 github add-pull-request [--column-url] [--pull-request-url]
 
@@ -65,6 +67,10 @@ github create-project <github-url> [--body]
 
 # Create a new project.
 ```
+
+@see: [`src/commands/projects/README.md`](https://github.com/Financial-Times/github/blob/master/src/commands/projects/README.md) for more details.
+
+### Working with GitHub Pull Requests
 
 ```bash
 github close-pull-request <github-url>
@@ -113,6 +119,8 @@ github open-pull-request <github-url>
 
 # Set the state of an existing pull request to `open`.
 ```
+
+@see: [`src/commands/pulls/README.md`](https://github.com/Financial-Times/github/blob/master/src/commands/pulls/README.md) for more details.
 
 ### Global Options
 
