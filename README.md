@@ -10,130 +10,124 @@ A human-friendly\* command line tool for the GitHub API.
 
 ### Global installation (recommmended)
 
-```shell
+```bash
 npm install --global @financial-times/github
 ```
 
-<blockquote>
 When you run the tool, it will automatically notify you if there is a newer version of it available for you to update to.
 
 [You can disable notifications](https://www.npmjs.com/package/update-notifier#user-settings) if you'd prefer not to be notified about updates.
 
-</blockquote>
-
 ### No installation
 
-```shell
+```bash
 npx @financial-times/github
 ```
 
-<blockquote>
-
 The `npx` command lets you use this tool without installing it. However, each time you use `npx` it downloads the whole package from the npm registry, which takes a while. That's why global installation is reccommended.
 
-Note: If this tool is globally installed, `npx @financial-times/github` will use that globally installed version rather than downloading.
-
-</blockquote>
+> Note: If this tool is globally installed, `npx @financial-times/github` will use that globally installed version rather than downloading.
 
 ## Commands
 
-```shell
+```bash
 github
+
+# Display help.
 ```
 
-<blockquote>Display help.</blockquote>
-
-```shell
+```bash
 github <command>
+
+# Display help for the command.
 ```
 
-<blockquote>Display help for the command.</blockquote>
-
-```shell
+```bash
 github --version
+
+# Show the version number.
 ```
 
-<blockquote>Show the version number.</blockquote>
-
-```shell
+```bash
 github add-pull-request [--column-url] [--pull-request-url]
+
+# Add a pull request to a GitHub project column.
 ```
 
-<blockquote>Add a pull request to a GitHub project column.</blockquote>
-
-```shell
+```bash
 github close-project <github-url>
+
+# Set the state of an existing project board to `closed`.
 ```
 
-<blockquote>Set the state of an existing project board to `closed`.</blockquote>
-
-```shell
+```bash
 github create-project <github-url> [--body]
+
+# Create a new project.
 ```
 
-<blockquote>Create a new project.</blockquote>
-
-```shell
+```bash
 github close-pull-request <github-url>
+
+# Set the state of an existing pull request to `closed`.
 ```
 
-<blockquote>Set the state of an existing pull request to `closed`.</blockquote>
-
-```shell
+```bash
 github create-comment <github-url> [--body]
+
+# Create a comment on an existing pull request.
 ```
 
-<blockquote>Create a comment on an existing pull request.</blockquote>
-
-```shell
+```bash
 github create-review-request <github-url> [reviewers|team-reviewers]
+
+# Request a review for a pull request.
 ```
 
-<blockquote>Request a review for a pull request.</blockquote>
-
-```shell
+```bash
 github create-pull-request <github-url> [--base] [--body] [--title]
+
+# Create a new pull request.
 ```
 
-<blockquote>Create a new pull request.</blockquote>
-
-```shell
+```bash
 github delete-comment <github-url>
+
+# Delete a comment on an existing pull request.
 ```
 
-<blockquote>Delete a comment on an existing pull request.</blockquote>
-
-```shell
+```bash
 github delete-review-request <github-url> [reviewers|team-reviewers]
+
+# Delete a review for a pull request.
 ```
 
-<blockquote>Delete a review for a pull request.</blockquote>
-
-```shell
+```bash
 github merge-pull-request <github-url> [--method]
+
+# Merge an existing pull request.
 ```
 
-<blockquote>Merge an existing pull request</blockquote>
-
-```shell
+```bash
 github open-pull-request <github-url>
-```
 
-<blockquote>Set the state of an existing pull request to `open`.</blockquote>
+# Set the state of an existing pull request to `open`.
+```
 
 ### Global Options
 
-```shell
+```bash
 --token
+
+# GitHub personal access token.
+# Generate one at https://github.com/settings/tokens
 ```
 
-<blockquote>GitHub personal access token. Generate one at https://github.com/settings/tokens.</blockquote>
-
-```shell
+```bash
 --json
-```
 
-<blockquote>Format command output as JSON string</blockquote>
+# Format command output as JSON string.
+```
 
 # Developers
 
