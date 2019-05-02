@@ -137,7 +137,7 @@ github open-pull-request <github-url>
 # Generate one at https://github.com/settings/tokens
 ```
 
-> Note: You can omit the `--token` argument, because it will default to  `process.env.GITHUB_PERSONAL_ACCESS_TOKEN`.
+> Note: You can omit the `--token` argument, because it will default to  `$GITHUB_PERSONAL_ACCESS_TOKEN`.
 >
 > In that case you will need to export the token to your environment:
 
