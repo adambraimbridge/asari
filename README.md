@@ -149,10 +149,6 @@ This project loosely follows the example provided in the Yargs documentation for
 
 ### Code formatting and linting
 
-- The [.editorconfig](https://github.com/Financial-Times/github/blob/master/.editorconfig) file contains configuration for the styling conventions used in this repository.
-
-  - @see: https://docs.microsoft.com/en-us/visualstudio/mac/editorconfig
-
 - The [.eslintrc.js](https://github.com/Financial-Times/github/blob/master/.eslintrc.js) file contains the settings for code linting.
 
   - @see: https://eslint.org/
@@ -161,10 +157,42 @@ This project loosely follows the example provided in the Yargs documentation for
 
   - @see: https://prettier.io/docs/en/integrating-with-linters.html
 
-- You can `npm run eslint-check` to check there are no conflicts between eslint and prettier.
+- You can `npm run eslint-check` to check there are no conflicts between eslint and prettier configurations.
 
   - @see: https://github.com/prettier/eslint-config-prettier#cli-helper-tool
 
 - If you use Visual Studio Code, consider installing the "Prettier - Code formatter" plugin.
 
   - @see: https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode
+
+## Package.json scripts
+
+```bash
+npm run unit-test
+
+# jest --coverage
+```
+
+```bash
+npm run test
+
+# npm run lint && npm run unit-test
+```
+
+```bash
+npm run lint
+
+# eslint src/
+```
+
+```bash
+npm run lint-fix
+
+# eslint --fix src/
+```
+
+```bash
+npm run eslint-check
+
+# eslint --print-config . | eslint-config-prettier-chec
+```
