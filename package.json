@@ -22,7 +22,7 @@
 		"@adambraimbridge/prettierrc-2019-05": "^1.0.0",
 		"@octokit/rest": "^16.16.3",
 		"lodash.flow": "^3.5.0",
-		"update-notifier": "^2.5.0",
+		"update-notifier": "^3.0.0",
 		"yargs": "^13.2.1"
 	},
 	"devDependencies": {
