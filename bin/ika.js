@@ -16,8 +16,9 @@ const baseOptions = flow([
 	commonYargs.withJson(),
 ])
 baseOptions(yargs)
+	.scriptName('ika')
 	/**
-	 * The --version argument only makes sense as an option for the main `github` command.
+	 * The --version argument only makes sense as an option for the main `ika` command.
 	 */
 	.command('[--version]', 'Show the version number.')
 	.hide('version')
