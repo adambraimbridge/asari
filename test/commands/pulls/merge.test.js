@@ -48,7 +48,7 @@ describe('Error output', () => {
 			 * So you can only test for errors.
 			 * If you test for successful execution, it will actually try to connect to GitHub.
 			 */
-			require('child_process').execSync(`./bin/github.js ${command} this-is-an-unvalid-github-url`)
+			require('child_process').execSync(`./bin/ika.js ${command} this-is-an-unvalid-github-url`)
 		} catch (error) {
 			expect(error.message).toMatch(new RegExp(`Invalid GitHub URL`, 'i'))
 		}
