@@ -4,7 +4,7 @@
 
 <sup>1</sup> It's script-friendly too. 
 
-"Ika" (えび) is [Japanese for squid/cuttlefish](https://translate.google.com/#view=home&op=translate&sl=en&tl=ja&text=Squid). Like a squid, the `ika` command line tool is an elongated, fast-swimming cephalopod mollusk with ten arms (technically, eight arms and two long tentacles), typically able to change color.
+"Ika" (いか) is [Japanese for squid/cuttlefish](https://translate.google.com/#view=home&op=translate&sl=en&tl=ja&text=Squid). Like a squid, the `ika` command line tool is an elongated, fast-swimming cephalopod mollusk with ten arms (technically, eight arms and two long tentacles), typically able to change color.
 
 `ika` lets you work with GitHub from your shell, and is delicious when lightly fried with garlic and spices.
 
