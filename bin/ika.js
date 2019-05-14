@@ -16,7 +16,7 @@ const baseOptions = flow([
 	commonYargs.withJson(),
 ])
 baseOptions(yargs)
-	.scriptName('github')
+	.scriptName('ika')
 	/**
 	 * The --version argument only makes sense as an option for the main `github` command.
 	 */

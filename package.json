@@ -1,9 +1,8 @@
 {
-	"name": "@financial-times/github",
+	"name": "ika",
 	"version": "1.0.0",
-	"description": "A human-friendly command line tool for the GitHub API",
-	"main": "src/lib/github.js",
-	"bin": "bin/github.js",
+	"description": "🦑 Ika: A human-friendly command line tool for the GitHub API",
+	"bin": "bin/ika.js",
 	"scripts": {
 		"test": "npm run lint && npm run unit-test",
 		"unit-test": "jest --coverage",
@@ -14,15 +13,14 @@
 	"keywords": [],
 	"repository": {
 		"type": "git",
-		"url": "git@github.com:Financial-Times/github.git"
+		"url": "git@github.com:Financial-Times/ika.git"
 	},
-	"author": "",
 	"license": "MIT",
 	"dependencies": {
 		"@adambraimbridge/prettierrc-2019-05": "^1.0.0",
 		"@octokit/rest": "^16.16.3",
 		"lodash.flow": "^3.5.0",
-		"update-notifier": "^2.5.0",
+		"update-notifier": "^3.0.0",
 		"yargs": "^13.2.1"
 	},
 	"devDependencies": {

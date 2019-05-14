@@ -71,7 +71,7 @@ const missingOptionWillThrow = (requiredArguments, command) => {
 				 * So you can only test for errors.
 				 * If you test for successful execution, it will actually try to connect to GitHub.
 				 */
-				require('child_process').execSync(`./bin/github.js ${command} ${argumentString}`, { env: testEnv })
+				require('child_process').execSync(`./bin/ika.js ${command} ${argumentString}`, { env: testEnv })
 			} catch (error) {
 				expect(error.message).toMatch(new RegExp(`Missing required argument:\(\[a\-z\\s\]\+\)${argumentName}`, 'i'))
 			}
