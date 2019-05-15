@@ -4,6 +4,10 @@
 
 <sup>1</sup> It's script-friendly too. 
 
+![image](https://user-images.githubusercontent.com/224547/57764890-42704180-76fc-11e9-9256-2be2037e2fdf.png)
+
+> Above: Use `npx ika` in your shell to manage your work in GitHub.
+
 "Ika" (いか) is [Japanese for squid/cuttlefish](https://translate.google.com/#view=home&op=translate&sl=en&tl=ja&text=Squid). Like a squid, the `ika` command line tool is an elongated, fast-swimming cephalopod mollusk with ten arms (technically, eight arms and two long tentacles), typically able to change color.
 
 `ika` lets you work with GitHub from your shell, and is delicious when lightly fried with garlic and spices.
