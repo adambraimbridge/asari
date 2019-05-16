@@ -12,13 +12,13 @@
 ## Commands
 
 ```bash
-github <command>
+ika <command>
 
 # Display help for the command.
 ```
 
 ```bash
-github add-pull-request [--column-url] [--pull-request-url]
+ika add-pull-request [--column-url] [--pull-request-url]
 
 # Add a pull request to a GitHub project column.
 ```
@@ -29,13 +29,13 @@ Get `--column-url` from the "Copy column link" option in the "`...`" menu button
 
 
 ```bash
-github close-project <github-url>
+ika close-project <github-url>
 
 # Set the state of an existing project board to `closed`.
 ```
 
 ```bash
-github create-project <github-url> [--body]
+ika create-project <github-url> [--body]
 
 # Create a new project.
 ```

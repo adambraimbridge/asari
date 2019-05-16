@@ -12,55 +12,55 @@
 ## Commands
 
 ```bash
-github <command>
+ika <command>
 
 # Display help for the command.
 ```
 
 ```bash
-github close-pull-request <github-url>
+ika close-pull-request <github-url>
 
 # Set the state of an existing pull request to `closed`.
 ```
 
 ```bash
-github create-comment <github-url> [--body]
+ika create-comment <github-url> [--body]
 
 # Create a comment on an existing pull request.
 ```
 
 ```bash
-github create-review-request <github-url> [reviewers|team-reviewers]
+ika create-review-request <github-url> [reviewers|team-reviewers]
 
 # Request a review for a pull request.
 ```
 
 ```bash
-github create-pull-request <github-url> [--base] [--body] [--title]
+ika create-pull-request <github-url> [--base] [--body] [--title]
 
 # Create a new pull request.
 ```
 
 ```bash
-github delete-comment <github-url>
+ika delete-comment <github-url>
 
 # Delete a comment on an existing pull request.
 ```
 
 ```bash
-github delete-review-request <github-url> [reviewers|team-reviewers]
+ika delete-review-request <github-url> [reviewers|team-reviewers]
 
 # Delete a review for a pull request.
 ```
 
 ```bash
-github merge-pull-request <github-url> [--method]
+ika merge-pull-request <github-url> [--method]
 
 # Merge an existing pull request.
 ```
 
 ```bash
-github open-pull-request <github-url>
+ika open-pull-request <github-url>
 
 # Set the state of an existing pull request to `open`.
 ```
