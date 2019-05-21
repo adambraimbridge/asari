@@ -59,7 +59,7 @@ const handler = async ({ token, json, bodyContent, base, title, githubUrl }) => 
 }
 
 module.exports = {
-	command: 'create-pull-request <github-url> [--base] [--body] [--title]',
+	command: 'create <github-url> [--base] [--body] [--title]',
 	desc: 'Create a new pull request',
 	builder,
 	handler,

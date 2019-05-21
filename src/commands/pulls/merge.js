@@ -58,7 +58,7 @@ const handler = async ({ token, json, method, githubUrl }) => {
 }
 
 module.exports = {
-	command: 'merge-pull-request <github-url> [--method]',
+	command: 'merge <github-url> [--method]',
 	desc: 'Merge an existing pull request',
 	builder,
 	handler,
