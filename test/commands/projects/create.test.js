@@ -16,7 +16,7 @@ afterEach(() => {
 /**
  * Common Yargs tests
  */
-const command = 'create-project'
+const command = 'projects create'
 const requiredArguments = {
 	positionals: {
 		'github-url': 'https://github.com/Test-Owner/Test-Repo',

@@ -58,7 +58,7 @@ const handler = async ({ token, json, columnUrl, pullRequestUrl }) => {
 }
 
 module.exports = {
-	command: 'add-pull-request [--column-url] [--pull-request-url]',
+	command: 'add-pull-request [--column-url] [--url]',
 	desc: 'Add a pull request to a GitHub project column',
 	builder,
 	handler,
