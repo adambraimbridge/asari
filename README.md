@@ -2,7 +2,7 @@
 
 ## A human-friendly<sup>1</sup> command line tool for the GitHub API.
 
-<sup>1</sup> It's script-friendly too. 
+<sup>1</sup> It's script-friendly too.
 
 "Ika" (えび) is [Japanese for squid/cuttlefish](https://translate.google.com/#view=home&op=translate&sl=en&tl=ja&text=Squid). Like a squid, the `ika` command line tool is an elongated, fast-swimming cephalopod mollusk with ten arms (technically, eight arms and two long tentacles), typically able to change color.
 
@@ -55,76 +55,72 @@ ika --version
 ### Working with GitHub Projects
 
 ```bash
-ika add-pull-request [--column-url] [--pull-request-url]
+ika projects add [--column-url] [--url]
 
 # Add a pull request to a GitHub project column.
 ```
 
 ```bash
-ika close-project <github-url>
+ika projects close <github-url>
 
 # Set the state of an existing project board to `closed`.
 ```
 
 ```bash
-ika create-project <github-url> [--body]
+ika projects create <github-url> [--body]
 
 # Create a new project.
 ```
 
-@see: [`src/commands/projects/README.md`](https://github.com/Financial-Times/ika/blob/master/src/commands/projects/README.md) for more details.
-
 ### Working with GitHub Pull Requests
 
 ```bash
-ika close-pull-request <github-url>
+ika pulls close <github-url>
 
 # Set the state of an existing pull request to `closed`.
 ```
 
 ```bash
-ika create-comment <github-url> [--body]
+ika pulls create-comment <github-url> [--body]
 
 # Create a comment on an existing pull request.
 ```
 
 ```bash
-ika create-review-request <github-url> [reviewers|team-reviewers]
+ika pulls create-review-request <github-url> [reviewers|team-reviewers]
 
 # Request a review for a pull request.
 ```
 
 ```bash
-ika create-pull-request <github-url> [--base] [--body] [--title]
+ika pulls create <github-url> [--base] [--body] [--title]
 
 # Create a new pull request.
 ```
 
 ```bash
-ika delete-comment <github-url>
+ika pulls delete-comment <github-url>
 
 # Delete a comment on an existing pull request.
 ```
 
 ```bash
-ika delete-review-request <github-url> [reviewers|team-reviewers]
+ika pulls delete-review-request <github-url> [reviewers|team-reviewers]
 
 # Delete a review for a pull request.
 ```
 
 ```bash
-ika merge-pull-request <github-url> [--method]
+ika pulls merge <github-url> [--method]
 
 # Merge an existing pull request.
 ```
 
 ```bash
-ika open-pull-request <github-url>
+ika pulls open <github-url>
 
 # Set the state of an existing pull request to `open`.
 ```
-
-@see: [`src/commands/pulls/README.md`](https://github.com/Financial-Times/ika/blob/master/src/commands/pulls/README.md) for more details.
 
 ### Global Options
 
@@ -141,7 +137,7 @@ ika open-pull-request <github-url>
 # Generate one at https://github.com/settings/tokens
 ```
 
-> Note: You can omit the `--token` argument, because it will default to  `$GITHUB_PERSONAL_ACCESS_TOKEN`.
+> Note: You can omit the `--token` argument, because it will default to `$GITHUB_PERSONAL_ACCESS_TOKEN`.
 >
 > In that case you will need to export the token to your environment:
 

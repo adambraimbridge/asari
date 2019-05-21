@@ -16,7 +16,7 @@ afterEach(() => {
 /**
  * Common Yargs tests
  */
-const command = 'add-pull-request'
+const command = 'projects add-pull-request'
 const requiredArguments = {
 	options: {
 		'column-url': 'https://github.com/Test-Owner/test-repository/pull/12345#column-67890',

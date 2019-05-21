@@ -105,7 +105,7 @@ const handler = async ({ token, json, name, bodyContent, githubUrl }) => {
 }
 
 module.exports = {
-	command: 'create-project <github-url> [--body]',
+	command: 'create <github-url> [--body]',
 	desc: 'Create a new project',
 	builder,
 	handler,

@@ -5,7 +5,7 @@ const commandModuleExportsObject = (yargsModule, command) => {
 	test(`The "${command}" command module exports an object that can be used by yargs`, () => {
 		expect(yargsModule).toEqual(
 			expect.objectContaining({
-				command: expect.stringContaining(command),
+				command: expect.stringContaining(command.split(' ')[1]),
 				desc: expect.any(String),
 				builder: expect.any(Function),
 				handler: expect.any(Function),
