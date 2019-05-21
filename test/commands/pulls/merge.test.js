@@ -11,7 +11,7 @@ nock.cleanAll()
 /**
  * Common Yargs tests
  */
-const command = 'merge-pull-request'
+const command = 'pulls merge'
 const requiredArguments = {
 	options: {
 		token: 'Test-Token',

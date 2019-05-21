@@ -11,7 +11,7 @@ nock.cleanAll()
 /**
  * Common Yargs tests
  */
-const command = 'create-pull-request'
+const command = 'pulls create'
 const requiredArguments = {
 	options: {
 		token: 'Test-Token',
