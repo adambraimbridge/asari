@@ -1,6 +1,6 @@
 /**
  * @see: https://octokit.github.io/rest.js/#octokit-routes-issues-create
- * const result = await octokit.issues.create({ owner, repo, title, body })
+ * const result = await octokit.issues.create({ owner, repo, title, [body], [assignees] })
  */
 const flow = require('lodash.flow')
 const commonYargs = require('../../lib/common-yargs')
@@ -20,7 +20,12 @@ const builder = yargs => {
 		commonYargs.withBody(),
 		commonYargs.withTitle({ demandOption: true }),
 	])
-	return baseOptions(yargs).example('github-url', 'Pattern: https://github.com/[owner]/[repository]')
+	return baseOptions(yargs)
+		.option('assignees', {
+			type: 'array',
+			describe: 'GitHub user names to assign to the issue',
+		})
+		.example('github-url', 'Pattern: https://github.com/[owner]/[repository]')
 }
 
 /**
@@ -31,15 +36,17 @@ const builder = yargs => {
  * @param {string} argv.json
  * @param {string} argv.title
  * @param {string} argv.bodyContent — This is created in the withBody() yarg option middleware.
+ * @param {array} argv.assignees — GitHub user names to assign to this issue.
  * @param {object} argv.githubUrl - The GitHub url parsed in the withGitHubUrl() yarg option into appropriate properties, such as `owner` and `repo`.
  */
-const handler = async ({ token, json, title, bodyContent, githubUrl }) => {
+const handler = async ({ token, json, title, bodyContent, assignees, githubUrl }) => {
 	const { owner, repo } = githubUrl
 	const inputs = {
 		owner,
 		repo,
 		title,
 		body: bodyContent,
+		assignees,
 	}
 	try {
 		const octokit = await authenticatedOctokit({ personalAccessToken: token })
@@ -51,7 +58,7 @@ const handler = async ({ token, json, title, bodyContent, githubUrl }) => {
 }
 
 module.exports = {
-	command: 'create-issue <github-url> [--title] [--body]',
+	command: 'create <github-url> [--title] [--body] [--assignees]',
 	desc: 'Create a new issue',
 	builder,
 	handler,
