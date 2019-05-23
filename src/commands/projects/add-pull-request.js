@@ -43,14 +43,22 @@ const builder = yargs =>
  * @param {object} argv.pullRequestUrl - an object produced by parsing the GitHub URL.
  */
 const handler = async ({ token, json, columnUrl, pullRequestUrl }) => {
-	const inputs = {
-		column_id: columnUrl.number,
-		content_id: pullRequestUrl.number,
-		content_type: 'PullRequest',
-	}
 	try {
 		const octokit = await authenticatedOctokit({ personalAccessToken: token })
-		const result = await octokit.projects.createCard(inputs)
+
+		// Fetch the pull request data to glean the ID
+		const pullRequestData = await octokit.pulls.get({
+			owner: pullRequestUrl.owner,
+			repo: pullRequestUrl.repo,
+			pull_number: pullRequestUrl.number,
+		})
+
+		// Add the issue to the project column by creating a card
+		const result = await octokit.projects.createCard({
+			content_id: pullRequestData.data.id,
+			column_id: columnUrl.number,
+			content_type: 'PullRequest',
+		})
 		printOutput({ json, resource: result.data })
 	} catch (error) {
 		printOutput({ json, error })

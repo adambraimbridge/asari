@@ -8,7 +8,6 @@ const handler = async ({ token, json }) => {
 	try {
 		const octokit = await authenticatedOctokit({ personalAccessToken: token })
 		const result = await octokit.rateLimit.get()
-		debugger
 		Object.keys(result.data.resources).forEach(row => {
 			console.log(`${row} \n • Remaining = ${result.data.resources[row].remaining} / ${result.data.resources[row].limit} \n • Reset     = ${new Date(result.data.resources[row].reset * 1000)}\n`)
 		})
