@@ -26,11 +26,11 @@ const builder = yargs => {
 				yargs.showHelp()
 				if (message.includes('Missing required argument: type')) {
 					console.error(`\nMissing required argument: type. Choices:
- * all: All issues you are authenticated to see.
- * assigned: Issues assigned to you.
+ * assigned (default): Issues assigned to you.
  * created: Issues created by you.
  * mentioned: Issues mentioning you.
  * subscribed: Issues you're subscribed to updates for.                     
+ * all: All issues you are authenticated to see.
                     `)
 				} else {
 					console.error(message)
