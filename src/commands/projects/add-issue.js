@@ -43,14 +43,22 @@ const builder = yargs =>
  * @param {object} argv.issueUrl - an object produced by parsing the GitHub URL.
  */
 const handler = async ({ token, json, columnUrl, issueUrl }) => {
-	const inputs = {
-		column_id: columnUrl.number,
-		content_id: issueUrl.value,
-		content_type: 'Issue',
-	}
 	try {
 		const octokit = await authenticatedOctokit({ personalAccessToken: token })
-		const result = await octokit.projects.createCard(inputs)
+
+		// Fetch the issue data to glean the ID
+		const issueData = await octokit.issues.get({
+			owner: issueUrl.owner,
+			repo: issueUrl.repo,
+			issue_number: issueUrl.value,
+		})
+
+		// Add the issue to the project column by creating a card
+		const result = await octokit.projects.createCard({
+			content_id: issueData.data.id,
+			column_id: columnUrl.number,
+			content_type: 'Issue',
+		})
 		printOutput({ json, resource: result.data })
 	} catch (error) {
 		printOutput({ json, error })

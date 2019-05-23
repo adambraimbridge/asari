@@ -31,7 +31,6 @@ const builder = yargs => {
  * @param {object} argv.githubUrl - The GitHub url parsed in the withGitHubUrl() yarg option into appropriate properties, such as `owner` and `repo`.
  */
 const handler = async ({ token, json, githubUrl }) => {
-	debugger
 	const { owner, repo, value } = githubUrl
 	const inputs = {
 		owner,
