@@ -25,13 +25,7 @@ const builder = yargs => {
 			.fail((message, error, yargs) => {
 				yargs.showHelp()
 				if (message.includes('Missing required argument: type')) {
-					console.error(`\nMissing required argument: type. Choices:
- * assigned (default): Issues assigned to you.
- * created: Issues created by you.
- * mentioned: Issues mentioning you.
- * subscribed: Issues you're subscribed to updates for.                     
- * all: All issues you are authenticated to see.
-                    `)
+					console.error(`\nMissing required argument: type. Choices: \n * assigned: Issues assigned to you. \n * created: Issues created by you. \n * mentioned: Issues mentioning you. \n * subscribed: Issues you're subscribed to updates for. \n * all: All issues you are authenticated to see.`)
 				} else {
 					console.error(message)
 				}
@@ -51,8 +45,11 @@ const builder = yargs => {
 const handler = async ({ token, json, type }) => {
 	try {
 		const octokit = await authenticatedOctokit({ personalAccessToken: token })
-		const result = await octokit.issues.list({ type })
-		result.data.forEach(issue => {
+
+		// @see https://github.com/octokit/rest.js/blob/master/docs/src/pages/api/00_usage.md#pagination
+		const request = octokit.issues.list.endpoint.merge({ filter: type })
+		const result = await octokit.paginate(request)
+		result.forEach(issue => {
 			const { title, created_at, html_url } = issue
 			console.log('\x1b[36m%s\x1b[0m %s \x1b[2m%s\x1b[0m', created_at, title, html_url)
 		})
