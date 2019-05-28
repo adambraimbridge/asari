@@ -19,7 +19,7 @@ const builder = yargs => {
 			describe: 'The URL of the GitHub issue to close.',
 		}),
 	])
-	return baseOptions(yargs).example('github-url', 'Pattern: [https://][github.com]/[owner]/[repository?]/pull/[number]')
+	return baseOptions(yargs).example('github-url', 'Pattern: [https://][github.com]/[owner]/[repository]/issue/[number]')
 }
 
 /**

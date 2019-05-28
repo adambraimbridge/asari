@@ -28,7 +28,6 @@ const builder = yargs => {
  * @param {object} argv - argv parsed and filtered by yargs
  * @param {string} argv.token
  * @param {string} argv.json
- * @param {object} argv.type - Indicates which sorts of issues to return.
  */
 const handler = async ({ token, json, githubUrl }) => {
 	try {
@@ -38,11 +37,21 @@ const handler = async ({ token, json, githubUrl }) => {
 		// @see https://github.com/octokit/rest.js/blob/master/docs/src/pages/api/00_usage.md#pagination
 		const request = octokit.issues.listForRepo.endpoint.merge({ owner, repo })
 		const result = await octokit.paginate(request)
-		result.forEach(issue => {
-			const { title, created_at, html_url } = issue
-			console.log('\x1b[36m%s\x1b[0m %s \x1b[2m%s\x1b[0m', created_at, title, html_url)
-		})
-		printOutput({ json, resource: result })
+		if (json) {
+			printOutput({ json, resource: result })
+		} else {
+			result.forEach(issue => {
+				const { title, created_at, html_url, assignees } = issue
+				const assigneeString = assignees.map(user => user.login).join(', ')
+				console.log(
+					// Prettier-ignore
+					`\x1b[36m${created_at}\x1b[0m`,
+					title,
+					`\x1b[33m${assigneeString || 'unassigned'}\x1b[0m`,
+					`\x1b[2m${html_url}\x1b[0m`
+				)
+			})
+		}
 	} catch (error) {
 		printOutput({ json, error })
 	}
