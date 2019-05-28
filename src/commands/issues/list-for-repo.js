@@ -54,8 +54,3 @@ module.exports = {
 	builder,
 	handler,
 }
-
-// octokit.issues.listForRepo({
-//   owner,
-//   repo
-// })

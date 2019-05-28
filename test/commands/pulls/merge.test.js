@@ -15,6 +15,7 @@ const command = 'pulls merge'
 const requiredArguments = {
 	options: {
 		token: 'Test-Token',
+		method: 'merge',
 	},
 	positionals: {
 		'github-url': 'https://github.com/Test-Owner/Test-Repo/tree/Test-Branch',
