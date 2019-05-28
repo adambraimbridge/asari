@@ -20,26 +20,13 @@ const builder = yargs => {
 		}),
 	])
 
-	return (
-		baseOptions(yargs)
-			.option('method', {
-				describe: 'Merge method to use.',
-				choices: ['merge', 'squash', 'rebase'],
-			})
-			.example('github-url', 'Pattern: [https://][github.com]/[owner]/[repository?]/pull/[number]')
-			/**
-			 * Give an appropriate error message
-			 */
-			.fail((message, error, yargs) => {
-				yargs.showHelp()
-				if (message.includes('Not enough non-option arguments')) {
-					console.error(`\nMissing required argument: method. Choices: \n * merge: All commits from the feature branch are added to the base branch in a merge commit. \n * squash: All of the pull request's commits are squashed into a single commit. \n * rebase: All commits from the feature branch are added to the base branch individually without a merge commit.`)
-				} else {
-					console.error(message)
-				}
-				process.exit(1)
-			})
-	)
+	return baseOptions(yargs)
+		.option('method', {
+			describe: 'Merge method to use.',
+			choices: ['merge', 'squash', 'rebase'],
+			demandOption: true,
+		})
+		.example('github-url', 'Pattern: [https://][github.com]/[owner]/[repository?]/pull/[number]')
 }
 
 /**

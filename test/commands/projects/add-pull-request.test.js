@@ -27,12 +27,18 @@ commonTests.describeYargs(yargsModule, command, requiredArguments)
 
 const yarguments = {
 	token: 'Test-Token',
-	columnUrl: { number: '1' },
-	pullRequestUrl: { number: '1' },
+	columnUrl: { number: 1 },
+	pullRequestUrl: {
+		number: 1,
+		owner: 'Test-Owner',
+		repo: 'test-repository',
+	},
 }
 describe('Octokit', () => {
 	// If this endpoint is not called, nock.isDone() will be false.
 	const successResponse = nock('https://api.github.com')
+		.get('/repos/Test-Owner/test-repository/pulls/1')
+		.reply(200)
 		.post('/projects/columns/1/cards')
 		.reply(200)
 
@@ -45,6 +51,8 @@ describe('Octokit', () => {
 describe('Error output', () => {
 	// If this endpoint is not called, nock.isDone() will be false.
 	const errorResponse = nock('https://api.github.com')
+		.get('/repos/Test-Owner/test-repository/pulls/1')
+		.reply(200)
 		.post('/projects/columns/1/cards')
 		.reply(422, {
 			message: 'Validation Failed',
