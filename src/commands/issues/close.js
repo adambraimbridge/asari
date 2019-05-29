@@ -1,8 +1,7 @@
 /**
- * @see: https://octokit.github.io/rest.js/#octokit-routes-pulls-update
+ * @see: https://octokit.github.io/rest.js/#octokit-routes-issues-update
  * There is no "closed" endpoint in the Octokit API. We use "update" with a `state` of "closed".
- * const result = await octokit.pulls.update({owner, repo, number, title, body, state, base, maintainer_can_modify})
- * /repos/:owner/:repo/pulls/:number
+ * const result = await octokit.issues.update({owner, repo, issue_number})
  */
 const flow = require('lodash.flow')
 const commonYargs = require('../../lib/common-yargs')
@@ -17,14 +16,14 @@ const authenticatedOctokit = require('../../lib/octokit')
 const builder = yargs => {
 	const baseOptions = flow([
 		commonYargs.withGitHubUrl({
-			describe: 'The URL of the GitHub pull request to close.',
+			describe: 'The URL of the GitHub issue to close.',
 		}),
 	])
-	return baseOptions(yargs).example('github-url', 'Pattern: [https://][github.com]/[owner]/[repository?]/pull/[number]')
+	return baseOptions(yargs).example('github-url', 'Pattern: [https://][github.com]/[owner]/[repository]/issue/[number]')
 }
 
 /**
- * Update a pull request.
+ * Update an issue.
  *
  * @param {object} argv - argv parsed and filtered by yargs
  * @param {string} argv.token
@@ -32,18 +31,17 @@ const builder = yargs => {
  * @param {object} argv.githubUrl - The GitHub url parsed in the withGitHubUrl() yarg option into appropriate properties, such as `owner` and `repo`.
  */
 const handler = async ({ token, json, githubUrl }) => {
-	const { owner, repo, number } = githubUrl
+	const { owner, repo, value } = githubUrl
 	const inputs = {
 		owner,
 		repo,
-		pull_number: number,
+		issue_number: value,
 		state: 'closed',
 	}
 	try {
 		const octokit = await authenticatedOctokit({ personalAccessToken: token })
-		const result = await octokit.pulls.update(inputs)
-		const { html_url, state } = result.data
-		printOutput({ json, resource: { html_url, state } })
+		const result = await octokit.issues.update(inputs)
+		printOutput({ json, resource: result })
 	} catch (error) {
 		printOutput({ json, error })
 	}
@@ -51,7 +49,7 @@ const handler = async ({ token, json, githubUrl }) => {
 
 module.exports = {
 	command: 'close <github-url>',
-	desc: 'Set the state of an existing pull request to `closed`',
+	desc: 'Set the state of an existing issue to `closed`',
 	builder,
 	handler,
 }

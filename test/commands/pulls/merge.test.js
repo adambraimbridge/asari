@@ -11,10 +11,11 @@ nock.cleanAll()
 /**
  * Common Yargs tests
  */
-const command = 'merge-pull-request'
+const command = 'pulls merge'
 const requiredArguments = {
 	options: {
 		token: 'Test-Token',
+		method: 'merge',
 	},
 	positionals: {
 		'github-url': 'https://github.com/Test-Owner/Test-Repo/tree/Test-Branch',

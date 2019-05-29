@@ -17,17 +17,19 @@ const baseOptions = flow([
 ])
 baseOptions(yargs)
 	.scriptName('ika')
+	.usage('$0 <command> <subcommand> [...options]')
 	/**
 	 * The --version argument only makes sense as an option for the main `ika` command.
 	 */
 	.command('[--version]', 'Show the version number.')
 	.hide('version')
+	.completion('completion', 'Output a generated script. To enable bash/zsh completions: \n 1. Install ika globally. \n 2. Add the script to your .bashrc or .bash_profile (or .zshrc for zsh).')
 	/**
 	 * Load our yargs command modules from a directory.
 	 *
 	 * @see https://github.com/yargs/yargs/blob/master/docs/advanced.md#commanddirdirectory-opts
 	 */
-	.commandDir(yargsCommandsDirectoryPath, { recurse: true })
+	.commandDir(yargsCommandsDirectoryPath)
 	/**
 	 * Maximize the width of yargs’ usage instructions.
 	 */

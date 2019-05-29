@@ -1,10 +1,8 @@
 /**
- * @see: https://octokit.github.io/rest.js/#octokit-routes-pulls-create
- * const result = await octokit.pulls.create({owner, repo, title, head, base, *body, *maintainer_can_modify})
- * /repos/:owner/:repo/pulls
+ * @see: https://octokit.github.io/rest.js/#octokit-routes-issues-create
+ * const result = await octokit.issues.create({ owner, repo, title, [body], [assignees] })
  */
 const flow = require('lodash.flow')
-
 const commonYargs = require('../../lib/common-yargs')
 const printOutput = require('../../lib/print-output')
 const authenticatedOctokit = require('../../lib/octokit')
@@ -17,14 +15,17 @@ const authenticatedOctokit = require('../../lib/octokit')
 const builder = yargs => {
 	const baseOptions = flow([
 		commonYargs.withGitHubUrl({
-			describe: 'The URL of the GitHub branch to create a pull request from.',
+			describe: 'The URL of the GitHub repository to add an issue to.',
 		}),
-		commonYargs.withBase(),
 		commonYargs.withBody(),
 		commonYargs.withTitle({ demandOption: true }),
 	])
-
-	return baseOptions(yargs).example('github-url', 'Pattern: https://github.com/[owner]/[repository]/tree/[branch]')
+	return baseOptions(yargs)
+		.option('assignees', {
+			type: 'array',
+			describe: 'GitHub user names to assign to the issue',
+		})
+		.example('github-url', 'Pattern: https://github.com/[owner]/[repository]')
 }
 
 /**
@@ -34,24 +35,22 @@ const builder = yargs => {
  * @param {string} argv.token
  * @param {string} argv.json
  * @param {string} argv.title
- * @param {string} argv.head - The name of the branch where your changes are implemented
- * @param {string} argv.base - The name of the branch you want the changes pulled into (Default: master)
  * @param {string} argv.bodyContent — This is created in the withBody() yarg option middleware.
+ * @param {array} argv.assignees — GitHub user names to assign to this issue.
  * @param {object} argv.githubUrl - The GitHub url parsed in the withGitHubUrl() yarg option into appropriate properties, such as `owner` and `repo`.
  */
-const handler = async ({ token, json, bodyContent, base, title, githubUrl }) => {
-	const { owner, repo, value } = githubUrl
+const handler = async ({ token, json, title, bodyContent, assignees, githubUrl }) => {
+	const { owner, repo } = githubUrl
 	const inputs = {
-		body: bodyContent,
 		owner,
 		repo,
 		title,
-		head: value,
-		base,
+		body: bodyContent,
+		assignees,
 	}
 	try {
 		const octokit = await authenticatedOctokit({ personalAccessToken: token })
-		const result = await octokit.pulls.create(inputs)
+		const result = await octokit.issues.create(inputs)
 		printOutput({ json, resource: result })
 	} catch (error) {
 		printOutput({ json, error })
@@ -59,8 +58,8 @@ const handler = async ({ token, json, bodyContent, base, title, githubUrl }) => 
 }
 
 module.exports = {
-	command: 'create <github-url> [--base] [--body] [--title]',
-	desc: 'Create a new pull request',
+	command: 'create <github-url> [--title] [--body] [--assignees]',
+	desc: 'Create a new issue',
 	builder,
 	handler,
 }

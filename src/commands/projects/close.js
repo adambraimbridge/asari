@@ -103,7 +103,7 @@ const handler = async ({ token, json, githubUrl }) => {
 }
 
 module.exports = {
-	command: 'close-project <github-url>',
+	command: 'close <github-url>',
 	desc: 'Set the state of an existing project board to `closed`',
 	builder,
 	handler,

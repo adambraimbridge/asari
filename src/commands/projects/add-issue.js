@@ -1,5 +1,5 @@
 /**
- * This command adds a pull request to a GitHub project column.
+ * This command adds an issue to a GitHub project column.
  *
  * @see: https://octokit.github.io/rest.js/#octokit-routes-projects-create-card
  * const result = await octokit.projects.createCard({column_id, note, content_id, content_type})
@@ -21,43 +21,43 @@ const builder = yargs =>
 			describe: 'A GitHub URL that contains the project column ID',
 			demandOption: true,
 		})
-		.option('pull-request-url', {
+		.option('issue-url', {
 			alias: ['p'],
-			describe: 'A GitHub URL that contains the pull request ID.',
+			describe: 'A GitHub URL that contains the issue ID.',
 			demandOption: true,
 		})
 		/**
 		 * Coerce IDs from GitHub URLs.
 		 */
-		.coerce(['column-url', 'pull-request-url'], arg => parseGitHubURL(arg))
+		.coerce(['column-url', 'issue-url'], arg => parseGitHubURL(arg))
 		.example('column-url', 'Pattern: [https://][github.com]/[owner]/[repository?]/pull/[number]#column-[number]')
-		.example('pull-request-url', 'Pattern: [https://][github.com]/[owner]/[repository?]/pull/[number]')
+		.example('issue-url', 'Pattern: [https://][github.com]/[owner]/[repository?]/issues/[number]')
 
 /**
- * Add a pull request to a GitHub project column.
+ * Add an issue to a GitHub project column.
  *
  * @param {object} argv - argv parsed and filtered by yargs
  * @param {string} argv.token
  * @param {string} argv.json
  * @param {object} argv.columnUrl - an object produced by parsing the GitHub URL.
- * @param {object} argv.pullRequestUrl - an object produced by parsing the GitHub URL.
+ * @param {object} argv.issueUrl - an object produced by parsing the GitHub URL.
  */
-const handler = async ({ token, json, columnUrl, pullRequestUrl }) => {
+const handler = async ({ token, json, columnUrl, issueUrl }) => {
 	try {
 		const octokit = await authenticatedOctokit({ personalAccessToken: token })
 
-		// Fetch the pull request data to glean the ID
-		const pullRequestData = await octokit.pulls.get({
-			owner: pullRequestUrl.owner,
-			repo: pullRequestUrl.repo,
-			pull_number: pullRequestUrl.number,
+		// Fetch the issue data to glean the ID
+		const issueData = await octokit.issues.get({
+			owner: issueUrl.owner,
+			repo: issueUrl.repo,
+			issue_number: issueUrl.value,
 		})
 
 		// Add the issue to the project column by creating a card
 		const result = await octokit.projects.createCard({
-			content_id: pullRequestData.data.id,
+			content_id: issueData.data.id,
 			column_id: columnUrl.number,
-			content_type: 'PullRequest',
+			content_type: 'Issue',
 		})
 		printOutput({ json, resource: result.data })
 	} catch (error) {
@@ -66,8 +66,8 @@ const handler = async ({ token, json, columnUrl, pullRequestUrl }) => {
 }
 
 module.exports = {
-	command: 'add-pull-request [--column-url] [--pull-request-url]',
-	desc: 'Add a pull request to a GitHub project column',
+	command: 'add-issue [--column-url] [--url]',
+	desc: 'Add an issue to a GitHub project column',
 	builder,
 	handler,
 }

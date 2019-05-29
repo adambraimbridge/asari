@@ -24,7 +24,7 @@ const builder = yargs => {
 		.option('method', {
 			describe: 'Merge method to use.',
 			choices: ['merge', 'squash', 'rebase'],
-			default: 'merge',
+			demandOption: true,
 		})
 		.example('github-url', 'Pattern: [https://][github.com]/[owner]/[repository?]/pull/[number]')
 }
@@ -58,7 +58,7 @@ const handler = async ({ token, json, method, githubUrl }) => {
 }
 
 module.exports = {
-	command: 'merge-pull-request <github-url> [--method]',
+	command: 'merge <github-url> [--method]',
 	desc: 'Merge an existing pull request',
 	builder,
 	handler,

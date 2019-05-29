@@ -11,7 +11,7 @@ nock.cleanAll()
 /**
  * Common Yargs tests
  */
-const command = 'delete-comment'
+const command = 'pulls delete-comment'
 const requiredArguments = {
 	options: {
 		token: 'Test-Token',

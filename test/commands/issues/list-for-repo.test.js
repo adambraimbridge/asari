@@ -1,6 +1,6 @@
 const nock = require('nock')
 const commonTests = require('../../common-tests')
-const yargsModule = require('../../../src/commands/pulls/create')
+const yargsModule = require('../../../src/commands/issues/list-for-repo')
 
 // Don't let Octokit make network requests
 nock.disableNetConnect()
@@ -8,34 +8,36 @@ nock.disableNetConnect()
 // Reset any mocked network endpoints
 nock.cleanAll()
 
+jest.spyOn(global.console, 'log')
+afterEach(() => {
+	jest.clearAllMocks()
+})
+
 /**
  * Common Yargs tests
  */
-const command = 'pulls create'
+const command = 'issues list-for-repo'
 const requiredArguments = {
+	positionals: {
+		'github-url': 'https://github.com/Test-Owner/Test-Repo',
+	},
 	options: {
 		token: 'Test-Token',
-		body: 'body.txt',
-		title: 'Test-Title',
-	},
-	positionals: {
-		'github-url': 'https://github.com/Test-Owner/Test-Repo/tree/Test-Branch',
 	},
 }
 commonTests.describeYargs(yargsModule, command, requiredArguments)
 
 const yarguments = Object.assign({}, requiredArguments.options, {
-	base: 'Test-Base',
-	bodyContent: 'This is a test',
-	githubUrl: { owner: 'Test-Owner', repo: 'Test-Repo', value: 'Test-Branch' },
+	githubUrl: { owner: 'Test-Owner', repo: 'Test-Repo' },
 })
+
 describe('Octokit', () => {
 	// If this endpoint is not called, nock.isDone() will be false.
 	const successResponse = nock('https://api.github.com')
-		.post('/repos/Test-Owner/Test-Repo/pulls')
-		.reply(200, {})
+		.get('/repos/Test-Owner/Test-Repo/issues')
+		.reply(200, [{ title: 'Test-Issue-01', created_at: 'Test-Date-01', html_url: 'Test-URL-01' }, { title: 'Test-Issue-02', created_at: 'Test-Date-02', html_url: 'Test-URL-02' }])
 
-	test('running the command handler triggers a network request of the GitHub API', async () => {
+	test('Running the command handler triggers a network request of the GitHub API', async () => {
 		await yargsModule.handler(yarguments)
 		expect(successResponse.isDone()).toBe(true)
 	})
@@ -44,21 +46,19 @@ describe('Octokit', () => {
 describe('Error output', () => {
 	// If this endpoint is not called, nock.isDone() will be false.
 	const errorResponse = nock('https://api.github.com')
-		.post('/repos/Test-Owner/Test-Repo/pulls')
+		.get('/repos/Test-Owner/Test-Repo/issues')
 		.reply(422, {
 			message: 'Validation Failed',
 			errors: [
 				{
-					resource: 'PullRequest',
+					resource: 'MockResource',
 					code: 'custom',
-					message: 'A pull request already exists. This is a mocked error, for testing.',
+					message: 'This is a mock error message.',
 				},
 			],
-			documentation_url: 'https://developer.github.com/v3/pulls/#create-a-pull-request',
 		})
 
 	test('Output error responses that are returned from network requests of the GitHub API', async () => {
-		jest.spyOn(global.console, 'log')
 		await yargsModule.handler(yarguments)
 		expect(errorResponse.isDone()).toBe(true)
 		expect(console.log).toBeCalledWith(expect.stringMatching(/error/i))

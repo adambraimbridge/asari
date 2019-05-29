@@ -52,7 +52,12 @@ const parseGitHubURL = arg => {
 	} else {
 		// Some other GitHub URL, e.g: https://github.com/[owner]/[repo]/tree/[value]
 		const [owner, repo, endpoint, value] = parts
-		Object.assign(parsed, { owner, repo, endpoint, value })
+		Object.assign(parsed, {
+			owner,
+			repo,
+			endpoint,
+			value: parseInt(value) || value,
+		})
 	}
 	return parsed
 }

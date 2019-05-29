@@ -11,7 +11,7 @@ nock.cleanAll()
 /**
  * Common Yargs tests
  */
-const command = 'create-comment'
+const command = 'pulls create-comment'
 const requiredArguments = {
 	options: {
 		token: 'Test-Token',

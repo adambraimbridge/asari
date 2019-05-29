@@ -1,6 +1,6 @@
 const nock = require('nock')
 const commonTests = require('../../common-tests')
-const yargsModule = require('../../../src/commands/projects/create')
+const yargsModule = require('../../../src/commands/issues/create')
 
 // Don't let Octokit make network requests
 nock.disableNetConnect()
@@ -16,23 +16,21 @@ afterEach(() => {
 /**
  * Common Yargs tests
  */
-const command = 'projects create'
+const command = 'issues create'
 const requiredArguments = {
 	positionals: {
 		'github-url': 'https://github.com/Test-Owner/Test-Repo',
 	},
 	options: {
 		token: 'Test-Token',
-		name: 'TestProject',
+		title: 'TestIssue',
 		body: './test/fixtures/body.txt', // Note: This fixture file is intended to exist.
 	},
 }
 commonTests.describeYargs(yargsModule, command, requiredArguments)
 
-// Todo: Add a test for options with spaces, e.g. { name: 'Test Project' }
-
 describe('StdIn-compatible options', () => {
-	const commandString = `./bin/ika.js ${command} https://github.com/Test-Owner/Test-Repo --name 'Test Project' --token 'Test-Token'`
+	const commandString = `./bin/ika.js ${command} https://github.com/Test-Owner/Test-Repo --title 'Test Issue' --token 'Test-Token'`
 	test(`Running the command handler without 'body' NOR 'stdin' throws an error`, async () => {
 		expect.assertions(1)
 		try {
@@ -74,15 +72,8 @@ const yarguments = Object.assign({}, requiredArguments.options, {
 describe('Octokit', () => {
 	// If this endpoint is not called, nock.isDone() will be false.
 	const successResponse = nock('https://api.github.com')
-		.post('/repos/Test-Owner/Test-Repo/projects')
-		.reply(200, {
-			id: 1,
-		})
-		.post('/projects/1/columns')
-		.times(3)
-		.reply(200, {
-			column_id: 1,
-		})
+		.post('/repos/Test-Owner/Test-Repo/issues')
+		.reply(200)
 
 	test('Running the command handler triggers a network request of the GitHub API', async () => {
 		await yargsModule.handler(yarguments)
@@ -93,7 +84,7 @@ describe('Octokit', () => {
 describe('Error output', () => {
 	// If this endpoint is not called, nock.isDone() will be false.
 	const errorResponse = nock('https://api.github.com')
-		.post('/repos/Test-Owner/Test-Repo/projects')
+		.post('/repos/Test-Owner/Test-Repo/issues')
 		.reply(422, {
 			message: 'Validation Failed',
 			errors: [

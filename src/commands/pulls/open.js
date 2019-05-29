@@ -50,7 +50,7 @@ const handler = async ({ token, json, githubUrl }) => {
 }
 
 module.exports = {
-	command: 'open-pull-request <github-url>',
+	command: 'open <github-url>',
 	desc: 'Set the state of an existing pull request to `open`',
 	builder,
 	handler,
