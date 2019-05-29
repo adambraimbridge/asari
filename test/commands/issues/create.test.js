@@ -30,7 +30,7 @@ const requiredArguments = {
 commonTests.describeYargs(yargsModule, command, requiredArguments)
 
 describe('StdIn-compatible options', () => {
-	const commandString = `./bin/ika.js ${command} https://github.com/Test-Owner/Test-Repo --title 'Test Issue' --token 'Test-Token'`
+	const commandString = `./bin/asari.js ${command} https://github.com/Test-Owner/Test-Repo --title 'Test Issue' --token 'Test-Token'`
 	test(`Running the command handler without 'body' NOR 'stdin' throws an error`, async () => {
 		expect.assertions(1)
 		try {

@@ -1,25 +1,35 @@
-# 🦑 ika
+# 🐚 asari
 
 ## A human-friendly<sup>1</sup> command line tool for the GitHub API.
 
 <sup>1</sup> It's script-friendly too.
 
-![image](https://user-images.githubusercontent.com/224547/57764890-42704180-76fc-11e9-9256-2be2037e2fdf.png)
+![image](https://user-images.githubusercontent.com/224547/58557351-1a153680-8216-11e9-9ebc-f25471405ea3.png)
 
-> Above: Use `npx ika` in your shell to manage your work in GitHub.
+> Above: Use `npx asari` in your shell to manage your work in GitHub.
 
-"Ika" (いか) is [Japanese for squid/cuttlefish](https://translate.google.com/#view=home&op=translate&sl=en&tl=ja&text=Squid). Like a squid, the `ika` command line tool is an elongated, fast-swimming cephalopod mollusk with ten arms (technically, eight arms and two long tentacles), typically able to change color.
+"Asari" (あさり) is [Japanese for "clam"](https://translate.google.com/#view=home&op=translate&sl=en&tl=ja&text=clam). Like a clam, `asari` is happiest when it's inside a shell.
 
-`ika` lets you work with GitHub from your shell, and is delicious when lightly fried with garlic and spices.
+🐚 `asari` lets you work with GitHub from your command line, and is delicious when lightly fried with garlic and spices.
 
-![image](https://user-images.githubusercontent.com/224547/57698749-3a59c880-764e-11e9-8dc1-92587f4dd884.png)
+![image](https://user-images.githubusercontent.com/224547/58558164-010d8500-8218-11e9-9279-9b93307989a7.png)
+
+_Above: Running `npx asari` from your command line shows you the top level of options and commands._
+
+![image](https://user-images.githubusercontent.com/224547/58558212-213d4400-8218-11e9-8b46-42be9ea9d0e9.png)
+
+![image](https://user-images.githubusercontent.com/224547/58558194-15518200-8218-11e9-8d48-0832558413ad.png)
+
+![image](https://user-images.githubusercontent.com/224547/58558179-0c60b080-8218-11e9-8e17-d5823b55c5ad.png)
+
+_Above: Running `npx asari <command>` shows you options for working with GitHub [issues](#working-with-github-issues), [projects](#working-with-github-projects) and [pull requests](#working-with-github-pull-requests)._
 
 ## Installation
 
 ### Global installation (recommmended)
 
 ```bash
-npm install --global ika
+npm install --global asari
 ```
 
 When you run the tool, it will automatically notify you if there is a newer version of it available for you to update to.
@@ -29,49 +39,95 @@ When you run the tool, it will automatically notify you if there is a newer vers
 ### No installation
 
 ```bash
-npx ika
+npx asari
 ```
 
 The `npx` command lets you use this tool without installing it. However, each time you use `npx` it downloads the whole package from the npm registry, which takes a while. That's why global installation is reccommended.
 
-> Note: If this tool is globally installed, `npx ika` will use that globally installed version rather than downloading.
+> Note: If this tool is globally installed, `npx asari` will use that globally installed version rather than downloading.
 
 ## Commands
 
 ```bash
-ika
+npx asari
 
 # Display help.
 ```
 
 ```bash
-ika <command>
+npx asari <command>
 
 # Display help for the command.
 ```
 
 ```bash
-ika --version
+npx asari --version
 
 # Show the version number.
+```
+
+```bash
+npx asari allowance
+
+# Display current GitHub API rate-limiting allowance.
+```
+
+```bash
+npx asari completion
+
+# Output a generated script. To enable bash/zsh completions:
+#  1. Install asari globally.
+#  2. Add the script to your .bashrc or .bash_profile (or .zshrc for zsh).
+```
+
+### Working with GitHub Issues
+
+```bash
+npx asari issues create <github-url> [--title] [--body] [--assignees]
+
+# Create a new issue
+```
+
+```bash
+npx asari issues open <github-url>
+
+# Set the state of an existing issue to `open`
+```
+
+```bash
+npx asari issues close <github-url>
+
+# Set the state of an existing issue to `closed`
+```
+
+```bash
+npx asari issues list [--type]
+
+# List all issues assigned to the authenticated user.
+```
+
+```bash
+npx asari issues list-for-repo <github-url>
+
+# List all issues in a repository.
 ```
 
 ### Working with GitHub Projects
 
 ```bash
-ika projects add [--column-url] [--url]
+npx asari projects add [--column-url] [--url]
 
 # Add a pull request to a GitHub project column.
 ```
 
 ```bash
-ika projects close <github-url>
+npx asari projects close <github-url>
 
 # Set the state of an existing project board to `closed`.
 ```
 
 ```bash
-ika projects create <github-url> [--body]
+npx asari projects create <github-url> [--body]
 
 # Create a new project.
 ```
@@ -79,49 +135,49 @@ ika projects create <github-url> [--body]
 ### Working with GitHub Pull Requests
 
 ```bash
-ika pulls close <github-url>
+npx asari pulls close <github-url>
 
 # Set the state of an existing pull request to `closed`.
 ```
 
 ```bash
-ika pulls create-comment <github-url> [--body]
+npx asari pulls create-comment <github-url> [--body]
 
 # Create a comment on an existing pull request.
 ```
 
 ```bash
-ika pulls create-review-request <github-url> [reviewers|team-reviewers]
+npx asari pulls create-review-request <github-url> [reviewers|team-reviewers]
 
 # Request a review for a pull request.
 ```
 
 ```bash
-ika pulls create <github-url> [--base] [--body] [--title]
+npx asari pulls create <github-url> [--base] [--body] [--title]
 
 # Create a new pull request.
 ```
 
 ```bash
-ika pulls delete-comment <github-url>
+npx asari pulls delete-comment <github-url>
 
 # Delete a comment on an existing pull request.
 ```
 
 ```bash
-ika pulls delete-review-request <github-url> [reviewers|team-reviewers]
+npx asari pulls delete-review-request <github-url> [reviewers|team-reviewers]
 
 # Delete a review for a pull request.
 ```
 
 ```bash
-ika pulls merge <github-url> [--method]
+npx asari pulls merge <github-url> [--method]
 
 # Merge an existing pull request.
 ```
 
 ```bash
-ika pulls open <github-url>
+npx asari pulls open <github-url>
 
 # Set the state of an existing pull request to `open`.
 ```
@@ -156,8 +212,8 @@ export $GITHUB_PERSONAL_ACCESS_TOKEN=[your token here]
 This project loosely follows the example provided in the Yargs documentation for command hierarchy and directory structure.
 
 - @see: https://github.com/yargs/yargs/blob/master/docs/advanced.md#commanddirdirectory-opts
-- @see: [`bin/ika.js`](https://github.com/Financial-Times/ika/blob/master/bin/ika.js) for the root `ika` command.
-- @see: [`src/commands`](https://github.com/Financial-Times/ika/blob/master/src/commands/) for the `ika <command>` commands.
+- @see: [`bin/asari.js`](https://github.com/Financial-Times/asari/blob/master/bin/asari.js) for the root `asari` command.
+- @see: [`src/commands`](https://github.com/Financial-Times/asari/blob/master/src/commands/) for the `asari <command>` commands.
 
 ## Conventions
 
@@ -169,7 +225,7 @@ This project loosely follows the example provided in the Yargs documentation for
 
 ### Code formatting and linting
 
-- The [.eslintrc.js](https://github.com/Financial-Times/ika/blob/master/.eslintrc.js) file contains the settings for code linting.
+- The [.eslintrc.js](https://github.com/Financial-Times/asari/blob/master/.eslintrc.js) file contains the settings for code linting.
 
   - @see: https://eslint.org/
 

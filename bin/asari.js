@@ -16,14 +16,14 @@ const baseOptions = flow([
 	commonYargs.withJson(),
 ])
 baseOptions(yargs)
-	.scriptName('ika')
+	.scriptName('asari')
 	.usage('$0 <command> <subcommand> [...options]')
 	/**
-	 * The --version argument only makes sense as an option for the main `ika` command.
+	 * The --version argument only makes sense as an option for the main `asari` command.
 	 */
 	.command('[--version]', 'Show the version number.')
 	.hide('version')
-	.completion('completion', 'Output a generated script. To enable bash/zsh completions: \n 1. Install ika globally. \n 2. Add the script to your .bashrc or .bash_profile (or .zshrc for zsh).')
+	.completion('completion', 'Output a generated script. To enable bash/zsh completions: \n 1. Install asari globally. \n 2. Add the script to your .bashrc or .bash_profile (or .zshrc for zsh).')
 	/**
 	 * Load our yargs command modules from a directory.
 	 *

@@ -1,8 +1,8 @@
 {
-	"name": "ika",
+	"name": "asari",
 	"version": "1.0.0",
-	"description": "🦑 Ika: A human-friendly command line tool for the GitHub API",
-	"bin": "bin/ika.js",
+	"description": "🐚 Asari: A human-friendly command line tool for the GitHub API",
+	"bin": "bin/asari.js",
 	"scripts": {
 		"test": "npm run lint && npm run unit-test",
 		"unit-test": "jest --coverage",
@@ -13,7 +13,7 @@
 	"keywords": [],
 	"repository": {
 		"type": "git",
-		"url": "git@github.com:Financial-Times/ika.git"
+		"url": "git@github.com:Financial-Times/asari.git"
 	},
 	"license": "MIT",
 	"dependencies": {
