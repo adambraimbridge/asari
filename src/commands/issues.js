@@ -1,5 +1,5 @@
 /**
- * This project follows the example provided in the Yards documentation for command hierarchy and directory structure.
+ * This project follows the example provided in the Yargs documentation for command hierarchy and directory structure.
  * @see: https://github.com/yargs/yargs/blob/master/docs/advanced.md#commanddirdirectory-opts
  */
 exports.command = 'issues <subcommand> [...options]'
