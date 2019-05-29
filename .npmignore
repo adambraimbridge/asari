@@ -1,0 +1,29 @@
+# dependencies
+/node_modules/
+
+# tests
+coverage/
+reports/
+tests/
+test/
+jest.config.js
+
+# files
+.circleci
+.github
+.babelrc
+.editorconfig
+.eslintrc.yml
+.gitattributes
+.gitignore
+.npmignore
+.idea/
+.DS_Store
+
+renovate.json
+nodemon.json
+ft.yml
+Makefile
+secret-squirrel.js
+yarn.lock
+CODEOWNERS
