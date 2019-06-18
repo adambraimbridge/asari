@@ -182,6 +182,14 @@ npx asari pulls open <github-url>
 # Set the state of an existing pull request to `open`.
 ```
 
+### Working with GitHub Topics
+
+```bash
+npx asari topics list <github-url>
+
+# List all topics.
+```
+
 ### Global Options
 
 ```bash
