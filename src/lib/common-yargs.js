@@ -179,6 +179,20 @@ const withGitHubUrl = options => yargs => {
 	)
 }
 
+const withTopic = options => yargs => {
+	return yargs.option(
+		'topic',
+		Object.assign(
+			{
+				alias: ['topics'],
+				type: 'string',
+				describe: 'GitHub topic to add. To add more than one, add multiple option and values or a comma separated list',
+			},
+			options
+		)
+	)
+}
+
 module.exports = {
 	withToken,
 	withJson,
@@ -188,4 +202,5 @@ module.exports = {
 	withReviewers,
 	withTeamReviewers,
 	withGitHubUrl,
+	withTopic,
 }

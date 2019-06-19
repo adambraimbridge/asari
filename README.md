@@ -190,6 +190,19 @@ npx asari topics list <github-url>
 # List all topics.
 ```
 
+```bash
+npx asari topics add <github-url> --topic new-app
+
+# Add a topic
+
+npx asari topics add <github-url> --topic new-app --topic good-one
+npx asari topics add <github-url> --topic new-app,good-one
+npx asari topics add <github-url> --topic "new-app,  good-one"
+npx asari topics add <github-url> --topics new-app,good-one
+
+# Add multiple topics
+```
+
 ### Global Options
 
 ```bash

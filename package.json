@@ -20,7 +20,10 @@
 		"@adambraimbridge/prettierrc-2019-05": "^1.0.0",
 		"@octokit/plugin-throttling": "^2.6.0",
 		"@octokit/rest": "^16.16.3",
+		"lodash.flatmap": "^4.5.0",
 		"lodash.flow": "^3.5.0",
+		"lodash.isequal": "^4.5.0",
+		"lodash.uniq": "^4.5.0",
 		"update-notifier": "^3.0.0",
 		"yargs": "^13.2.1"
 	},
