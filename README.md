@@ -203,6 +203,19 @@ npx asari topics add <github-url> --topics new-app,good-one
 # Add multiple topics
 ```
 
+```bash
+npx asari topics remove <github-url> --topic new-app
+
+# Remove a topic
+
+npx asari topics remove <github-url> --topic new-app --topic good-one
+npx asari topics remove <github-url> --topic new-app,good-one
+npx asari topics remove <github-url> --topic "new-app,  good-one"
+npx asari topics remove <github-url> --topics new-app,good-one
+
+# Remove multiple topics
+```
+
 ### Global Options
 
 ```bash

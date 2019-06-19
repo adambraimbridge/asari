@@ -24,6 +24,7 @@
 		"lodash.flow": "^3.5.0",
 		"lodash.isequal": "^4.5.0",
 		"lodash.uniq": "^4.5.0",
+		"lodash.without": "^4.4.0",
 		"update-notifier": "^3.0.0",
 		"yargs": "^13.2.1"
 	},

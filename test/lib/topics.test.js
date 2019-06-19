@@ -1,5 +1,5 @@
 const nock = require('nock')
-const { getTopics, addTopics } = require('../../src/lib/topics')
+const { getTopics, addTopics, removeTopics } = require('../../src/lib/topics')
 
 // Don't let Octokit make network requests
 nock.disableNetConnect()
@@ -144,6 +144,101 @@ describe('lib/topics.js', () => {
 			// NOTE: No nock for replacing topics here
 
 			const topics = await addTopics({ githubUrl, token: 'someToken', topics: ['app'] })
+			expect(topics).toEqual(outputTopics)
+		})
+	})
+
+	describe('removeTopics', () => {
+		const testRemoveTopics = async ({ existingTopics, topics, topicsToReplaceWith }) => {
+			nock('https://api.github.com')
+				.get('/repos/Test-Owner/Test-Repo/topics')
+				.reply(200, {
+					names: existingTopics,
+				})
+			nock('https://api.github.com')
+				.put('/repos/Test-Owner/Test-Repo/topics', {
+					names: topicsToReplaceWith,
+				})
+				.reply(200)
+
+			await removeTopics({ githubUrl, token: 'someToken', topics })
+		}
+
+		test('remove no topic', async () => {
+			await testRemoveTopics({
+				existingTopics: ['customer-products', 'app'],
+				topics: [],
+				topicsToReplaceWith: ['customer-products', 'app'],
+			})
+		})
+
+		test('remove topics array', async () => {
+			await testRemoveTopics({
+				existingTopics: ['customer-products', 'app', 'new'],
+				topics: ['new', 'app'],
+				topicsToReplaceWith: ['customer-products'],
+			})
+		})
+
+		test('remove single topic', async () => {
+			await testRemoveTopics({
+				existingTopics: ['customer-products', 'new'],
+				topics: 'new',
+				topicsToReplaceWith: ['customer-products'],
+			})
+		})
+
+		test('does nothing when removing non existent topic', async () => {
+			await testRemoveTopics({
+				existingTopics: ['customer-products', 'app'],
+				topics: ['something'],
+				topicsToReplaceWith: ['customer-products', 'app'],
+			})
+		})
+
+		test('removes comma separated list of topics', async () => {
+			await testRemoveTopics({
+				existingTopics: ['customer-products', 'app'],
+				topics: ['customer-products,app'],
+				topicsToReplaceWith: [],
+			})
+		})
+
+		test('removes comma separated list of topics without spaces', async () => {
+			await testRemoveTopics({
+				existingTopics: ['customer-products', 'app'],
+				topics: ['customer-products,   app'],
+				topicsToReplaceWith: [],
+			})
+		})
+
+		test('returns topics from replace request', async () => {
+			const outputTopics = ['customer-products']
+			nock('https://api.github.com')
+				.get('/repos/Test-Owner/Test-Repo/topics')
+				.reply(200, {
+					names: ['customer-products', 'app'],
+				})
+			nock('https://api.github.com')
+				.put('/repos/Test-Owner/Test-Repo/topics')
+				.reply(200, {
+					names: outputTopics,
+				})
+
+			const topics = await removeTopics({ githubUrl, token: 'someToken', topics: ['app'] })
+			expect(topics).toEqual(outputTopics)
+		})
+
+		test('does not update topics if no changes are made and outputs topics', async () => {
+			const outputTopics = ['customer-products', 'app']
+			nock('https://api.github.com')
+				.get('/repos/Test-Owner/Test-Repo/topics')
+				.reply(200, {
+					names: outputTopics,
+				})
+			// NOTE: No nock for replacing topics here
+
+			const topics = await removeTopics({ githubUrl, token: 'someToken', topics: ['something'] })
 			expect(topics).toEqual(outputTopics)
 		})
 	})
