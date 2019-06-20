@@ -85,35 +85,11 @@ describe('lib/topics.js', () => {
 			})
 		})
 
-		test('adds single topic', async () => {
-			await testAddTopics({
-				existingTopics: ['customer-products', 'app'],
-				topics: 'new',
-				topicsToReplaceWith: ['customer-products', 'app', 'new'],
-			})
-		})
-
 		test('does not send topics with the same name multiple times', async () => {
 			await testAddTopics({
 				existingTopics: ['customer-products', 'app'],
 				topics: ['app'],
 				topicsToReplaceWith: ['customer-products', 'app'],
-			})
-		})
-
-		test('adds comma separated list of topics', async () => {
-			await testAddTopics({
-				existingTopics: ['customer-products', 'app'],
-				topics: ['hello,hello2'],
-				topicsToReplaceWith: ['customer-products', 'app', 'hello', 'hello2'],
-			})
-		})
-
-		test('adds comma separated list of topics without spaces', async () => {
-			await testAddTopics({
-				existingTopics: ['customer-products', 'app'],
-				topics: ['hello,   hello2'],
-				topicsToReplaceWith: ['customer-products', 'app', 'hello', 'hello2'],
 			})
 		})
 
@@ -180,35 +156,11 @@ describe('lib/topics.js', () => {
 			})
 		})
 
-		test('remove single topic', async () => {
-			await testRemoveTopics({
-				existingTopics: ['customer-products', 'new'],
-				topics: 'new',
-				topicsToReplaceWith: ['customer-products'],
-			})
-		})
-
 		test('does nothing when removing non existent topic', async () => {
 			await testRemoveTopics({
 				existingTopics: ['customer-products', 'app'],
 				topics: ['something'],
 				topicsToReplaceWith: ['customer-products', 'app'],
-			})
-		})
-
-		test('removes comma separated list of topics', async () => {
-			await testRemoveTopics({
-				existingTopics: ['customer-products', 'app'],
-				topics: ['customer-products,app'],
-				topicsToReplaceWith: [],
-			})
-		})
-
-		test('removes comma separated list of topics without spaces', async () => {
-			await testRemoveTopics({
-				existingTopics: ['customer-products', 'app'],
-				topics: ['customer-products,   app'],
-				topicsToReplaceWith: [],
 			})
 		})
 

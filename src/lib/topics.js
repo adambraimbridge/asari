@@ -1,7 +1,6 @@
 const authenticatedOctokit = require('./octokit')
 const uniq = require('lodash.uniq')
 const isEqual = require('lodash.isequal')
-const flatMap = require('lodash.flatmap')
 const without = require('lodash.without')
 
 const getTopics = async ({ githubUrl, token }) => {
@@ -14,19 +13,12 @@ const getTopics = async ({ githubUrl, token }) => {
 	return topics
 }
 
-/**
- * Expand any comma separated items in the array and trim the item strings
- * @param {Array} array
- */
-const expandAndTrimArrayLists = array => flatMap(array, (item = '') => item.split(',').map(splitItem => splitItem.trim()))
-
 const addTopics = async ({ githubUrl, token, topics: newTopics }) => {
 	const initialTopics = await getTopics({ githubUrl, token })
 	const { owner, repo } = githubUrl
 
 	const octokit = await authenticatedOctokit({ personalAccessToken: token })
-	const topicsToAddRaw = uniq(initialTopics.concat(newTopics))
-	const topics = expandAndTrimArrayLists(topicsToAddRaw)
+	const topics = uniq(initialTopics.concat(newTopics))
 
 	if (isEqual(initialTopics, topics)) {
 		return initialTopics
@@ -43,9 +35,7 @@ const removeTopics = async ({ githubUrl, token, topics: topicsToRemove }) => {
 	const { owner, repo } = githubUrl
 
 	const octokit = await authenticatedOctokit({ personalAccessToken: token })
-	const toRemove = Array.isArray(topicsToRemove) ? topicsToRemove : [topicsToRemove]
-	const allTopicsToRemove = expandAndTrimArrayLists(toRemove)
-	const topics = without(initialTopics, ...allTopicsToRemove)
+	const topics = without(initialTopics, ...topicsToRemove)
 
 	if (isEqual(initialTopics, topics)) {
 		return initialTopics
