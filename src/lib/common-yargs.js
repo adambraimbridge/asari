@@ -1,5 +1,6 @@
 const fs = require('fs')
 const parseGitHubURL = require('./parse-github-url')
+const convertToFlattenedArrayOfValues = require('./convert-to-flattened-array-of-values')
 
 const withToken = options => yargs =>
 	yargs
@@ -179,6 +180,22 @@ const withGitHubUrl = options => yargs => {
 	)
 }
 
+const withTopics = options => yargs => {
+	return yargs
+		.option(
+			'topics',
+			Object.assign(
+				{
+					alias: ['topic'],
+					type: 'string',
+					describe: 'GitHub topics to add. To add more than one, add multiple options or a comma separated list',
+				},
+				options
+			)
+		)
+		.coerce('topic', convertToFlattenedArrayOfValues)
+}
+
 module.exports = {
 	withToken,
 	withJson,
@@ -188,4 +205,5 @@ module.exports = {
 	withReviewers,
 	withTeamReviewers,
 	withGitHubUrl,
+	withTopics,
 }

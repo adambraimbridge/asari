@@ -4,7 +4,7 @@
 
 <sup>1</sup> It's script-friendly too.
 
-![image](https://user-images.githubusercontent.com/224547/58557351-1a153680-8216-11e9-9ebc-f25471405ea3.png)
+![asari command](https://user-images.githubusercontent.com/79451/59847137-986a8180-9359-11e9-84b9-ac60e1b205fa.png)
 
 > Above: Use `npx asari` in your shell to manage your work in GitHub.
 
@@ -12,15 +12,18 @@
 
 🐚 `asari` lets you work with GitHub from your command line, and is delicious when lightly fried with garlic and spices.
 
-![image](https://user-images.githubusercontent.com/224547/58558164-010d8500-8218-11e9-9279-9b93307989a7.png)
+![asari command line tool help](https://user-images.githubusercontent.com/79451/59781793-7965e400-92b4-11e9-9646-bfc60a9927a2.png)
 
 _Above: Running `npx asari` from your command line shows you the top level of options and commands._
 
-![image](https://user-images.githubusercontent.com/224547/58558212-213d4400-8218-11e9-8b46-42be9ea9d0e9.png)
+![asari issues command help](https://user-images.githubusercontent.com/224547/58558212-213d4400-8218-11e9-8b46-42be9ea9d0e9.png)
 
-![image](https://user-images.githubusercontent.com/224547/58558194-15518200-8218-11e9-8d48-0832558413ad.png)
+![asari projects command help](https://user-images.githubusercontent.com/224547/58558194-15518200-8218-11e9-8d48-0832558413ad.png)
 
-![image](https://user-images.githubusercontent.com/224547/58558179-0c60b080-8218-11e9-8e17-d5823b55c5ad.png)
+![asari pulls command help](https://user-images.githubusercontent.com/224547/58558179-0c60b080-8218-11e9-8e17-d5823b55c5ad.png)
+
+![asari repos command help](https://user-images.githubusercontent.com/79451/59847162-aa4c2480-9359-11e9-9807-61a1c572bc69.png)
+
 
 _Above: Running `npx asari <command>` shows you options for working with GitHub [issues](#working-with-github-issues), [projects](#working-with-github-projects) and [pull requests](#working-with-github-pull-requests)._
 
@@ -180,6 +183,26 @@ npx asari pulls merge <github-url> [--method]
 npx asari pulls open <github-url>
 
 # Set the state of an existing pull request to `open`.
+```
+
+### Working with GitHub Repositories
+
+```bash
+npx asari repos list-topics <github-url>
+
+# List all topics.
+```
+
+```bash
+npx asari repos <add-topics|remove-topics> <github-url> --topic new-app
+
+# Add/Remove a topic
+
+npx asari repos <add-topics|remove-topics> <github-url> --topic new-app --topic good-one
+npx asari repos <add-topics|remove-topics> <github-url> --topics new-app,good-one
+npx asari repos <add-topics|remove-topics> <github-url> --topics "new-app,  good-one"
+
+# Add/Remove multiple topics
 ```
 
 ### Global Options

@@ -20,6 +20,12 @@ module.exports = async ({ personalAccessToken }) => {
 				 * @see https://developer.github.com/v3/projects
 				 */
 				'inertia-preview',
+				/**
+				 * Access Topics API while it is under preview
+				 *
+				 * @see https://developer.github.com/v3/repos/#list-all-topics-for-a-repository
+				 */
+				`mercy-preview`,
 			],
 			/**
 			 * Authenticate GitHub API calls using GitHub personal access token
