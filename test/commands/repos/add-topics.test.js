@@ -1,6 +1,6 @@
 const nock = require('nock')
 const commonTests = require('../../common-tests')
-const yargsModule = require('../../../src/commands/topics/remove')
+const yargsModule = require('../../../src/commands/repos/add-topics')
 
 beforeEach(() => {
 	jest
@@ -20,11 +20,11 @@ afterEach(() => {
 /**
  * Common Yargs tests
  */
-const command = 'topics remove'
+const command = 'repos add-topics'
 const requiredArguments = {
 	options: {
 		token: 'Test-Token',
-		topic: 'hello',
+		topics: ['hello'],
 	},
 	positionals: {
 		'github-url': 'https://github.com/Test-Owner/Test-Repo',
@@ -32,25 +32,25 @@ const requiredArguments = {
 }
 commonTests.describeYargs(yargsModule, command, requiredArguments)
 
-describe('Remove topic', () => {
-	test('triggers a network requests on the GitHub API', async () => {
+describe('Add topic', () => {
+	test('triggers network requests on the GitHub API', async () => {
 		nock('https://api.github.com')
 			.get('/repos/Test-Owner/Test-Repo/topics')
 			.reply(200, {
-				names: ['customer-products', 'app'],
+				names: ['customer-products'],
 			})
 
 		const response = nock('https://api.github.com')
 			.put('/repos/Test-Owner/Test-Repo/topics', {
-				names: ['customer-products'],
+				names: ['customer-products', 'app'],
 			})
 			.reply(200, {
-				names: ['customer-products'],
+				names: ['customer-products', 'app'],
 			})
 		const args = {
 			token: 'Test-Token',
 			githubUrl: { owner: 'Test-Owner', repo: 'Test-Repo' },
-			topic: 'app',
+			topics: ['app'],
 		}
 
 		await yargsModule.handler(args)
@@ -61,42 +61,42 @@ describe('Remove topic', () => {
 		nock('https://api.github.com')
 			.get('/repos/Test-Owner/Test-Repo/topics')
 			.reply(200, {
-				names: ['hello'],
+				names: [],
 			})
 			.put('/repos/Test-Owner/Test-Repo/topics', {
-				names: [],
+				names: ['hello'],
 			})
 			.reply(200, {
-				names: [],
+				names: ['hello'],
 			})
 		const args = {
 			token: 'Test-Token',
 			githubUrl: { owner: 'Test-Owner', repo: 'Test-Repo' },
-			topic: 'hello',
+			topics: ['hello'],
 		}
 		await yargsModule.handler(args)
-		expect(console.log).toBeCalledWith('')
+		expect(console.log).toBeCalledWith('hello')
 	})
 
-	test('shows new topics in a newline separated list', async () => {
+	test('Running the command handler shows new topics in a newline separated list', async () => {
 		nock('https://api.github.com')
 			.get('/repos/Test-Owner/Test-Repo/topics')
 			.reply(200, {
-				names: ['customer-products', 'app', 'new'],
+				names: ['customer-products'],
 			})
 			.put('/repos/Test-Owner/Test-Repo/topics', {
-				names: ['customer-products', 'new'],
+				names: ['customer-products', 'app'],
 			})
 			.reply(200, {
-				names: ['customer-products', 'new'],
+				names: ['customer-products', 'app'],
 			})
 		const args = {
 			token: 'Test-Token',
 			githubUrl: { owner: 'Test-Owner', repo: 'Test-Repo' },
-			topic: 'app',
+			topics: ['app'],
 		}
 		await yargsModule.handler(args)
-		expect(console.log).toBeCalledWith('customer-products\nnew')
+		expect(console.log).toBeCalledWith('customer-products\napp')
 	})
 })
 
@@ -117,7 +117,7 @@ describe('Error output', () => {
 		const args = {
 			token: 'Test-Token',
 			githubUrl: { owner: 'Test-Owner', repo: 'Test-Repo' },
-			topic: 'customer-products',
+			topics: ['app'],
 		}
 		await yargsModule.handler(args)
 		expect(errorResponse.isDone()).toBe(true)
@@ -137,7 +137,7 @@ describe('Error output', () => {
 		const args = {
 			token: 'Test-Token',
 			githubUrl: { owner: 'Test-Owner', repo: 'Test-Repo' },
-			topic: 'customer-products',
+			topics: ['app'],
 		}
 		await yargsModule.handler(args)
 		expect(console.log).toBeCalledWith(expect.stringMatching(/Not found/i))

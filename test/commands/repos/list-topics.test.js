@@ -1,6 +1,6 @@
 const nock = require('nock')
 const commonTests = require('../../common-tests')
-const yargsModule = require('../../../src/commands/topics/list')
+const yargsModule = require('../../../src/commands/repos/list-topics')
 
 beforeEach(() => {
 	jest
@@ -20,7 +20,7 @@ afterEach(() => {
 /**
  * Common Yargs tests
  */
-const command = 'topics list'
+const command = 'repos list-topics'
 const requiredArguments = {
 	options: {
 		token: 'Test-Token',

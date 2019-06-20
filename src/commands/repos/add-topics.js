@@ -4,7 +4,7 @@
  * const result = await octokit.repos.replaceTopics()
  */
 const flow = require('lodash.flow')
-const { withGitHubUrl, withTopic } = require('../../lib/common-yargs')
+const { withGitHubUrl, withTopics } = require('../../lib/common-yargs')
 const printOutput = require('../../lib/print-output')
 const { addTopics } = require('../../lib/topics')
 
@@ -18,7 +18,7 @@ const builder = yargs => {
 		withGitHubUrl({
 			describe: 'The URL of the GitHub repository to list the topics of.',
 		}),
-		withTopic({
+		withTopics({
 			required: true,
 		}),
 	])
@@ -32,9 +32,9 @@ const builder = yargs => {
  * @param {string} argv.token
  * @param {string} argv.json
  * @param {object} argv.githubUrl - The GitHub url parsed in the withGitHubUrl() yarg option into appropriate properties, such as `owner` and `repo`.
- * @param {string|array} argv.topic - The topic/s to add
+ * @param {array} argv.topics - The topics to add
  */
-const handler = async ({ token, json, githubUrl, topic: topicsToAdd }) => {
+const handler = async ({ token, json, githubUrl, topics: topicsToAdd }) => {
 	try {
 		const topics = await addTopics({ githubUrl, token, topics: topicsToAdd })
 		if (json) {
@@ -49,7 +49,7 @@ const handler = async ({ token, json, githubUrl, topic: topicsToAdd }) => {
 }
 
 module.exports = {
-	command: 'add <github-url>',
+	command: 'add-topics <github-url>',
 	desc: 'Add topics to a repository.',
 	builder,
 	handler,

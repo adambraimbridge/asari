@@ -1,12 +1,12 @@
 /**
- * @see: https://octokit.github.io/rest.js/#octokit-routes-repos-replace-topics
- * Add topics to a repository.
- * const result = await octokit.repos.replaceTopics()
+ * @see: https://octokit.github.io/rest.js/#octokit-routes-repos-list-topics
+ * List all topics of a repository.
+ * const result = await octokit.repos.listTopics()
  */
 const flow = require('lodash.flow')
-const { withGitHubUrl, withTopic } = require('../../lib/common-yargs')
+const commonYargs = require('../../lib/common-yargs')
 const printOutput = require('../../lib/print-output')
-const { removeTopics } = require('../../lib/topics')
+const { getTopics } = require('../../lib/topics')
 
 /**
  * yargs builder function.
@@ -15,28 +15,25 @@ const { removeTopics } = require('../../lib/topics')
  */
 const builder = yargs => {
 	const baseOptions = flow([
-		withGitHubUrl({
+		commonYargs.withGitHubUrl({
 			describe: 'The URL of the GitHub repository to list the topics of.',
-		}),
-		withTopic({
-			required: true,
 		}),
 	])
 	return baseOptions(yargs).example('github-url', 'Pattern: https://github.com/[owner]/[repository]')
 }
 
 /**
- * Add topics to a repository.
+ * List all issues for a repository.
  *
  * @param {object} argv - argv parsed and filtered by yargs
  * @param {string} argv.token
  * @param {string} argv.json
  * @param {object} argv.githubUrl - The GitHub url parsed in the withGitHubUrl() yarg option into appropriate properties, such as `owner` and `repo`.
- * @param {string|array} argv.topic - The topic/s to remove
  */
-const handler = async ({ token, json, githubUrl, topic: topicsToAdd }) => {
+const handler = async args => {
+	const { token, json, githubUrl } = args
 	try {
-		const topics = await removeTopics({ githubUrl, token, topics: topicsToAdd })
+		const topics = await getTopics({ githubUrl, token })
 		if (json) {
 			printOutput({ json, resource: topics })
 		} else {
@@ -49,8 +46,8 @@ const handler = async ({ token, json, githubUrl, topic: topicsToAdd }) => {
 }
 
 module.exports = {
-	command: 'remove <github-url>',
-	desc: 'Remove topics from a repository.',
+	command: 'list-topics <github-url>',
+	desc: 'List all topics of a repository.',
 	builder,
 	handler,
 }
