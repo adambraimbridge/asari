@@ -35,7 +35,10 @@ describe('Octokit', () => {
 	// If this endpoint is not called, nock.isDone() will be false.
 	const successResponse = nock('https://api.github.com')
 		.get('/repos/Test-Owner/Test-Repo/issues')
-		.reply(200, [{ title: 'Test-Issue-01', created_at: 'Test-Date-01', html_url: 'Test-URL-01' }, { title: 'Test-Issue-02', created_at: 'Test-Date-02', html_url: 'Test-URL-02' }])
+		.reply(200, [
+			{ title: 'Test-Issue-01', created_at: 'Test-Date-01', html_url: 'Test-URL-01' },
+			{ title: 'Test-Issue-02', created_at: 'Test-Date-02', html_url: 'Test-URL-02' },
+		])
 
 	test('Running the command handler triggers a network request of the GitHub API', async () => {
 		await yargsModule.handler(yarguments)
