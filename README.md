@@ -1,5 +1,9 @@
 # 🐚 asari
 
+## Deprecated
+
+Use the official GitHub CLI: https://cli.github.com
+
 ## A human-friendly<sup>1</sup> command line tool for the GitHub API.
 
 <sup>1</sup> It's script-friendly too.
